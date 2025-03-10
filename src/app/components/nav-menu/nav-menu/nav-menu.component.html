@@ -1,0 +1,194 @@
+<div class="header-container" *ngIf="loggedin()">
+  <img class="login" *ngIf="!loggedin()" src="assets/images/Title3.png" />
+  <div class="header" *ngIf="loggedin()">
+    <div class="title">
+      <span class="choosen-country">
+        <i class="fa-solid fa-earth-americas" ngbTooltip="Countries List" (click)="ShowCountries()"></i>
+        
+        <span class="country-name" *ngIf="countryName?.country && !['','India'].includes(countryName?.country)">
+          {{countryName?.country | titlecase}}-{{countryName?.direction | titlecase}}
+        </span>
+      </span>
+      
+      <!-- <img class="cr" src="assets/images/hero-diwali.gif" /> -->
+      <img class="cr" src="assets/images/Title3.png" />      
+
+      <ng-template #tipContent>
+        <div style="color:#dc3545;" *ngIf="[1].includes(currentRoleId)" class="points">Super Admin: <span>{{userCounter['superAdmin']}}</span></div>
+        <div style="color:#007bff;" *ngIf="[1,2].includes(currentRoleId)" class="points">Admin: <span>{{userCounter['admin']}}</span></div>
+        <div style="color:#28a745;" *ngIf="[1,2].includes(currentRoleId)" class="points">Users: <span>{{userCounter['users']}}</span></div>
+        <div style="color:#28a745;" *ngIf="[3].includes(currentRoleId)" class="points">Sub User: <span>{{userCounter['subUsers']}}</span></div>
+      </ng-template>
+      
+      <div class="user-counters d-flex align-items-center ms-4" *ngIf="[1].includes(currentRoleId) || [1,2].includes(currentRoleId) || [1,2].includes(currentRoleId) || [3].includes(currentRoleId)">
+        <i class="fa-solid fa-users-line" [ngbTooltip]="tipContent"></i>
+        <!-- <div style="color:#dc3545;" *ngIf="[1].includes(currentRoleId)" class="points">Super Admin: <span>{{userCounter['superAdmin']}}</span></div>
+        <div style="color:#007bff;" *ngIf="[1,2].includes(currentRoleId)" class="points">Admin: <span>{{userCounter['admin']}}</span></div>
+        <div style="color:#28a745;" *ngIf="[1,2].includes(currentRoleId)" class="points">Users: <span>{{userCounter['users']}}</span></div>
+        <div style="color:#28a745;" *ngIf="[3].includes(currentRoleId)" class="points">Sub User: <span>{{userCounter['subUsers']}}</span></div> -->
+      </div>
+
+      <button class="hunter-btn btn btn-warning ms-3" (click)="goToCompany()">Company Info</button>
+    </div>
+
+
+    <div *ngIf="loggedin()" class="user-package">
+      <div class="user-points" [ngStyle]="{'background-color': getBackColor(searchPoints, 'search', userInfo?.Searches)}">
+        <!-- <span>Searches</span> -->
+        <span>{{searchPoints >= unlimited.search ? 'UNLIMITED' : (searchPoints || 0)}}</span>
+      </div>
+
+      <div class="user-points"
+        [ngStyle]="{'background-color': getBackColor(downloadPoints, 'download', userInfo?.Downloads)}">
+        <!-- <span>Downloads</span> -->
+        <span>{{downloadPoints >= unlimited.download ? 'UNLIMITED' : (downloadPoints || 0)}}</span>
+      </div>
+
+      <div class="user-points" [ngStyle]="{'background-color': getBackColor(getRemainingDays(remainingdays), 'day')}">
+        <!-- <span>Days</span> -->
+        <span>{{getRemainingDays(remainingdays)}}</span>
+      </div>
+      <!-- <span class="search-limit">Searches: {{userInfo?.Searches}} / {{searchPoints}}</span> -->
+      <!-- <span class="user-points">
+      Downloads: 
+      <span class="first">{{userInfo?.Downloads}} / </span> 
+      <span class="second">{{downloadPoints}}</span>
+    </span> -->
+      <!-- <span class="days-limit">{{remainingdays}} Days</span> -->
+    </div>
+
+    <div *ngIf="loggedin()" class="right-header">
+      <div class='setting'>
+        <!-- <span *ngIf="loggedin()"> {{user.FullName}}</span> -->
+        <span class="username" *ngIf="loggedin()">{{userInfo?.FullName}}</span>
+        <!-- <p class="username" *ngIf="loggedin()">{{user.FullName}}</p> -->
+        <img class="team team-other" src="assets/images/admin.png" (click)="onClickHeaderOption('profile')" />
+        
+        <!-- *ngIf="isDownloadingFile" -->
+        <div class="download-file" tabindex="1" (focusout)="showLoaderBubble(true)">
+          <img id="successImg" src="assets/images/file-download.png" alt="" (click)="showLoaderBubble()">
+          <span class="counter {{counterObj.hasDownloadFileStarted ? 'blinkIt' :''}}">{{downloadingFiles.length}}</span>
+
+          <div id="downloadMsg" class="loader-desc loader-desc-show" [hidden]="isDownloadingPanelHidden">
+            <div class="bubble-point"></div>
+            <div class="list">
+              <div class="file" *ngFor="let item of downloadingFiles;">
+                <span>{{item?.fileName}}</span>
+                <img *ngIf="item?.status=='pending'" src="assets/images/waiting2.png" alt="">
+                <span (click)="onClickHeaderOption('download', item?.fileName)" *ngIf="item?.status=='done'" class="open-file">Open File</span>
+                <span *ngIf="item?.status=='failed'" class="fail-file">Failed!</span>
+              </div>
+              <div class="text-center" *ngIf="downloadingFiles.length==0">No downloads</div>
+            </div>
+          </div>
+        </div>
+        
+        
+        <!-- -->
+        <span class="notification-alert" (click)="onClickNotification()">
+          <span class="counter {{counterObj.hasNotificationReceived ? 'blinkIt' :''}}">{{unreadNotifications.length}}</span>
+          <img class='team' src="assets/images/not.png" />
+          <audio id="audioTag" src="assets/ting.mp3"></audio>
+        </span>
+
+        <div tabindex="1" class="setting-container" (focusout)="setDropClass(userPanel, 'cut')">
+          <a #userPanel (click)="setDropClass(userPanel, 'add')">
+            <img class='team setting' src="assets/images/setting.png" />
+          </a>
+
+          <div class="setting-options">
+            <div class="user-profile">
+              <img src="assets/images/account.png" alt="">
+              <div class="user-detail">
+                <span class="user-name">{{userInfo?.FullName | titlecase}}</span>
+                <span class="user-post">{{userInfo?.Designation}}</span>
+              </div>
+              <!-- <span class="edit-button">Edit</span> -->
+            </div>
+
+            <div class="other-options">
+              <span>
+                <img src="assets/images/company.png" alt="">
+                <p>{{userInfo?.CompanyName | titlecase}}</p>
+                <!-- <span class="edit-button">Edit</span> -->
+              </span>
+              <span>
+                <img src="assets/images/settingMail.png" alt="">
+                <p>{{userInfo?.Email}}</p>
+              </span>
+              <span>
+                <img src="assets/images/contact.png" style="height:33px;" alt="call">
+                <p>+91{{userInfo?.MobileNumber}}</p>
+                <!-- <span class="edit-button">Edit</span> -->
+              </span>
+              <span>
+                <img src="assets/images/settingAdmin.png" alt="">
+                <p>{{userService.getUserRoleName() | titlecase}}</p>
+              </span>
+              <span *ngIf="!authService.isUserSubuser()">
+                <img src="assets/images/profile.png" alt="team" style="height:40px;margin-left:-3px;">
+                <p (click)="onClickHeaderOption('profile-team')">Team</p>
+              </span>
+              <span style="margin-top:-7px;margin-bottom:15px;">
+                <img src="assets/images/password.png" alt="" style="margin-right:19px;">
+                <p>Password</p>
+                <span class="edit-button" (click)="onClickHeaderOption('profile-password');">Change Password</span>
+              </span>
+              <span class="pointer-null">
+                <img src="assets/images/downloading.png" alt="download" style="height: 28px;margin-right: 20px;">
+                <p class="d-flex">Downloading Points: &nbsp;&nbsp;
+                  <!-- {{userInfo?.Downloads}} /  -->
+                  <span *ngIf="downloadPoints<unlimited.download">{{downloadPoints}}</span>
+                  <span *ngIf="downloadPoints>=unlimited.download">UNLIMITED</span>
+                </p>
+              </span>
+              <span class="pointer-null">
+                <img src="assets/images/search1.png" alt="" style="margin-right:14px;">
+                <p class="d-flex">Searching Points: &nbsp;&nbsp;
+                  <!-- {{userInfo?.Searches}} /  -->
+                  <span *ngIf="searchPoints<unlimited.search">{{searchPoints}}</span>
+                  <span *ngIf="searchPoints>=unlimited.search">UNLIMITED</span>
+                </p>
+              </span>
+              <span class="pointer-null">
+                <img src="assets/images/duration.png" alt="" style="margin-right:17px;">
+                <p>{{getRemainingDays(remainingdays)}}{{remainingdays>1 ? ' Days' : ' Day'}}</p>
+              </span>
+            </div>
+
+            <div class="current-plan">
+              <span class="label">Current Plan:</span>
+              <span class="other-btn">
+                <button class="green-button">{{userPlanDetails?.PlanName}}</button>
+                <img (click)="onClickHeaderOption('profile-plans');" src="assets/images/rightArrow.png" alt="" />
+              </span>
+            </div>
+
+            <span class="logout" (click)="onSignOut(logoutMe)">
+              <a href="/#" #logoutMe class="logout-anchor"></a>
+              <img src="assets/images/logout.png" alt="">
+              <p>Log Out</p>
+            </span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="data-tabs" *ngIf="loggedin()">
+    <span class="side-tabs">
+      <div id="TableTab" class="tab active" #tab1 (click)="onSelectTab($event, tab2, false)">Table</div>
+      <div id="analysisTab" class="tab" (click)="onSelectTab($event, tab1, true)" #tab2>Analysis</div>
+      <!-- (click)="onSelectTab($event, tab1, true)" -->
+    </span>
+    <div class="alert-notifications overflow-hidden">
+      <!-- <marquee *ngIf="isShowBanner" scrollamount="4">{{marqueeMsg}}</marquee> -->
+        <div class="marquees w-100 h-100 d-flex align-items-center" *ngIf="isShowBanner">
+            <!-- {{(i+1)>1 ? 'ms-5': ''}}" *ngFor="let item of [1,2,3,4,5];let i=index" -->
+            <div class="marquee">{{marqueeMsg}}</div>
+        </div>
+    </div>
+  </div>
+  <!-- #e3e3e3b0 -->
+  <div class="disable-layer {{bgColorClass}}" *ngIf="isPageLoading"></div>
+</div>

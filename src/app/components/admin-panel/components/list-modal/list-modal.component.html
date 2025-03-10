@@ -1,0 +1,21 @@
+
+<div class="table-detail-container">
+    <div class="top-head">
+        <h5>{{tableName}} detail</h5>
+        <img src="assets/images/cross.png" alt="" (click)="closeModal()">
+    </div>
+
+    <div class="action-bar">
+        <span (click)="onClickButton('add')" title="Add New" class="add"><img src="assets/images/plusicon.png" alt="">Add New</span>
+        <span (click)="onClickButton('edit', listData)" title="Edit" class="edit"><img src="assets/images/edit.png" alt="">Edit</span>
+    </div>
+
+    <div class="table">
+        <div class="table-box">
+            <div class="table-row" *ngFor="let item of listHeads;">
+                <span class="table-data left">{{item}}</span>
+                <span class="table-data right">{{isValueUnlimited(listData, item)}}</span>
+            </div>
+        </div>
+    </div>
+</div>

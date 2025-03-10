@@ -1,0 +1,129 @@
+@import url("../../media_styles/1680x1050.css");
+@import url("../../media_styles/1600x900.css");
+@import url("../../media_styles/1440x900.css");
+
+div.admin-panel-container{
+    height: 99%;
+    width: 100%;
+    /* margin-top: 5px; */
+}
+div.admin-panel-container div.top-tabs{
+    background-color: white;
+    position: relative;
+    z-index: 99;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-right: 20px;
+    user-select: none;
+}
+div.admin-panel-container div.top-tabs div.tabs{
+    height: 5%;
+    width: 100%;
+    display: flex;
+    overflow: auto;
+    padding: 0px 15px;
+    align-items: center;
+    justify-content: flex-start;
+}
+div.admin-panel-container div.top-tabs div.tabs::-webkit-scrollbar{height: 7px;}
+
+div.admin-panel-container div.top-tabs div.tabs div.tab{
+    cursor: pointer;
+    border: 1px solid transparent;
+    width: 10%;
+    text-align: center;
+    padding: 5px 20px;
+    margin: 5px 30px 5px 0;
+    display: flex;
+    justify-content: space-evenly;
+    align-items: center;
+}
+div.admin-panel-container div.top-tabs div.tabs div.tab:hover{box-shadow: 0px 0px 5px 0px grey;}
+div.admin-panel-container div.top-tabs div.tabs div.tab img{height: 35px;margin-right: 5px;}
+
+div.admin-panel-container div.top-tabs div.tabs div.tab span{
+    font-size: 15px;
+    font-weight: 500;
+    margin-left: 10px;
+    white-space: nowrap;
+    font-family: 'Roboto',sans-serif;
+}
+
+div.admin-panel-container div.top-tabs div.filter{
+    width: 10%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+div.admin-panel-container div.top-tabs div.filter span{
+    color: gray;
+    margin-right: 10px;
+    font-size: 15px;
+    font-family: 'Roboto',sans-serif;
+}
+div.admin-panel-container div.top-tabs div.filter select{
+    border: none;
+    padding: 3px 5px;
+    color: #8a9ea0;
+    outline: none;
+    cursor: pointer;
+    text-transform: capitalize;
+}
+
+div.admin-panel-container div.switched-tabs{height: 95%;}
+
+div.admin-panel-container div.admin-btns{
+    height: 100%;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: center;
+}
+
+div.admin-btns h1{
+    height: 20%;
+    margin-top: 2%;
+    width: 100%;
+    display: flex;
+    color: #49494b;
+    align-items: center;
+    justify-content: center;
+    font-weight: 400;
+    font-family: 'Roboto', sans-serif;
+}
+
+div.admin-btns div.admin-options{
+    display: grid;
+    grid-template-columns: auto auto auto auto;
+    gap: 35px;
+    height: 40%;
+}
+div.admin-btns div.admin-options span.choice{
+    display: flex;
+    cursor: pointer;
+    background: white;
+    align-items: center;
+    user-select: none;
+    justify-content: space-around;
+    border: 1px solid #c2c2c2;
+    border-radius: 10px;
+    padding: 50px 35px;
+    width: 15rem;
+    box-shadow: 0px 0px 7px 2px #00000026;
+    transform-origin: center;
+    transition: all 0.2s ease-in-out;
+}
+div.admin-btns div.admin-options span.choice:hover{box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px; transform: scale(1.1);}
+div.admin-btns div.admin-options span.choice:active{box-shadow: none;}
+
+/* div.admin-btns div.admin-options span.choice img{height: 50px;margin-right: 10px;} */
+div.admin-btns div.admin-options span.choice.client img{height: 45px;}
+div.admin-btns div.admin-options span.choice span{
+    font-size: 20px;
+    color: #49494b;
+    white-space: nowrap;
+    font-family: 'Roboto', sans-serif;
+}
+

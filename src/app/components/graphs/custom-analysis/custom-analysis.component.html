@@ -1,0 +1,162 @@
+<div class="custom-analysis-container h-100 position-relative">
+    <div class="add-chart-btn">
+        <button ngbTooltip="Create new analysis" class="btn btn-danger corner-btn" *ngIf="!isLoading && allCustomGraph.length>0 && !isPalleteOpen" (click)="openPellet()"> Add Chart </button>
+    </div>
+
+    <div class="graph-container h-100 mx-auto position-relative">        
+        <div class="empty-container position-absolute" *ngIf="allCustomGraph.length==0">
+            <div class="icon"><img src="assets/images/chart-empty.png" alt="" /></div>
+            <div class="msg">Looks like there is no analysis here</div>
+            <button class="btn btn-danger" (click)="onFirstTimeClick()"> <span>Create New Analysis</span> </button>
+        </div>
+
+        <div class="h-100 w-100 analysis-list" *ngIf="allCustomGraph.length>0" [ngStyle]="{visibility: isLoading?'hidden':'visible'}">
+            <div class="graph-container-box w-75 mx-auto" *ngFor="let item of allCustomGraph;let i=index">
+                <div class="heading-box">
+                    <h3 class="text-center w-100" *ngIf="item?.graphTitle!=''">{{item?.graphTitle | titlecase}}</h3>
+                    <div class="icons position-absolute d-flex align-items-center justify-content-evenly">
+                        <i ngbTooltip="Edit Chart" class="fa-solid fa-pen-to-square me-3" (click)="openPellet(false, item, i)"></i>
+                        <i ngbTooltip="Delete Chart" class="fa-solid fa-xmark" (click)="onRemoveItem(item.id)"></i>
+                    </div>
+                </div>
+                <div class="graph"> <canvas class="w-100 h-100" id="{{item.id}}"></canvas> </div>
+                <div class="graph-table">
+                    <table class="w-100">
+                        <thead class="sticky-top">
+                            <th>S.no</th>
+                            <th>{{item?.tableType | titlecase}}</th>
+                            <th *ngIf="item.axis1Type == 'quantity' || item?.axis2Type == 'quantity'">Quantity</th>
+                            <th *ngIf="item.axis1Type == 'unitpricefc' || item?.axis2Type == 'unitpricefc'">Price</th>
+                            <th *ngIf="item.axis1Type == 'valueinusd' || item?.axis2Type == 'valueinusd'">Value</th>                           
+                        </thead>
+                        <tbody>
+                            <tr *ngFor="let value of item.data;let j=index">
+                                <td>{{j+1}}</td>
+                                <td>{{value[item?.analysisType]}}</td>
+                                <td *ngIf="item.axis1Type == 'quantity' || item?.axis2Type == 'quantity'"><span ngbTooltip="{{convertIntoString(value?.quantity, true)}}">{{convertIntoString(value?.quantity)}}</span></td>
+                                <td *ngIf="item.axis1Type == 'unitpricefc' || item?.axis2Type == 'unitpricefc'"><span ngbTooltip="{{convertIntoString(value?.unitpricefc, true)}}">{{convertIntoString(value?.unitpricefc)}}</span></td>
+                                <td *ngIf="item.axis1Type == 'valueinusd' || item?.axis2Type == 'valueinusd'"><span ngbTooltip="{{convertIntoString(value?.valueinusd, true)}}">{{convertIntoString(value?.valueinusd)}}</span></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>            
+        </div>
+    </div>
+
+    <div class="loader" *ngIf="isLoading">
+        <img src="assets/images/loader.png" alt="">
+        <span>Graphs are loading, Please wait...</span>
+    </div>
+</div>
+
+
+<div class="analysis-pellate h-100 w-100 d-flex justify-content-center align-items-center position-absolute zoom-{{isPalleteOpen ? 'out':'in'}}">
+    <div class="pellate d-flex align-items-center">
+        <div class="pellate-box pb-4">
+            <div class="close-btn text-end d-flex align-items-center">
+                <h4 class="text-center w-100 m-0">Add Chart</h4>
+                <i class="fa-regular fa-circle-xmark" (click)="resetEverything()"></i>
+            </div>
+            
+            <div class="input-field">
+                <label>Graph Heading/Title <span class="mandatory">*</span></label>
+                <input type="text" class="{{errorFlags[7] && 'error-input'}}" [(ngModel)]="graphHead" placeholder="Analysis Title" />
+            </div>
+    
+            <div class="input-field mt-2">            
+                <label>Select Chart Type <span class="mandatory">*</span></label>
+                <select [(ngModel)]="mainSelectedChart" class="{{errorFlags[0] && 'error-input'}}">
+                    <option value=""> -- </option>
+                    <option value="{{item.key}}" *ngFor="let item of chartType">
+                        <span>{{item.chart | titlecase}} Chart</span>
+                    </option>
+                </select>
+            </div>
+    
+            <div class="input-field mt-2">
+                <label>Select X-Axis <span class="mandatory">*</span></label>
+                <select [(ngModel)]="selectedAnalysis" [disabled]="mainSelectedChart==''" class="{{errorFlags[1] && 'error-input'}}"> 
+                    <option value=""> -- </option>
+                    <option value="{{item.key}}" *ngFor="let item of analysisType">                    
+                        <span>{{item.analysis | titlecase}}</span>
+                    </option>
+                </select>
+            </div>        
+    
+            <div class="y-axis-val mt-2">
+                <div class="input-field">
+                    <label>Select {{mainSelectedChart=='pie'?'Measure By': mainSelectedChart=='mixed'?'Y-Axis 1':'Y-Axis'}} <span class="mandatory">*</span></label>
+                    <select [(ngModel)]="yAxisValues.y1" class="{{errorFlags[2] && 'error-input'}}">
+                        <option value=""> -- </option>
+                        <option value="{{item.key}}" *ngFor="let item of yAxisType">                    
+                            <span>{{item.axis | titlecase}}</span>
+                        </option>
+                    </select>
+                </div>
+    
+                <div class="input-field mt-2 {{mainSelectedChart!='mixed' ? 'opacity-50':''}}">
+                    <label>Select Y-Axis 2 <span class="mandatory">*</span></label>
+                    <select [(ngModel)]="yAxisValues.y2" [disabled]="mainSelectedChart!='mixed'" class="{{errorFlags[3] && 'error-input'}}">
+                        <option value=""> -- </option>
+                        <option value="{{item.key}}" *ngFor="let item of yAxisType">                    
+                            <span>{{item.axis | titlecase}}</span>
+                        </option>
+                    </select>
+                </div>
+            </div>
+    
+            <div class="further-inputs-box">
+                <div class="more-input-list h-100 position-relative">
+                    <div class="mixed-chart-selection {{mainSelectedChart!='mixed' ? 'opacity-50':''}}">
+                        <div class="input-field mt-2">
+                            <label>Y-Axis 1 Chart Type <span class="mandatory">*</span></label>
+                            <select [(ngModel)]="mixedCharts.type1" [disabled]="mainSelectedChart!='mixed'" class="{{errorFlags[4] && 'error-input'}}">
+                                <option value=""> -- </option>
+                                <option value="{{item.chart}}" *ngFor="let item of chartTypeMix">                    
+                                    <span>{{item.chart | titlecase}}</span>
+                                </option>
+                            </select>
+                        </div>
+        
+                        <div class="input-field mt-2">
+                            <label>Y-Axis 2 Chart Type <span class="mandatory">*</span></label>
+                            <select [(ngModel)]="mixedCharts.type2" [disabled]="mainSelectedChart!='mixed'" class="{{errorFlags[5] && 'error-input'}}">
+                                <option value=""> -- </option>
+                                <option value="{{item.chart}}" *ngFor="let item of chartTypeMix">                    
+                                    <span>{{item.chart | titlecase}}</span>
+                                </option>
+                            </select>
+                        </div>
+                    </div>
+    
+                    <div class="input-field mt-2">
+                        <label>Select Data Range <span class="mandatory">*</span></label>
+                        <select [(ngModel)]="dataRange" class="{{errorFlags[6] && 'error-input'}}">
+                            <option value="0"> -- </option>
+                            <option value="{{item}}" *ngFor="let item of [5, 10, 15]">
+                                <span>Top {{item}}</span>
+                            </option>
+                        </select>
+                    </div>
+    
+                    <div class="btns mt-4 w-100 text-center">
+                        <button class="btn btn-warning me-1" (click)="onClickApply(false, true)">Preview</button>
+                        <button class="btn btn-success me-1" (click)="onClickApply()">{{isEditPallete ? 'Update':'Create'}}</button>
+                        <!-- <button class="btn btn-primary me-1" (click)="onClickApply(false)">Create</button> -->
+                        <button class="btn btn-danger" (click)="resetEverything()">Cancel</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="pellate-preview position-relative h-100 d-flex align-items-center justify-content-center">
+            <img class="h-100 position-absolute" src="assets/images/preview-placeholder.webp" alt="" *ngIf="isImgPrevExist"/>
+            <i class="fa-solid fa-circle-notch fa-spin" style="color:#4cbfa6;" *ngIf="isPreviewLoading"></i>
+            <canvas class="w-100 h-100" id="previewContainer"></canvas>
+        </div>
+    </div>    
+</div>
+
+
+

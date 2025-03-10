@@ -1,0 +1,35 @@
+<div class="user-panel-container">
+    <div class="form-box">
+        <h1 [ngStyle]="{'visibility':headVisibility}">
+            {{formHeadingName | uppercase}}
+        </h1>
+
+        <div class="tab-indicator" *ngIf="!isOnlyForPlan">
+            <div class="indicator">
+                <div class="loader" [ngStyle]="{'width': currentLoc}"></div>
+                <img src="assets/images/triangle.png" class="pointer" alt="" />
+            </div>
+
+            <div class="tabs">
+                <p (click)="moveIndicator(0)">Add User</p>
+                <p id="tab2" class="{{!isUserAdmin ?'disabled-tab':''}}" (click)="moveIndicator(1)">Plan Setup</p>
+                <p class="{{!isUserAdmin ?'disabled-tab':''}}">Payment</p>
+                <!-- <p (click)="moveIndicator(2)">Payment</p> -->
+            </div>
+        </div>
+        
+        <div class="form-body" [ngStyle]="{'height': isOnlyForPlan?'80%': getHeightOnRes()}">
+            <app-input-field 
+                [isOnlyForPlan]="isOnlyForPlan"
+                [currentForm]="currentFormType" 
+                [hasSubmitted]="hasSubmitted"
+                (onSubmitted)="onSubmitForm($event)">
+            </app-input-field>
+            <div class="nxt-btn blue-bgColor" (click)="onSubmit()">
+                <!-- <p *ngIf="!hasSubmitted">{{isOnlyForPlan?'Submit':'Next'}}</p> -->
+                <p *ngIf="!hasSubmitted">{{isOnlyForPlan?'Submit': isUserAdmin ? 'Next':'Submit'}}</p>
+                <img *ngIf="hasSubmitted" class="loading-wheel" src="assets/images/waiting.png" alt="">
+            </div>
+        </div>
+    </div>
+</div>

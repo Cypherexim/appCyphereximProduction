@@ -1,0 +1,19 @@
+<div class="profile-popup">
+    <div class="modal-head">
+        <h5>{{popupHeading | titlecase}}</h5>
+        <img src="assets/images/cross.png" (click)="activeModal.dismiss('Cross click')" alt="">
+    </div>
+
+    <div class="body-container">
+        <table>
+            <thead>
+                <th *ngFor="let i of [1,2,2,2,2]">heading</th>
+            </thead>
+            <tbody>
+                <tr *ngFor="let i of [1,2,2,2,2,2,2,2,2,2,2,2,2]">
+                    <td *ngFor="let i of [1,2,2,2,2]">data</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>

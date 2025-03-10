@@ -1,0 +1,225 @@
+.mandatory{color: red;}
+div.custom-analysis-container{
+    padding: 1%;
+    background-color: #e3e3e3;
+}
+
+div.custom-analysis-container div.loader{
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+div.custom-analysis-container div.add-chart-btn{    
+    width: 100%;
+    text-align: right;
+    padding-right: 3%;
+    position: sticky;
+}
+div.custom-analysis-container div.add-chart-btn button.corner-btn{
+    font-size: 16.5px;
+    font-weight: 600;
+    letter-spacing: 0.75px;
+    transition: all 0.4s ease;
+}
+
+div.custom-analysis-container div.graph-container{}
+
+
+div.custom-analysis-container div.graph-container div.empty-container{
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    border: 1px solid #c7d5eb;
+    width: 40%;
+    padding: 5% 0;
+    text-align: center;
+    background-color: white;
+}
+div.custom-analysis-container div.graph-container div.analysis-list {overflow: auto;}
+div.custom-analysis-container div.graph-container div.analysis-list div.graph-container-box{
+    border: 1px solid #c2c2c2;
+    border-radius: 20px;
+    padding-top: 0;
+    overflow: hidden;
+    margin-bottom: 4rem;
+    background-color: white;
+}
+div.custom-analysis-container div.graph-container div.analysis-list div.graph-container-box div.heading-box{
+    width: 100%;
+    padding: 10px 0;
+    position: relative;
+    margin-bottom: 20px;
+    background-color: #4cbfa6;
+}
+div.custom-analysis-container div.graph-container div.analysis-list div.graph-container-box div.icons{
+    right: 2.5%;
+    top: 50%;
+    width: 7.5%;
+    text-align: right;
+    transform: translateY(-50%);
+}
+div.custom-analysis-container div.graph-container div.analysis-list div.graph-container-box div.icons i{font-size: 20px;color: white;cursor: pointer;}
+div.custom-analysis-container div.graph-container div.analysis-list div.graph-container-box div.icons i:last-child{font-size: 23px;}
+div.custom-analysis-container div.graph-container div.analysis-list div.graph-container-box h3{color: white;font-size: 23px;}
+
+div.custom-analysis-container div.graph-container div.analysis-list div.graph-container-box div.graph{
+    max-height: 45vh;
+    margin-bottom: 1.5rem;    
+    padding: 0px 15px;
+}
+div.custom-analysis-container div.graph-container div.analysis-list div.graph-container-box div.graph-table {
+    overflow: auto;
+    padding: 0px 15px;
+    margin-bottom: 15px;
+    max-height: 35vh;
+}
+div.custom-analysis-container div.graph-container div.analysis-list div.graph-container-box div.graph-table table{border: 1px solid #00000052;border-collapse: collapse;}
+div.custom-analysis-container div.graph-container div.analysis-list div.graph-container-box div.graph-table table thead th:first-child{text-align: center;}
+div.custom-analysis-container div.graph-container div.analysis-list div.graph-container-box div.graph-table table thead th:not(:first-child){padding-left: 10px;}
+div.custom-analysis-container div.graph-container div.analysis-list div.graph-container-box div.graph-table table thead{
+    color: white;    
+    background-color: #4cbfa6;
+    border: 1px solid #4cbfa6;
+}
+div.custom-analysis-container div.graph-container div.analysis-list div.graph-container-box div.graph-table table thead th:not(:last-child){border-right: 1px solid white;}
+div.custom-analysis-container div.graph-container div.analysis-list div.graph-container-box div.graph-table table tbody tr td:first-child{width: 5%; text-align: center;}
+div.custom-analysis-container div.graph-container div.analysis-list div.graph-container-box div.graph-table table tbody tr td:not(:first-child){padding-left: 10px;}
+div.custom-analysis-container div.graph-container div.analysis-list div.graph-container-box div.graph-table table td{border: 1px solid #0000003b;}
+
+div.custom-analysis-container div.graph-container div.icon img{height: 6rem;margin-bottom: 10px;}
+div.custom-analysis-container div.graph-container div.msg{
+    font-size: 18px;
+    color: #767679;
+    font-weight: 700;
+    text-align: center;
+    margin-bottom: 20px;
+}
+div.custom-analysis-container div.graph-container button{
+    font-size: 15px;
+    font-weight: 600;
+    letter-spacing: 0.55px;
+}
+
+div.analysis-pellate{
+    top: 0%;
+    z-index: 10001;
+    background-color: #e3e3e3;
+    transition: all 0.3s ease;
+}
+div.analysis-pellate div.pellate {
+    width: 70%;
+    height: 75%;
+    overflow: auto;
+    background: white;
+    position: relative;
+    border-radius: 15px;
+    overflow: hidden;
+    box-shadow: 0px 0px 15px 0px #4cbfa6a8;
+}
+div.analysis-pellate div.pellate-box{
+    width: 50%;
+    max-height: 65%;
+    padding-left: 7.5px;
+    padding-right: 7.5px;
+    border-top-left-radius: 10px;
+    border-bottom-left-radius: 10px;
+    background-color: white;
+}
+div.analysis-pellate div.pellate-box div.close-btn i{cursor: pointer;}
+div.analysis-pellate div.pellate-box div.close-btn h4{color: white;}
+div.analysis-pellate div.pellate-box div.close-btn{
+    font-size: 1.7rem;
+    padding: 5px 10px;
+    position: absolute;
+    width: 100%;
+    top: 0;
+    left: 0;
+    background-color: #4cbfa6;
+}
+
+div.analysis-pellate div.pellate-box div.input-field{
+    display: flex;
+    /* flex-direction: column; */
+    padding: 0 20px;
+}
+div.analysis-pellate div.pellate-box div.input-field label{
+    font-size: 15.5px;
+    font-weight: 600;
+    color: #656668;
+    margin-bottom: 2px;
+    width: 40%;
+}
+div.analysis-pellate div.pellate-box div.input-field input,
+div.analysis-pellate div.pellate-box div.input-field select{
+    width: 60%;
+    outline: none;
+    padding: 5px 7px;
+    font-size: 15px;
+    border-radius: 5px;
+    border: 1px solid #c2c2c2;
+    cursor: pointer;
+}
+
+div.analysis-pellate div.pellate-box div.further-inputs-box {}
+div.analysis-pellate div.pellate-box div.further-inputs-box div.more-input-list {border-radius: 10px;}
+div.analysis-pellate div.pellate-box div.further-inputs-box div.more-input-list div.btns{bottom: 2.5%;}
+div.analysis-pellate div.pellate-box div.further-inputs-box div.more-input-list div.btns button{
+    padding: 3px 10px;
+    font-size: 15px;
+    font-weight: 600;
+    letter-spacing: 0.55px;
+}
+.zoom-in{scale: 0;}
+.zoom-out{scale: 1;}
+
+
+div.analysis-pellate div.pellate-preview {
+    width: 50%;
+    max-height: 85%;
+    border-top-right-radius: 10px;
+    border-bottom-right-radius: 10px;
+    padding: 5px 10px;
+    background-color: white;
+    transition: all 0.8s ease;
+    border-left: 1px dotted #c2c2c2c2;
+}
+div.analysis-pellate div.pellate-preview img{width: 90%;margin-top: 5.75%;}
+div.analysis-pellate div.pellate-preview i.fa-circle-notch{
+    color: #4cbfa6;
+    position: absolute;
+    font-size: 1.8rem;    
+}
+
+
+.error-input {
+    border: 1px solid #e65656 !important;
+    background-color: #ff00001a !important;
+    transition: all 0.4s ease;
+    animation: error-shake 0.6s ease;
+}
+
+@keyframes error-shake {
+    0% {
+        transform: translateX(-1.5%);
+    }
+
+    15% {
+        transform: translateX(1.5%);
+    }
+
+    30% {
+        transform: translateX(-1.5%);
+    }
+
+    45% {
+        transform: translateX(1.5%);
+    }
+
+    60%,
+    100% {
+        transform: translateX(0%);
+    }
+}
+

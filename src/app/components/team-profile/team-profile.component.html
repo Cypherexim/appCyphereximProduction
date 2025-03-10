@@ -1,0 +1,74 @@
+<div class="team-profile-container" [ngStyle]="{'height': boxHeight}">
+    <div class="table-container">
+        <div class="table-head">
+            <img class="zoom-img" src="assets/images/{{currentScale}}.png" alt="" (click)="toggleZoom()" [title]="currentScale">
+            <button *ngIf="numOfUsers>0" class="btn btn-danger ms-4" (click)="showSubUserForm=true" [disabled]="!((this.numOfUsers - this.subUserList.length) > 0)">
+                Add Sub-User
+            </button>
+            <h5>Profile - Team</h5>
+            <span class="input-box">
+                Remaining User: {{numOfUsers - subUserList.length}}
+                <!-- <input type="text" placeholder="Search client, companies etc">
+                <span class="search-btn"><img src="assets/images/dateIcon.png" alt=""/></span> -->
+            </span>
+        </div>
+
+        <div class="table-body">
+            <table>
+                <thead>
+                    <th>User Name</th>
+                    <th>Email</th>
+                    <th>Phone</th>
+                    <!-- <th>Edit</th> -->
+                </thead>
+                <tbody>
+                    <tr *ngFor="let item of subUserList;">
+                        <td>{{item?.FullName}}</td>
+                        <td>{{item?.Email}}</td>
+                        <td>{{item?.MobileNumber}}</td>
+                        <!-- <td><span class="edit-btn">Edit</span></td> -->
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div class="add-form" [ngStyle]="{'scale': showSubUserForm?'1':'0'}">
+        <div class="form-container" *ngIf="!successWindow">
+            <span class="close-btn" (click)="closePopUp()"><img src="assets/images/cross.png" alt=""></span>
+            <h1>Add Sub-User</h1>
+
+            <div class="input-box">
+                <div class="input-field imp">
+                    <span>Name</span>
+                    <input type="text" [(ngModel)]="formValues.name" />
+                </div>
+                <span class="error" [ngStyle]="{'visibility': !errorFlags[0] ? 'hidden' : 'visible'}">Name field is requied</span>
+                
+                <div class="input-field imp">
+                    <span>Email</span>
+                    <input type="email" [(ngModel)]="formValues.email" />
+                </div>
+                <span class="error" [ngStyle]="{'visibility': !errorFlags[1] ? 'hidden' : 'visible'}">Email field is required</span>
+
+                <div class="input-field imp">
+                    <span>Phone</span>
+                    <input type="text" [(ngModel)]="formValues.phone" />
+                </div>
+                <span class="error" [ngStyle]="{'visibility': !errorFlags[2] ? 'hidden' : 'visible'}">Phone field is required</span>
+            </div>
+            <div class="submit-btn"><button class="btn btn-danger" (click)="onSubmitForm($event, errorMsg)">Submit</button></div>
+            <p class="error" #errorMsg></p>
+        </div>
+
+        <div class="success-msg form-container" *ngIf="successWindow">
+            <span class="close-btn" (click)="closePopUp()"><img src="assets/images/cross.png" alt=""></span>
+            <div class="icon-img">
+                <img src="assets/images/check.png" alt="" />
+                <h3>Success</h3>
+            </div>
+
+            <p>Sub user has been added successfully!</p>
+        </div>
+    </div>
+</div>

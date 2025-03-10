@@ -1,0 +1,415 @@
+<div #parentBox class="analysis-container w-100 h-100">
+    <div class="summary-container">
+        <h5 class="table-head position-relative">
+            Summary Table
+            <div class="download-btn position-absolute d-flex align-items-center">
+                <img title="Download Complete {{currentAnalysis}} Analysis" class="me-2" (click)="downloadPDF(parentBox, 'all')" src="assets/images/pdf.png" alt="" />
+                <img title="Donwload Summary" (click)="downloadSummary()" src="assets/images/downloading.png" alt="">
+                
+                <div class="selection-tops ms-3">
+                    <span>Top:</span>
+                    <select class="ms-2" [disabled]="summaryTableArr.length<=10" [ngModel]="currentTop" (change)="onChangeByTop($event)">
+                        <option value="5">5</option>
+                        <option value="10">10</option>
+                        <option value="15">15</option>
+                    </select>
+                </div> 
+            </div>
+        </h5>
+        <div class="summary-table bg-white" #summaryContainer>
+            <table *ngIf="summaryTableArr.length>0">
+                <thead>
+                    <th>{{currentAnalysis | titlecase}}</th>
+                    <th><div>Average Price In {{currentCountry=='India' ? 'FC' : 'USD'}} <img (click)="sortSummaryArr(isCountryIndia(), false)" src="assets/images/sort.png" alt="" /></div></th>
+                    <th><div>Value In USD <img (click)="sortSummaryArr('valueinusd', false)" src="assets/images/sort.png" alt="" /></div></th>
+                    <th><div>Quantity <img (click)="sortSummaryArr('quantity', false)" src="assets/images/sort.png" alt="" /></div></th>
+                    <th><div>Price Share <img (click)="sortSummaryArr('priceShare', false)" src="assets/images/sort.png" alt="" /></div></th>
+                    <th><div>Value Share <img (click)="sortSummaryArr('valueShare', false)" src="assets/images/sort.png" alt="" /></div></th>
+                    <th><div>Quantity Share <img (click)="sortSummaryArr('quantityShare', false)" src="assets/images/sort.png" alt="" /></div></th>
+                </thead>
+                <tbody>
+                    <tr *ngFor="let item of summaryPartitionArr;">
+                        <td>
+                            <a *ngIf="currentCountry=='India'" (click)="linkToDataSearch(item[getColName()])">{{item[getColName()]}}</a>
+                            <span *ngIf="currentCountry!='India'">{{item[getColName()]}}</span>
+                        </td>
+                        <td><span ngbTooltip="{{convertIntoString(item[isCountryIndia()], true)}}">{{convertIntoString(item[isCountryIndia()])}}</span></td>
+                        <td><span ngbTooltip="{{convertIntoString(item?.valueinusd, true)}}">{{convertIntoString(item?.valueinusd)}}</span></td>
+                        <td><span ngbTooltip="{{convertIntoString(item?.quantity, true)}}">{{convertIntoString(item?.quantity)}}</span></td>
+                        <td>{{item?.priceShare}}%</td>
+                        <td>{{item?.valueShare}}%</td>
+                        <td>{{item?.quantityShare}}%</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <div class="loader" *ngIf="summaryTableArr.length==0">
+                <img *ngIf="isLoading" src="assets/images/loader.png" alt="">
+                <span *ngIf="isLoading">Please wait...</span>
+                <h4 *ngIf="!isLoading">No Data Available</h4>
+            </div>
+        </div>
+        <div class="control-btns">
+            <span class="me-2">Per page: 20 records</span>
+            <button (click)="getPartitionTableData(summaryTableArr, 'prev')" [disabled]="controlBtns.prev" class="btn btn-danger me-2">Prev</button>
+            <button (click)="getPartitionTableData(summaryTableArr, 'next')" [disabled]="controlBtns.next || summaryPartitionArr.length==0" class="btn btn-danger">Next</button>
+            <span class="ms-2">Upto {{summaryTableArr.length}} records</span>
+        </div>
+    </div>
+
+    <div class="chartJsBox vertical-bars-box pb-5" id="{{currentAnalysis}}-vertical">
+        <div class="button-bar d-flex justify-content-center w-100">
+            <h5>Top {{currentTop}}: {{currentAnalysis | titlecase}} vs Price and Quantity</h5>                    
+        </div>
+        
+        <div class="graph-table">
+            <div class="graph-container">
+                <div class="filter-bar">
+                    <div class="filter-container w-100 d-flex align-items-end justify-content-between">
+                        <div class="togglling-tool d-flex align-items-center">
+                            <span>Price</span>
+                            <input type="checkbox" id="switch" (click)="onToggleSwitch($event, 'barY', barY)" /><label class="toggle-switch" for="switch">Toggle</label>
+                            <span>Quantity</span>
+                        </div>
+                        <div class="searching-container">
+                            <div class="heads"><span></span><span>Min</span>Max<span></span><span></span></div>
+                            <div class="inputs" #barY>
+                                <span>Price</span>
+                                <input id="me" class="search-input" [(ngModel)]="filterValues['barY'][0]" type="text" />
+                                <input class="search-input" [(ngModel)]="filterValues['barY'][1]" type="text" />
+                                <button class="cypher-btn first" (click)="onApplyMinMax('barY')">Apply</button>
+                                <button class="cypher-btn second" (click)="resetSingleGraph('barY')">Reset</button>
+                            </div>
+                        </div>
+                    </div>
+        
+                    <div class="rhs-options d-none">
+                        <img class="tableHideShow" (click)="hideGraphTable($event, currentAnalysis+'-vertical')" src="assets/images/hideTable.png" alt/>
+                        
+                        <div tabindex="1" class="download-opts" title="Download File">
+                            <span>. . .</span>
+                            <div class="select-opts">
+                                <div class="option"><img src="assets/images/pdf.png" alt="" /> PDF</div>
+                                <div class="option"><img src="assets/images/xls.png" alt="" /> EXCEL</div>
+                            </div>
+                        </div>
+                        
+                        <div class="selection-tops">
+                            <span>Top:</span>
+                            <select [disabled]="summaryTableArr.length<=10" [ngModel]="currentTop" (change)="onChangeByTop($event)">
+                                <option value="5">5</option>
+                                <option value="10">10</option>
+                                <option value="15">15</option>
+                            </select>
+                        </div>              
+                    </div>
+                </div>
+
+                <div class="graph back-gray"><canvas [id]="canvasIds[0]"></canvas></div>
+            </div>
+            <div class="table-title w-100 d-none">
+                <h5 class="text-center">Top {{currentTop}}: {{currentAnalysis | titlecase}} vs Price and Quantity</h5>
+            </div>
+            <div class="table-data back-gray ">
+                <div class="inner-box">
+                    <table>
+                        <thead>
+                            <th>{{currentAnalysis | titlecase}}</th>
+                            <th>Average Price In {{currentCountry=='India' ? 'FC' : 'USD'}}</th>
+                            <th>Quantity</th>
+                            <th>Price Share</th>
+                            <th>Quantity Share</th>
+                        </thead>
+                        <tbody>
+                            <tr *ngFor="let item of (graphCopyData?.verticalBar);let i=index;">
+                                <td>{{item[getColName()]}}</td>
+                                <td><span ngbTooltip="{{convertIntoString(item[isCountryIndia()], true)}}">{{convertIntoString(item[isCountryIndia()])}}</span></td>
+                                <td><span ngbTooltip="{{convertIntoString(item?.quantity, true)}}">{{convertIntoString(item?.quantity)}}</span></td>
+                                <td>{{item?.priceShare}}%</td>
+                                <td>{{item?.quantityShare}}%</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <div class="side-description d-none"></div>
+    </div>
+
+    <div class="chartJsBox horizontal-bars-box pb-5 back-gray light-bar" id="{{currentAnalysis}}-horizontal">
+        <div class="button-bar d-flex justify-content-between w-100">
+            <h5>Top {{currentTop}}: {{currentAnalysis | titlecase}} vs Quantity vs Value</h5>
+            <!-- <button class="hideTable"><img (click)="hideGraphTable($event, currentAnalysis+'-horizontal')" src="assets/images/hideTable.png" alt="" /></button> -->
+        </div>
+        
+        <div class="graph-table">
+            <div class="graph-container">                
+                <div class="filter-bar">
+                    <div class="filter-container d-flex justify-content-between w-100">
+                        <div class="togglling-tool d-flex align-items-center">
+                            <span>Value</span>
+                            <input type="checkbox" id="switch2" (click)="onToggleSwitch($event, 'barX', barX)" /><label class="toggle-switch" for="switch2">Toggle</label>
+                            <span>Quantity</span>
+                        </div>
+                        <div class="searching-container">
+                            <div class="heads"><span></span><span>Min</span>Max<span></span><span></span></div>
+                            <div class="inputs" #barX>
+                                <span>Value</span>
+                                <input id="me" class="search-input" [(ngModel)]="filterValues['barX'][0]" type="text" />
+                                <input class="search-input" [(ngModel)]="filterValues['barX'][1]" type="text" />
+                                <button class="cypher-btn first" (click)="onApplyMinMax('barX')">Apply</button>
+                                <button class="cypher-btn second" (click)="resetSingleGraph('barX')">Reset</button>
+                            </div>
+                        </div>
+                    </div>
+        
+                    <div class="rhs-options d-none">
+                        <img class="tableHideShow" (click)="hideGraphTable($event, currentAnalysis+'-horizontal')" src="assets/images/hideTable.png" alt/>
+                        
+                        <div tabindex="1" class="download-opts" title="Download File">
+                            <span>. . .</span>
+                            <div class="select-opts">
+                                <div class="option"><img src="assets/images/pdf.png" alt="" /> PDF</div>
+                                <div class="option"><img src="assets/images/xls.png" alt="" /> EXCEL</div>
+                            </div>
+                        </div>
+        
+                        <div class="selection-tops">
+                            <span>Top:</span>
+                            <select [disabled]="summaryTableArr.length<=10" [ngModel]="currentTop" (change)="onChangeByTop($event)">
+                                <option value="10">10</option>
+                                <option value="15">15</option>
+                                <option value="20">20</option>
+                            </select>
+                        </div>              
+                    </div>
+                </div>
+
+                <div class="graph bg-white"><canvas [id]="canvasIds[1]"></canvas></div>
+            </div>
+            <div class="table-title w-100 d-none">
+                <h5 class="text-center">Top {{currentTop}}: {{currentAnalysis | titlecase}} vs Quantity vs Value</h5>
+            </div>
+            <div class="table-data bg-white">
+                <div class="inner-box">
+                    <table>
+                        <thead>
+                            <th>{{currentAnalysis | titlecase}}</th>
+                            <th>Quantity</th>
+                            <th>Value</th>
+                            <th>Quantity Share</th>
+                            <th>Value Share</th>
+                        </thead>
+                        <tbody>
+                            <tr *ngFor="let item of (graphCopyData?.horizontalBar);let i=index;">
+                                <td>{{item[getColName()]}}</td>
+                                <td><span ngbTooltip="{{convertIntoString(item?.quantity, true)}}">{{convertIntoString(item?.quantity)}}</span></td>
+                                <td><span ngbTooltip="{{convertIntoString(item?.valueinusd, true)}}">{{convertIntoString(item?.valueinusd)}}</span></td>
+                                <td>{{item?.quantityShare}}%</td>
+                                <td>{{item?.valueShare}}%</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <div class="side-description d-none"></div>
+    </div>
+
+    <div class="chartJsBox line-pie-first pb-5 light-bar" id="{{currentAnalysis}}-firstPie">
+        <div class="button-bar d-flex justify-content-between w-100">
+            <h5 class="w-100">Top {{currentTop}}: {{currentAnalysis | titlecase}} vs Price and Value</h5>
+            <!-- <button class="hideTable"><img (click)="hideGraphTable($event, currentAnalysis+'-firstPie')" src="assets/images/hideTable.png" alt/></button> -->
+        </div>
+        
+        <div class="graph-table">
+            <div class="graph-container1">
+                <div class="graph-container2">                        
+                        <div class="filter-bar">
+                            <div class="filter-container d-flex justify-content-between w-100">
+                                <div class="togglling-tool d-flex align-items-center">
+                                    <span>Price</span>
+                                    <input type="checkbox" id="switch3" (click)="onToggleSwitch($event, 'line1', line1)" /><label class="toggle-switch" for="switch3">Toggle</label>
+                                    <span>Value</span>
+                                </div>
+                                <div class="searching-container">
+                                    <div class="heads"><span></span><span>Min</span>Max<span></span><span></span></div>
+                                    <div class="inputs" #line1>
+                                        <span>Price</span>
+                                        <input id="me" class="search-input" [(ngModel)]="filterValues['line1'][0]" type="text" />
+                                        <input class="search-input" [(ngModel)]="filterValues['line1'][1]" type="text" />
+                                        <button class="cypher-btn first" (click)="onApplyMinMax('line1')">Apply</button>
+                                        <button class="cypher-btn second" (click)="resetSingleGraph('line1')">Reset</button>
+                                    </div>
+                                </div>
+                            </div>
+                
+                            <div class="rhs-options d-none">
+                                <img class="tableHideShow" (click)="hideGraphTable($event, currentAnalysis+'-firstPie')" src="assets/images/hideTable.png" alt/>
+                                
+                                <div tabindex="1" class="download-opts" title="Download File">
+                                    <span>. . .</span>
+                                    <div class="select-opts">
+                                        <div class="option"><img src="assets/images/pdf.png" alt="" /> PDF</div>
+                                        <div class="option"><img src="assets/images/xls.png" alt="" /> EXCEL</div>
+                                    </div>
+                                </div>
+                
+                                <div class="selection-tops">
+                                    <span>Top:</span>
+                                    <select [disabled]="summaryTableArr.length<=10" [ngModel]="currentTop" (change)="onChangeByTop($event)">
+                                        <option value="10">10</option>
+                                        <option value="15">15</option>
+                                        <option value="20">20</option>
+                                    </select>
+                                </div>              
+                            </div>
+                        </div>
+
+
+                        <div class="graphs back-gray">
+                            <div class="graph1 mx-auto"><canvas [id]="canvasIds[2]"></canvas></div>
+                            
+                            <div class="graph2 d-flex justify-content-between">
+                                <div class="w-50">
+                                    <h5>{{currentAnalysis | titlecase}} vs Price</h5>
+                                    <canvas [id]="canvasIds[4]"></canvas>
+                                </div>
+                                <div class="w-50">
+                                    <h5>{{currentAnalysis | titlecase}} vs Value</h5>
+                                    <canvas [id]="canvasIds[5]"></canvas>
+                                </div>                         
+                            </div>
+                        </div>
+                </div>
+            </div>
+            
+            <div class="table-title w-100 d-none">
+                <h5 class="text-center">Top {{currentTop}}: {{currentAnalysis | titlecase}} vs Price and Value</h5>
+            </div>
+            
+            <div class="table-data back-gray">
+                <div class="inner-box">
+                    <table class="w-100">
+                        <thead>
+                            <th>{{currentAnalysis | titlecase}}</th>
+                            <th>Average Price In {{currentCountry=='India' ? 'FC' : 'USD'}}</th>
+                            <th>Value</th>
+                            <th>Price Share</th>
+                            <th>Value Share</th>
+                        </thead>
+                        <tbody>
+                            <tr *ngFor="let item of (graphCopyData?.line1Graph);let i=index;">
+                                <td>{{item[getColName()]}}</td>
+                                <td><span ngbTooltip="{{convertIntoString(item[isCountryIndia()], true)}}">{{convertIntoString(item[isCountryIndia()])}}</span></td>
+                                <td><span ngbTooltip="{{convertIntoString(item?.valueinusd, true)}}">{{convertIntoString(item?.valueinusd)}}</span></td>
+                                <td>{{item?.priceShare}}%</td>
+                                <td>{{item?.valueShare}}%</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="chartJsBox line-pie-last pb-5 back-gray light-bar" id="{{currentAnalysis}}-lastPie">
+        <div class="button-bar d-flex justify-content-between w-100">
+            <h5 class="w-100">Top {{currentTop}}: {{currentAnalysis | titlecase}} vs Value vs Quantity</h5>
+            <!-- <button class="hideTable"><img (click)="hideGraphTable($event, currentAnalysis+'-lastPie')" src="assets/images/hideTable.png" alt/></button> -->
+        </div>
+        
+        <div class="graph-table">
+            <div class="graph-container1">
+                <div class="graph-container2">    
+                    <div class="filter-bar">
+                        <div class="filter-container d-flex justify-content-between w-100">
+                            <div class="togglling-tool d-flex align-items-center">
+                                <span>Value</span>
+                                <input type="checkbox" id="switch4" (click)="onToggleSwitch($event, 'line2', line2)" /><label class="toggle-switch" for="switch4">Toggle</label>
+                                <span>Quantity</span>
+                            </div>
+                            <div class="searching-container">
+                                <div class="heads"><span></span><span>Min</span>Max<span></span><span></span></div>
+                                <div class="inputs" #line2>
+                                    <span>Value</span>
+                                    <input id="me" class="search-input" [(ngModel)]="filterValues['line2'][0]" type="text" />
+                                    <input class="search-input" [(ngModel)]="filterValues['line2'][1]" type="text" />
+                                    <button class="cypher-btn first" (click)="onApplyMinMax('line2')">Apply</button>
+                                    <button class="cypher-btn second" (click)="resetSingleGraph('line2')">Reset</button>
+                                </div>
+                            </div>
+                        </div>
+            
+                        <div class="rhs-options d-none">
+                            <img class="tableHideShow" (click)="hideGraphTable($event, currentAnalysis+'-lastPie')" src="assets/images/hideTable.png" alt/>
+                            
+                            <div tabindex="1" class="download-opts" title="Download File">
+                                <span>. . .</span>
+                                <div class="select-opts">
+                                    <div class="option"><img src="assets/images/pdf.png" alt="" /> PDF</div>
+                                    <div class="option"><img src="assets/images/xls.png" alt="" /> EXCEL</div>
+                                </div>
+                            </div>
+            
+                            <div class="selection-tops">
+                                <span>Top:</span>
+                                <select [disabled]="summaryTableArr.length<=10" [ngModel]="currentTop" (change)="onChangeByTop($event)">
+                                    <option value="10">10</option>
+                                    <option value="15">15</option>
+                                    <option value="20">20</option>
+                                </select>
+                            </div>              
+                        </div>
+                    </div>
+
+                    <div class="graphs bg-white">
+                        <div class="graph1 mx-auto"><canvas [id]="canvasIds[3]"></canvas></div>
+                        <div class="graph2 d-flex justify-content-between">
+                            <div class="w-50">
+                                <h5>{{currentAnalysis | titlecase}} vs Value</h5>
+                                <canvas [id]="canvasIds[6]"></canvas>
+                            </div>
+                            <div class="w-50">
+                                <h5>{{currentAnalysis | titlecase}} vs Quantity</h5>
+                                <canvas [id]="canvasIds[7]"></canvas>
+                            </div>                           
+                        </div>
+                    </div>
+                </div>
+
+                <!-- <div class="side-pie-chart">
+                </div> -->
+            </div>
+
+            <div class="table-title w-100 d-none">
+                <h5 class="text-center">Top {{currentTop}}: {{currentAnalysis | titlecase}} vs Value vs Quantity</h5>
+            </div>
+            
+            <div class="table-data bg-white">
+                <div class="inner-box">
+                    <table class="w-100">
+                        <thead>
+                            <th>{{currentAnalysis | titlecase}}</th>
+                            <th>Value</th>
+                            <th>Quantity</th>
+                            <th>Value Share</th>
+                            <th>Quantity Share</th>
+                        </thead>
+                        <tbody>
+                            <tr *ngFor="let item of (graphCopyData?.line2Graph);let i=index;">
+                                <td>{{item[getColName()]}}</td>
+                                <td><span ngbTooltip="{{convertIntoString(item?.valueinusd, true)}}">{{convertIntoString(item?.valueinusd)}}</span></td>
+                                <td><span ngbTooltip="{{convertIntoString(item?.quantity, true)}}">{{convertIntoString(item?.quantity)}}</span></td>
+                                <td>{{item?.valueShare}}%</td>
+                                <td>{{item?.quantityShare}}%</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

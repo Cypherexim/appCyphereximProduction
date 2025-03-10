@@ -1,0 +1,12 @@
+@media screen and (max-width: 1680px) {
+    div.contentmain span.header-btns {
+        padding: 10px 14px !important;
+        font-size: 14px !important;
+    }
+
+    /* header */
+    div.header div.setting-options{width: 25% !important;}
+
+    /* admin panel */
+    div.admin-panel-container div.top-tabs div.tabs div.tab{width: 12% !important;}
+}

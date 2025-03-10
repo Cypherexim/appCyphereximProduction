@@ -1,0 +1,91 @@
+@media screen and (max-width: 1440px) {
+    /* Navbar analysis tabs */
+    div.contentmain span.header-btns {
+        padding: 10px 12px !important;
+        font-size: 12px !important;
+    }
+    
+    /* Header bar */
+    div.header {
+        padding-top: 2px !important;
+    }
+
+    div.header div.title span.choosen-country img.logo {
+        height: 40px !important;
+    }
+
+    div.header div.title img.cr {
+        height: 42px !important;
+        margin-top: -10px !important;
+    }
+
+    div.header div.user-package span {
+        font-size: 13.5px !important;
+    }
+
+    div.header div.right-header div.setting span.username {
+        font-size: 14px !important;
+    }
+
+    div.header div.setting img.team-other {
+        height: 30px !important;
+    }
+
+    div.header div.setting img.team {
+        height: 32px !important;
+    }
+
+    div.header div.setting span.notification-alert span.counter {
+        padding: 0px 6px !important;
+    }
+
+    div.header div.setting img.team.setting {
+        height: 26px !important;
+        margin-top: -10px !important;
+    }
+
+    div.header div.title div.flag-log img.flag{
+        left: 65% !important;
+        top: -75% !important;
+    }
+    div.header div.title div.flag-log img.rocket{
+        height: 3.8rem !important;
+        top: -45% !important;
+    }
+
+
+    /* homepage style */
+    div.content div.feature div.feat div.custom-dropdown div.dropdown-box {height: 30px !important;}
+    .direct div.selected-val {height: 33px !important;}    
+    .direct.hscode {height: 33px !important;}
+    div.content div.feature div.feat div.custom-dropdown div.dropdown-data{top: 33px !important;}
+    div.content div.feature div.feat div.custom-dropdown div.dropdown-data p{font-size: 14px !important;}
+    div.content div.feature div.feat div.firstDrop span.label,
+    div.feature>div.feat>div.secondDrop.d-flex.align-items-center>span.label,
+    div.content div.feature div.feat div.custom-datepicker span.label,
+    .direct {font-size: 12px !important;}
+
+    .opt1.fit-height,
+    .direct div.selected-val{width: 16rem !important;}
+    .opt1{width: 10.85rem !important;}
+    .direct span{padding-right: 8px;}
+    .direct.hscode::before{left: -25% !important;}
+    .direct.hscode select.hscode-type{width: 4.5rem !important;}
+    select{font-size: 13px !important;}
+
+
+    /* admin panel */
+    div.admin-panel-container div.top-tabs div.tabs div.tab{width: 13% !important;}
+    /* admin panel --->> user form */
+    div.user-panel-container div.form-box div.tab-indicator,
+    div.fields-container div.adduser-fields{width: 60% !important;}
+    
+
+    /* workstation */
+    div.workstation-box div.filter-bar input[type="text"]{padding: 4px !important;}
+    div.workstation-box div.filter-bar select{padding: 3px !important;}
+    div.workstation-box div.filter-bar input[type="date"]{padding: 3px 20px !important;}
+
+    /* side filter */
+    div.side-options div.option-name p{font-size: 14px !important;}
+}

@@ -1,0 +1,165 @@
+div.component-body{
+  width: 100%;
+  /* height: calc(100vh - 75px); */
+  height: calc(100vh - 95px);
+  overflow: hidden;
+  display: flex;
+  align-items: flex-start;
+}
+
+div.component-body div.sidebar-body,
+div.component-body div.mainpage-body{transition: all 0.3s ease-in-out;background-color: white;}
+div.component-body div.mainpage-body app-navbar.homeNavBar{
+  height: 0px;
+  display: block;
+  overflow-y: hidden;
+  transition: all 0.3s ease-in-out;
+}
+div.component-body div.mainpage-body app-navbar.homeNavBar.active{height: 63px;}
+
+div.component-body div.sidebar-body{width: 20%;z-index: 999;}
+div.component-body div.mainpage-body{height: 100%;}
+
+/*collapsing sidebar css*/
+div.component-body div.sidebar-body-shrink{width: 0% !important;}
+div.component-body div.sidebar-body:not(.sidebar-body-shrink) + div.mainpage-body{width: 80%;}
+div.component-body div.sidebar-body.sidebar-body-shrink + div.mainpage-body{width: 100%;}
+
+div.component-body div.full-page{
+  position: absolute;
+  z-index: 999999;
+  background: #1e1e1eb0;
+  height: 90%;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+div.component-body div.full-page div.quote-container{
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 35%;
+  border: 1px solid white;
+  background-color: white;
+}
+div.component-body div.full-page div.knowledge-box{
+  text-align: center;
+  width: 100%;
+  margin-bottom: 2rem;
+  margin-top: 20px;
+}
+div.component-body div.full-page span.bar-text{position: relative;}
+div.component-body div.full-page span.bar-text::before{
+  content: 'Loading...';
+  position: absolute;
+  top: -65%;
+  font-size: 14px;
+  font-style: italic;
+  font-weight: 500;
+  left: 30%;
+  color: #4a4949;
+}
+div.component-body div.full-page div.knowledge-box img{height: 40px;}
+div.component-body div.full-page div.knowledge-box h4{
+  font-size: 25px;
+  margin-top: 15px;
+  letter-spacing: 0.5px;
+  text-align: center;
+  font-weight: 500;
+  font-family: 'Roboto';
+}
+div.component-body div.full-page img.loading{
+  animation:spin 1s linear infinite;
+  height: 45px;
+}
+
+div.component-body div.full-page button.cancel-btn{
+  width: 20%;
+  margin-top: 3rem;
+  margin-bottom: 20px;
+  padding: 5px 0px;
+}
+
+/***********************************************************/
+div.component-body div.show-alert{
+  top: 0;
+  height: 100%;
+  width: 100%;
+  background-color: #00000085;
+  z-index: 999;
+  transition: all 0.35s ease-in-out;
+  transform-origin: center;
+  animation: popout 0.3s;
+}
+div.component-body div.show-alert div.content-box{
+  width: 40%;
+  height: 75%;
+  background-color: white;
+  border-radius: 10px;
+  overflow: hidden;
+}
+div.component-body div.show-alert div.content-box img.close{
+  right: 1.5%;
+  top: 2%;
+  cursor: pointer;
+}
+div.component-body div.show-alert div.content-box div.img{
+  height: 70%;
+  width: 100%;
+  margin: auto;
+  background-color: #0d0d0d;
+  display: flex;
+  justify-content: center;
+  padding-top: 0px;
+}
+div.component-body div.show-alert div.content-box div.img img{
+  height: 100%;
+  width: 85%;
+}
+div.component-body div.show-alert div.content-box div.body{
+  height: 30%;
+  overflow: auto;
+  padding: 10px 5%;
+  padding-top: 2%;
+}
+div.component-body div.show-alert div.content-box div.body h4{
+  font-size: 1.5rem;
+  margin-bottom: 1.3rem;
+  font-family: 'Roboto';
+}
+div.component-body div.show-alert div.content-box div.body p{
+  font-size: 1.2rem;
+  font-family: 'Roboto';
+}
+.closePop{transform: scale(0);}
+@keyframes popout {
+  0% {transform: scale(0);}
+  50% {transform: scale(1.1);}
+  100% {transform: scale(1);}
+}
+/***********************************************************/
+
+
+@media screen and (max-width: 1600px){
+  div.component-body{height: calc(100vh - 90px);}
+  div.component-body div.full-page{height: 89%;}
+
+  div.component-body div.full-page div.knowledge-box img{height: 30px;}
+  div.component-body div.full-page div.knowledge-box h4{font-size: 20px;}
+  div.component-body div.full-page img.loading{height: 35px;}
+  div.component-body div.full-page button.cancel-btn{
+    width: 18%;
+    padding: 3px 0px;
+  }
+
+  @media screen and (max-width: 1366px){
+    div.component-body div.mainpage-body app-navbar.homeNavBar.active{
+      height: 55px !important;
+    }
+
+    div.component-body div.full-page{height: 87.5%;}
+  }
+} 
+

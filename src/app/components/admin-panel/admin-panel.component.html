@@ -1,0 +1,105 @@
+<div class="admin-panel-container">
+    <div class="admin-btns" *ngIf="optionName=='adminPanel'">
+        <h1>Welcome to Admin Panel</h1>
+    
+        <div class="admin-options" [ngStyle]="{'height': isUserAdmin ? '40%' : '20%'}">
+            <span class="choice client user" (click)="optionName = 'userPanel'">
+                <img src="assets/images/adminPanel2.png" alt="">
+                <span class="option">Add User</span>
+            </span>
+            <span class="choice client plan" (click)="optionName = 'addPlan'" *ngIf="isUserAdmin">
+                <img src="assets/images/addPlan2.png" alt="">
+                <span class="option">Add Plan</span>
+            </span>
+            <span class="choice client" (click)="optionName = 'userList'" *ngIf="isUserAdmin">
+                <img src="assets/images/clientlist.png" alt="">
+                <span class="option">User List</span>
+            </span>
+            <span class="choice client" (click)="optionName = 'planList'" *ngIf="isUserAdmin">
+                <img src="assets/images/addPlan.png" alt="">
+                <span class="option">Plan List</span>
+            </span>
+            <span class="choice client" (click)="optionName = 'add-country'" *ngIf="isUserAdmin">
+                <img src="assets/images/globe.png" alt="">
+                <span class="option">Add Country</span>
+            </span>
+            <span class="choice client" (click)="optionName = 'update-date'" *ngIf="isUserAdmin">
+                <img src="assets/images/timetable.png" alt="">
+                <span class="option">Update Date</span>
+            </span>
+            <span class="choice client" (click)="optionName = 'password'" *ngIf="isUserAdmin">
+                <img src="assets/images/password-code.png" alt="">
+                <span class="option">Reset Password</span>
+            </span>
+            <!--  -->
+            <span (click)="optionName = 'logs'" class="choice client" *ngIf="isUserAdmin">
+                <img src="assets/images/history.png" alt="">
+                <span class="option">Log History</span>
+            </span>
+            <!--    opacity-50-->
+            <span (click)="optionName = 'notification'" class="choice client" *ngIf="isUserAdmin">
+                <img src="assets/images/push-notification.png" alt="">
+                <span class="option">Notification</span>
+            </span>
+        </div>
+    </div>
+
+    <div class="top-tabs" *ngIf="optionName!='adminPanel'">
+        <div class="tabs">
+            <div class="tab" *ngIf="optionName!='userPanel'" (click)="optionName = 'userPanel'">
+                <img src="assets/images/adminPanel2.png" alt="">
+                <span>Add User</span>
+            </div>
+            <div class="tab" *ngIf="optionName!='addPlan'" (click)="optionName = 'addPlan'">
+                <img src="assets/images/addPlan2.png" alt="">
+                <span>Add Plan</span>
+            </div>
+            <div class="tab" *ngIf="optionName!='planList'" (click)="optionName = 'planList'">
+                <img src="assets/images/addPlan.png" alt="">
+                <span>Plan List</span>    
+            </div>
+            <div class="tab" *ngIf="optionName!='userList'" (click)="optionName = 'userList'">
+                <img src="assets/images/clientlist.png" alt="">
+                <span>User List</span>    
+            </div>
+            <div class="tab" *ngIf="optionName!='add-country'" (click)="optionName = 'add-country'">
+                <img src="assets/images/globe.png" alt="">
+                <span>Add Country</span>
+            </div>
+            <div class="tab" *ngIf="optionName!='update-date'" (click)="optionName = 'update-date'">
+                <img src="assets/images/timetable.png" alt="">
+                <span>Update Date</span>
+            </div>
+            <!-- <div class="tab" *ngIf="optionName!='notification'" (click)="optionName = 'notification'">
+                <img src="assets/images/push-notification.png" alt="">
+                <span>Notification</span>
+            </div> -->
+            <div class="tab" *ngIf="optionName!='password'" (click)="optionName = 'password'">
+                <img src="assets/images/password-code.png" alt="">
+                <span>Reset Password</span>
+            </div>
+            <div class="tab" (click)="optionName = 'adminPanel'">
+                <img src="assets/images/admin2.png" alt="">
+                <span>Admin Panel</span>
+            </div>
+        </div>
+        <!-- <div class="filter" *ngIf="optionName=='userList' || optionName=='planList'">
+            <span>Filter by:</span>
+            <select name="filterVal" id="filter">
+                <option value="none">none</option>
+            </select>
+        </div> -->
+    </div>
+    <div class="switched-tabs" [ngSwitch]="optionName">
+        <span *ngSwitchCase="'userPanel'"><app-user-panel (onChangePage)="onChangePage($event)"></app-user-panel></span>
+        <span *ngSwitchCase="'addPlan'"><app-user-panel (onChangePage)="onChangePage($event)" currentTab="plan-form" [isOnlyForPlan]="true"></app-user-panel></span>
+        <span *ngSwitchCase="'planList'"><app-clients (onChangePlan)="onChangePlan($event)" listType="plan"></app-clients></span>
+        <span *ngSwitchCase="'userList'"><app-clients (onChangePlan)="onChangePlan($event)" listType="user"></app-clients></span>
+        <span *ngSwitchCase="'logs'"><app-logs></app-logs></span>
+        <span *ngSwitchCase="'add-country'"><app-other-list pageHeadName="country"></app-other-list></span>
+        <span *ngSwitchCase="'password'"><app-notification-password pageType="resetPassword"></app-notification-password></span>
+        <span *ngSwitchCase="'notification'"><app-notification-password pageType="notification"></app-notification-password></span>
+        <span *ngSwitchCase="'update-date'"><app-other-list pageHeadName="date"></app-other-list></span>
+        <span *ngSwitchDefault></span>
+    </div>
+</div>

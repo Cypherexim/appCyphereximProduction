@@ -1,0 +1,147 @@
+div.dropdown-container{position: relative;}
+
+div.dropdown-container div.dropdown-input{margin-bottom: 0px;}
+
+div.dropdown-container div.dropdown-input div.type-text{
+    width: 100%;
+    height: 38px;
+    padding: 5px 10px;
+    font-size: 16px;
+    font-family: 'Roboto', sans-serif;
+    font-weight: 400;
+    overflow-y: auto;
+    padding-top: 2px;
+}
+div.dropdown-container div.dropdown-input div.type-text span.corner-icons{float: right;}
+div.dropdown-container div.dropdown-input div.type-text span.nameholder{
+    background-color: white;
+    color: darkgray;
+}
+div.dropdown-container div.dropdown-input div.type-text span.selected{
+    background-color: #82a3ad;
+    padding: 5px 15px;
+    border-radius: 25px;
+    color: white;
+    font-size: 14px;
+    display: flex;
+    justify-content: center;
+    /* margin-bottom: 5px; */
+}
+
+.remaining-select{
+    position: absolute;
+    top: -20px;
+    right: 20px;
+    font-size: 12px;
+    color: green;
+}
+.showAlert{color: red !important;}
+
+div.dropdown-container div.dropdown-input div.type-text span.selected:not(:first-child){margin-left: 5px;}
+div.dropdown-container div.dropdown-input div.type-text span.selected a{
+    text-decoration: none;
+    color: white;
+    margin-left: 10px;
+    cursor: pointer;
+}
+
+div.dropdown-container div.dropdown-options{
+    min-height: 18vh;
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    border: 1px solid #e9e9e9;
+    padding: 0px 3px;
+    padding-bottom: 10px;
+    padding-top: 10px;
+    background-color: white;
+    box-shadow: 0px 10px 15px 0px #00000059;
+}
+div.dropdown-container div.dropdown-options span.waiting-load{
+    position: absolute;
+    top: 61%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+div.dropdown-container div.dropdown-options span.waiting-load img{
+    height: 60px;
+    width: 35px;
+}
+div.dropdown-container div.dropdown-options span.waiting-load::before{
+    content: "Please wait ";
+}
+
+div.dropdown-container div.dropdown-options div.filter-bar{
+    width: 100%;
+    margin-bottom: 10px;
+    border: 1px solid #c3c3c3;
+    padding: 5px 5px;
+}
+div.dropdown-container div.dropdown-options div.filter-bar input[type="text"]{
+    width: 100%;
+    border: 1px solid #c2c2c2;
+    padding: 5px 10px;
+    outline: none;
+}
+cdk-virtual-scroll-viewport{height: 10rem;}
+cdk-virtual-scroll-viewport::-webkit-scrollbar {width: 5px;height: 8px;}
+cdk-virtual-scroll-viewport::-webkit-scrollbar-track {background: #c9c9c9;}
+cdk-virtual-scroll-viewport::-webkit-scrollbar-thumb {background: #818181;}
+cdk-virtual-scroll-viewport::-webkit-scrollbar-thumb:hover {background: #555;}
+
+div.dropdown-container div.dropdown-options div.options{
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    overflow: auto;
+}
+div.dropdown-container div.dropdown-options span.item{display: flex;margin-bottom: 10px;}
+div.dropdown-container div.dropdown-options span.item input[type="checkbox"],
+div.dropdown-container div.dropdown-options div.filter-bar span.select-all input[type="checkbox"]{
+    margin: 0 20px 0 10px;
+    scale: 1.1;
+    accent-color: #278ba8;
+}
+div.dropdown-container div.dropdown-options div.filter-bar span.select-all input[type="checkbox"]{margin-top: 15px;margin-left: 5px;}
+div.dropdown-container div.dropdown-options span.item label,
+div.dropdown-container div.dropdown-options div.filter-bar span.select-all{
+    width: 80%;
+    font-size: 16px;
+    font-family: 'Roboto';
+    font-weight: 400;
+    letter-spacing: 0.5px;
+    border: none;
+    margin-left: 5px;
+    cursor: pointer;
+}
+div.dropdown-container div.dropdown-options span.single-select:hover{
+    background-color: #e3e3e3;
+}
+div.dropdown-container div.dropdown-options span.single-select.unable{position: relative;opacity: 0.5;}
+
+div.dropdown-container div.dropdown-options span.single-select.unable:hover::after{
+    content: "Locked";
+    position: absolute;
+    background: #e6e6e6c9;
+    width: 100%;
+    height: 100%;
+    color: black;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+@media screen and (max-width: 1600px) {
+    .remaining-select{
+        top: -15px !important;
+        right: 10px !important;
+        font-size: 11px;
+    }
+
+    /* div.dropdown-container div.type-text{height: 27px !important;} */
+}
+@media screen and (max-width: 1280px) {
+    @media screen and (max-height: 720px){
+        .remaining-select{font-size: 10px;}
+    }
+}

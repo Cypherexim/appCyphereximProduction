@@ -1,0 +1,59 @@
+<div class="log-container position-relative">
+    <div class="log-category position-absolute" #panelId>
+        <div class="arrow" (click)="hideAndShowPanel(panelId, iconId)"><i #iconId class="fa-solid fa-angle-right"></i></div>
+        <ul class="log-list">
+            <li *ngFor="let item of logTypes;" (click)="showCurrentLog(item?.key);hideAndShowPanel(panelId, iconId)">{{item?.label | titlecase}}</li>
+        </ul>
+    </div>
+    
+    <div class="empty-box h-100 d-flex justify-content-center align-items-center" *ngIf="currentTable==''"><div class="info">Please select any log from the list</div></div>
+
+    <div class="log-list h-100" *ngIf="currentTable!=''">
+        <div class="title text-center position-relative">
+            <div class="search-box position-absolute">
+                <input type="search" placeholder="Search here..." (keyup)="onFilterBySearch()" [(ngModel)]="searchkeyword" />
+            </div>
+
+            {{tableTitle | titlecase}} Manage Logs
+        </div>
+        <div class="table-box w-100">
+            <cdk-virtual-scroll-viewport [itemSize]="25" class="CustomVirtualScrollStrategy h-100">
+                <table class="w-100">
+                    <thead> <th class="text-center" *ngFor="let item of tableHeads[currentTable]">{{item}}</th> </thead>
+                    <tbody>
+                        <tr *cdkVirtualFor="let item of tempLogsObj[currentTable];let i=index">
+                            <td *ngIf="tableTitle!='login'"><i class="fa-solid fa-circle-info" (click)="showDetailModal(item)"></i></td>
+                            <td style="width: 5%;">{{i+1}}</td>
+                            <!-- search log TDs -->
+                            <td *ngIf="tableTitle=='search'">{{item?.Email}}</td>
+                            <td *ngIf="tableTitle=='search'">{{item?.IP}}</td>
+                            <td *ngIf="tableTitle=='search'">{{item?.Location}}</td>
+                            <td *ngIf="tableTitle=='search'">{{item?.Searchcount}}</td>
+                            <td *ngIf="tableTitle=='search'">{{item?.Datetime | date:'MM/dd/yyyy'}}</td>
+
+                            <!-- user log TDs -->
+                            <td *ngIf="tableTitle=='user'">{{item?.Email}}</td>
+                            <td *ngIf="tableTitle=='user'">{{item?.LogType=='User Creation(add)'?'User Add':'User Update'}}</td>
+                            <td *ngIf="tableTitle=='user'">{{item?.PlanName}}</td>
+                            <td *ngIf="tableTitle=='user'">{{item?.CreatedDate | date:'MM/dd/yyyy'}}</td>
+                            
+                            <!-- plan log TDs -->
+                            <td *ngIf="tableTitle=='plan'">{{item?.PlanName}}</td>
+                            <td *ngIf="tableTitle=='plan'">{{item?.Validity}}</td>
+                            <td *ngIf="tableTitle=='plan'">{{item?.DataAccess}}</td>
+                            <td *ngIf="tableTitle=='plan'">{{item?.CreatedDate | date:'MM/dd/yyyy'}}</td>
+
+                            <!-- login log TDs -->
+                            <td *ngIf="tableTitle=='login'">{{item?.IP}}</td>
+                            <td *ngIf="tableTitle=='login'">{{item?.Email}}</td>
+                            <td *ngIf="tableTitle=='login'">{{item?.Lastlogin | date:'MM/dd/yyyy, h:mm a'}}</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </cdk-virtual-scroll-viewport>
+        </div>
+    </div>
+</div>
+
+
+

@@ -1,0 +1,39 @@
+<div class="locator-box">
+    <div class="head-bar">
+        <h5 class="w-100 text-center">Select {{filterName | titlecase}} ({{listTotal}})</h5>
+        <img (click)="closeModal()" src="assets/images/cross.png" alt="" />
+    </div>
+
+    <div class="table-container" *ngIf="hasDataReceived">
+        <div class="copy-tab-head">
+            <span><input type="text" (keyup)="onchangeSearch($event)" placeholder="Search {{filterName}}" id="" /></span>
+        </div>
+        <cdk-virtual-scroll-viewport [itemSize]="10" class="CustomVirtualScrollStrategy">
+            <table id="locatorTable">
+                <tbody>
+                    <tr #selectAll>
+                        <td><input type="checkbox" (click)="onSelectAll(selectAll, 20)" /></td>
+                        <td><span class="label">Select All</span></td>
+                    </tr>
+                    <tr *cdkVirtualFor="let item of copiedDataArr">
+                        <td><input type="checkbox" [checked]="isChecked(replaceSpace(item))" value="{{getValueFromObj(item)}}" [id]="replaceSpace(item)" (click)="onSelectData($event, item, i)" /></td>
+                        <td colspan="2">
+                            <span class="label">{{getValueFromObj(item)}}</span>
+                            <span title="Value" class="value" *ngIf="currentCountry=='INDIA'">&nbsp;({{convertor(item['valueinusd'])}})</span>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </cdk-virtual-scroll-viewport>
+        <div class="copy-tab-foot">
+            <div class="selected"><span>Selected:</span> {{selectedDataArr.length}}</div>
+            <button class="btn btn-danger" (click)="onSubmitData()">Add to apply</button>
+        </div>
+    </div>
+    <div class="loader" *ngIf="!hasDataReceived">
+        <img src="assets/images/loader.png" alt="">
+        <span>Please wait...</span>
+    </div>
+</div>
+
+

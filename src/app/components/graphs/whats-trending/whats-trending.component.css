@@ -1,0 +1,318 @@
+div.navigation-container{height: calc(85vh);}
+
+div.whats-trending-container{
+    /* height: 90vh; */
+    height: 100%;
+    background: #ecf0f3;
+    overflow-y: auto;
+}
+
+div.whats-trending-container app-navbar{
+    position: sticky;
+    top: 0;
+    width: 100%;
+}
+
+/* div.whats-trending-container section.mid-container, */
+div.whats-trending-container section.top-container{
+    height: calc(90vh + 25px);
+    width: 100%;
+}
+
+/* top section --> various charts and graphs */
+div.whats-trending-container section.top-container{
+    display: flex;
+    align-items: flex-start;
+    padding: 0 15px;
+}
+div.whats-trending-container section.top-container div.left-container{
+    width: 60%;
+    height: 100%;
+    margin-right: 10px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+div.whats-trending-container section.top-container div.left-container div.upper-card-charts{
+    width: 100%;
+    height: 35%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+}
+div.whats-trending-container section.top-container div.left-container div.upper-card-charts app-card-chart{width: 33.34%;height: 100%;}
+div.whats-trending-container section.top-container div.left-container div.upper-card-charts app-card-chart:not(:last-child){margin-right: 10px;}
+div.whats-trending-container section.top-container div.left-container div.below-card-charts{
+    width: 100%;
+    height: 65%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+div.whats-trending-container section.top-container div.left-container div.below-card-charts app-card-md-chart{width: 50%;height: 100%;}
+div.whats-trending-container section.top-container div.left-container div.below-card-charts app-card-md-chart:first-child{margin-right: 10px;}
+
+div.whats-trending-container section.top-container div.right-container{
+    height: 100%;
+    width: 40%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-between;
+}
+div.whats-trending-container section.top-container div.right-container app-card-md-chart{width: 100%;height: 50%;}
+div.whats-trending-container section.top-container div.right-container app-card-md-chart:first-child{margin-bottom: 10px;}
+
+
+/* mid section table graph */
+div.whats-trending-container section.mid-container {
+    margin-top: 10px;
+}
+
+div.whats-trending-container section.mid-container div.table-container{
+    width: 100%;
+    height: 100%;
+    padding: 0 15px;
+}
+
+
+
+/* bottom section country graph */
+div.whats-trending-container section.bottom-container{
+    /* margin-top: 10px;
+    display: flex;
+    justify-content: space-between; */
+    margin-top: -0.95%;
+    height: 85vh;
+    padding: 10px 15px;
+}
+div.whats-trending-container section.bottom-container div.loader-img{
+    align-content: center;
+    text-align: center;
+    background-color: white;
+    border-radius: 10px;
+    box-shadow: rgb(0 0 0 / 5%) -2px 2px 5px;
+}
+div.whats-trending-container section.bottom-container div.loader-img img{height: 4rem;}
+div.whats-trending-container section.bottom-container div.loader-img span{
+    font-weight: 500;
+    font-size: 12.5px;
+    letter-spacing: 0.5px;
+    margin-top: -10px;
+}
+div.whats-trending-container section.bottom-container div.bottom-left {
+    /* width: 60%; */
+    background-color: white;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    border-radius: 10px;
+    padding: 10px 15px;
+    box-shadow: rgb(0 0 0 / 5%) -2px 2px 5px;
+}
+div.whats-trending-container section.bottom-container div.bottom-left div.country-chart{
+    height: 70%;
+    width: 100%;
+    border-radius: 10px;
+    background-color: white;
+}
+div.whats-trending-container section.bottom-container div.bottom-left div.country-chart div.country-map{
+    height: 100%;
+    width: 100%;
+    /* padding: 20px 25px; */
+}
+div.whats-trending-container section.bottom-container div.bottom-left div.country-chart  div.country-map div.map{
+    height: 100%;
+    width: 100%;
+    overflow-y: auto;
+    position: relative;
+}
+section.bottom-container div.bottom-left div.country-chart div.country-map div.map div.country-popup{
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    background: #0000006e;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    transition: all 0.3s ease-in-out;
+    transform-origin: center;
+    transform: scale(0);
+}
+.popup-active{transform: scale(1) !important;}
+section.bottom-container div.bottom-left div.country-chart div.country-map div.map div.country-popup div.popup-table{
+    width: 30%;
+    height: auto;
+    background: white;
+    border-radius: 5px;
+    padding: 18px 20px;
+    font-family: 'Roboto';
+    position: relative;
+}
+section.bottom-container div.bottom-left div.country-chart div.country-map div.map div.country-popup div.popup-table span.close{
+    background: red;
+    padding: 3px 6px;
+    border-radius: 50%;
+    position: absolute;
+    right: -10px;
+    top: -10px;
+    cursor: pointer;
+}
+section.bottom-container div.bottom-left div.country-chart div.country-map div.map div.country-popup div.popup-table span.close img{height: 20px;margin-top: -2px;}
+section.bottom-container div.bottom-left div.country-chart div.country-map div.map div.country-popup div.popup-table h5{
+    text-align: center;
+    margin-bottom: 20px;
+    font-weight: 400;
+    font-size: 25px;
+}
+section.bottom-container div.bottom-left div.country-chart div.country-map div.map div.country-popup div.popup-table div.tab-row{
+    display: flex;
+    justify-content: space-evenly;
+    padding: 6px 0;
+    border-bottom: 1px solid #e1dddd;
+    font-size: 15px;
+}
+section.bottom-container div.bottom-left div.country-chart div.country-map div.map div.country-popup div.popup-table div.tab-row:last-child{border-bottom: none;}
+/* section.bottom-container div.bottom-left div.country-chart div.country-map div.map div.country-popup div.popup-table div.tab-row span{} */
+section.bottom-container div.bottom-left div.country-chart div.country-map div.map div.country-popup div.popup-table div.tab-row span.tab-col{width: 50%;font-weight: bold;}
+section.bottom-container div.bottom-left div.country-chart div.country-map div.map div.country-popup div.popup-table div.tab-row span.tab-col2{width: 15%;}
+
+div.whats-trending-container section.bottom-container div.bottom-left div.country-chart div.header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 20px;
+    padding-top: 20px;
+}
+div.whats-trending-container section.bottom-container div.bottom-left div.country-chart div.header h1 {   
+    font-size: 23.5px;
+    font-weight: 400;
+    font-family: 'Roboto';
+}
+div.whats-trending-container section.bottom-container div.bottom-left div.country-chart div.header h1 span.sub-head{
+    font-size: 18px;
+    margin-left: 10px;
+}
+div.whats-trending-container section.bottom-container div.bottom-left div.country-chart div.header span.right-options img{height: 25px;cursor: pointer;}
+div.whats-trending-container section.bottom-container div.bottom-left div.country-chart div.header span.right-options img:first-child{margin-right: 10px;rotate: -45deg;}
+
+
+
+div.whats-trending-container section.bottom-container div.bottom-left div.chart-table{
+    height: 30%;
+    width: 100%;
+    padding: 0 15px;
+    overflow: auto;
+}
+div.whats-trending-container section.bottom-container div.bottom-left div.chart-table table{width: 100%;}
+div.whats-trending-container section.bottom-container div.bottom-left div.chart-table table thead{
+    background-color: white;
+    width: 100%;
+    border-bottom: 1px solid #e7e7e7;}
+div.whats-trending-container section.bottom-container div.bottom-left div.chart-table table thead th{
+    text-align: center;
+    color: #555555;
+    padding: 10px 0px;
+}
+div.whats-trending-container section.bottom-container div.bottom-left div.chart-table table thead th:first-child{text-align: left;}
+
+div.whats-trending-container section.bottom-container div.bottom-left div.chart-table table tr {border-bottom: 1px solid #e7e7e7;}
+div.whats-trending-container section.bottom-container div.bottom-left div.chart-table table tr td {
+    font-size: 16px;
+    text-align: center;
+    font-family: 'Roboto';
+    font-weight: 400;
+    padding: 6.5px 0;
+}
+div.whats-trending-container section.bottom-container div.bottom-left div.chart-table table tr td:first-child{text-align: left;}
+
+div.whats-trending-container section.bottom-container div.bottom-right {
+    width: 40%;
+    height: 100%; 
+    display: flex;
+    flex-direction: column;
+}
+div.whats-trending-container section.bottom-container div.bottom-right div.testimonial-container{
+    width: 100%;
+    height: 45%;   
+    overflow-x: auto;
+    background-color: white;
+    margin-bottom: 10px;
+    border-radius: 10px;
+    box-shadow: rgb(0 0 0 / 5%) -2px 2px 5px;
+}
+div.whats-trending-container section.bottom-container div.bottom-right div.testimonial-container div.testimonial-list{
+    display: flex;
+    justify-content: flex-start;
+    width: fit-content;
+    height: 100%;
+    padding: 5px;
+}
+
+section.bottom-container div.bottom-right div.testimonial-container div.testimonial-card{
+    background: #f8bf45;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    width: 600px;
+    padding: 20px 25px;
+    margin-right: 15px;
+}
+section.bottom-container div.bottom-right div.testimonial-container div.testimonial-card p{
+    margin: 0;
+    font-size: 18px;
+    font-weight: 400;
+    font-family: 'Roboto';
+    color: white;
+}
+section.bottom-container div.bottom-right div.testimonial-container div.testimonial-card div.user-info{
+    display: flex;
+    align-items: center;
+    width: 100%;
+}
+section.bottom-container div.bottom-right div.testimonial-container div.testimonial-card div.user-info span.name-logo{
+    border: 2px solid white;
+    border-radius: 50%;
+    padding: 8px 10px;
+    font-size: 18px;
+    font-family: 'Roboto';
+    font-weight: bolder;
+    color: white;
+}
+section.bottom-container div.bottom-right div.testimonial-container div.testimonial-card div.user-info h4{
+    margin: 0;
+    font-size: 20px;
+    display: flex;
+    flex-direction: column;
+    margin-left: 15px;
+    font-family: 'Roboto';
+    font-weight: 400;
+    color: white;
+}
+section.bottom-container div.bottom-right div.testimonial-container div.testimonial-card div.user-info h4 span{font-size: 15px;}
+section.bottom-container div.bottom-right div.testimonial-container div.testimonial-card div.user-info span.rating{margin-left: auto;}
+section.bottom-container div.bottom-right div.testimonial-container div.testimonial-card div.user-info span.rating img{height: 25px;}
+
+div.whats-trending-container section.bottom-container div.bottom-right div.recent-activity{
+    width: 100%;
+    height: 55%;
+    border-radius: 10px;
+    background-color: white;
+    box-shadow: rgb(0 0 0 / 5%) -2px 2px 5px;
+}
+section.bottom-container div.bottom-right div.recent-activity div.top-head{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 25px;
+    padding-top: 20px;
+}
+section.bottom-container div.bottom-right div.recent-activity div.top-head h4{
+    font-size: 19px;
+    font-family: 'Roboto';
+}
+section.bottom-container div.bottom-right div.recent-activity div.top-head img{height: 25px;}
+

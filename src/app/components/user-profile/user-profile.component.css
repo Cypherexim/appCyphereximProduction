@@ -1,0 +1,388 @@
+@import url("../../media_styles/1600x900.css");
+@import url("../../media_styles/1400x1050.css");
+
+div.container-box {
+    width: 100%;
+    overflow-y: auto;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: -webkit-fill-available;
+}
+
+div.container-box div.profile-container {
+    width: 35%;
+    margin: auto;
+    display: flex;
+    padding: 25px 0;
+    margin-top: 2rem;
+    align-items: center;
+    flex-direction: column;
+    justify-content: center;
+    transition: all 0.3s ease-in;
+}
+div.container-box div.profile-container.collapsed-time {
+    /* width: 25% !important; */
+    margin-left: 2rem !important;
+}
+
+div.container-box div.profile-container h1,
+div.container-box div.plans-section h1{
+    font-size: 3rem;
+    font-weight: 400;
+    font-family: 'Roboto', sans-serif;
+    margin-bottom: 2rem;
+    color: #49494b;
+}
+
+div.container-box div.profile-container div.user-setting-box{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    padding: 50px 0;
+    border-radius: 25px;
+    box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
+}
+
+div.container-box div.profile-container div.user-setting-box div.user-detail{
+    display: flex;
+    align-items: center;
+    margin-bottom: 2rem
+}
+div.container-box div.profile-container div.user-setting-box div.user-detail img{
+    height: 60px;
+    margin-right: 20px;
+}
+div.container-box div.profile-container div.user-setting-box div.user-detail div.user-data{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+div.container-box div.profile-container div.user-setting-box div.user-detail span.link{
+    color: blue;
+    font-size: 14px;
+    cursor: pointer;
+    margin-top: -20px;
+    margin-left: 10px;
+    font-family: 'Roboto', sans-serif;
+}
+div.container-box div.profile-container div.user-setting-box div.user-detail span.link:hover{text-decoration: underline;}
+div.container-box div.profile-container div.user-setting-box div.user-detail div.user-data span.username{
+    font-weight: bold;
+    font-size: 20px;
+    font-family: 'Roboto', sans-serif;
+    color: #73738a;
+}
+div.container-box div.profile-container div.user-setting-box div.user-detail div.user-data span.userpost{
+    font-size: 14px;
+    color: #73738a;
+    font-family: 'Roboto', sans-serif;
+}
+
+
+/* div.container-box div.profile-container div.user-setting-box div.user-more-options{} */
+div.container-box div.profile-container div.user-setting-box div.user-more-options div.option{
+    margin-bottom: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+}
+div.container-box div.profile-container div.user-setting-box div.user-more-options div.option img{
+    height: 30px;
+    margin-right: 15px;
+}
+div.container-box div.profile-container div.user-setting-box div.user-more-options div.option span.info{
+    font-family: 'Roboto', sans-serif;
+    color: #73738a;
+}
+
+
+div.container-box div.profile-container div.user-setting-box div.user-more-options div.option span.info.button{
+    color: white;
+    font-weight: bold;
+    padding: 5px 10px;
+    border-radius: 5px;
+    letter-spacing: 0.6px;
+    font-family: 'Roboto', sans-serif;
+}
+div.container-box div.profile-container div.user-setting-box div.user-more-options div.option span.info.button:hover{
+    box-shadow: none;
+}
+/* div.container-box div.profile-container div.user-setting-box div.user-more-options div.option span.info.button:hover{
+    box-shadow: rgb(50 50 93 / 24%) 0px 2px 10px -2px, rgb(0 0 0 / 20%) 0px 3px 7px -3px;
+} */
+
+div.container-box div.profile-container div.user-setting-box div.user-more-options div.option span.link{
+    color: blue;
+    font-family: 'Roboto', sans-serif;
+    font-size: 14px;
+    cursor: pointer;
+    margin-left: 2rem;
+}
+div.container-box div.profile-container div.user-setting-box div.user-more-options div.option span.link:hover{text-decoration: underline;}
+
+div.container-box div.profile-container div.user-setting-box div.user-more-options div.option.plan span.link{
+    font-family: 'Roboto', sans-serif;
+    color: #73738a;
+    margin-left: 2rem;
+}
+div.container-box div.profile-container div.user-setting-box div.user-more-options div.option.plan span.link{text-decoration: none;}
+div.container-box div.profile-container div.user-setting-box div.user-more-options div.option span.upgrade,
+div.container-box div.profile-container div.user-setting-box div.user-more-options div.option span.renew{
+    color: blue;
+    font-size: 14px;
+}
+div.container-box div.profile-container div.user-setting-box div.user-more-options div.option span.upgrade:hover,
+div.container-box div.profile-container div.user-setting-box div.user-more-options div.option span.renew:hover{
+    text-decoration: underline;
+}
+
+/*plans section style*/
+div.container-box div.plans-section{
+    width: 100%;
+    transition: all 0.3s;
+    transform-origin: left;
+    transform: scale(0);
+}
+div.container-box div.plans-section h1{
+    text-align: center;
+    margin-top: -1rem;
+    font-size: 2.2rem;
+    font-weight: 300;
+}
+div.container-box div.plans-section div.plans{
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-evenly;
+}
+div.container-box div.plans-section app-plan-template{width: 28%;}
+div.container-box div.plans-section.active{
+    animation-name: showPlan;
+    animation-duration: 500ms;
+    transform: scale(1);
+}
+div.container-box div.plans-section.deactive{
+    animation-name: hidePlan;
+    animation-duration: 200ms;
+    transform: scale(0);
+}
+
+/*team profile section style*/
+div.container-box div.team-profile,
+div.container-box div.change-password{
+    width: 100%;
+    padding: 0 10px;
+    padding-left: 35px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    transform-origin: left;
+    transition: all 0.3s ease-in-out;
+}
+div.container-box div.team-profile app-team-profile,
+div.container-box div.change-password div.form-container{
+    /* border-radius: 20px; */
+    /* overflow: hidden; */
+    border: 1px solid #c2c2c2;
+    width: 100%;
+    box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
+}
+div.container-box div.team-profile app-team-profile{overflow: hidden;}
+
+/*seprate classes*/
+.pointer{cursor: pointer;}
+.pointer:active{color: red !important;}
+
+.popup-active{
+    animation-name: showPlan;
+    animation-duration: 500ms;
+    transform: scale(1);
+}
+.popup-deactive{
+    animation-name: hidePlan;
+    animation-duration: 200ms;
+    transform: scale(0);
+}
+@keyframes showPlan {
+    from {transform: scale(0);}
+    to {transform: scale(1);}
+}
+@keyframes hidePlan {
+    from {transform: scale(1);}
+    to {transform: scale(0);}
+}
+
+
+/*********change password container style**********/
+
+div.container-box div.change-password{
+    height: 100%;
+    transition: all 0.3 ease-in-out;
+    transform-origin: left;
+}
+div.container-box div.change-password div.form-container{
+    height: calc(75% - 35px);
+    width: 45%;
+    margin-top: 3rem;
+    border-radius: 20px;
+}
+
+div.container-box div.change-password div.form-container h3{
+    text-align: center;
+    font-size: 30px;
+    font-weight: 400;
+    font-family: 'Roboto', sans-serif;
+    padding-top: 50px;
+    margin-bottom: 3rem;
+    color: #73738a;
+
+}
+
+div.container-box div.change-password div.form-container div.input-box{
+    width: 70%;
+    display: flex;
+    flex-direction: column;
+    margin: 0 auto 0 auto;
+    margin-bottom: 4rem;
+}
+div.container-box div.change-password div.form-container div.input-box div.input-field{
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 1.5rem;
+}
+div.container-box div.change-password div.form-container div.input-box div.input-field.new-pass{position: relative;}
+div.container-box div.change-password div.form-container div.input-box div.input-field.new-pass.active div#pass-suggestion{display:block;}
+div.container-box div.change-password div.form-container div.input-box div.input-field span:not(.error){
+    font-size: 16px;
+    margin-bottom: 5px;
+    font-family: 'Roboto', sans-serif;
+    font-weight: 400;
+    color: #73738a;
+}
+div.container-box div.change-password div.form-container div.input-box div.input-field span:not(.error)::after{
+    content: '*';
+    color: red;
+    margin-left: 3px;
+}
+div.container-box div.change-password div.form-container div.input-box div.input-field div.input{
+    display: flex;
+    align-items: center;
+    border: 1px solid #c2c2c2;
+}
+div.container-box div.change-password div.form-container div.input-box div.input-field div.input input{
+    border-radius: 0;
+    height: 40px;
+    width: 90%;
+    border: none;
+    border-right: 1px solid #c2c2c2;
+    outline: none;
+    padding-left: 15px;
+}
+div.container-box div.change-password div.form-container div.input-box div.input-field div.input img{    
+    height: 30px;
+    margin-left: 7px;
+}
+div.container-box div.change-password div.form-container div.input-box div.input-field div.input:focus{border-color: #4cbfa6;}
+
+div.container-box div.change-password div.form-container div.update-btn{text-align:center;width:100%;}
+div.container-box div.change-password div.form-container div.update-btn button{
+    width: 30%;
+    color: white;
+    padding: 10px 0px;
+    border: none;
+    border-radius: 10px;
+    font-size: 18px;
+    font-weight: 500;
+    letter-spacing: 0.5px;
+    text-shadow: -1px -1px 0 #6e6e6e, 1px -1px 0 #6e6e6e, -1px 1px 0 #6e6e6e, 1px 1px 0 #6e6e6e;
+}
+div.container-box div.change-password div.form-container div.update-btn button:hover{
+    box-shadow: rgb(50 50 93 / 24%) 0px 2px 10px -2px, rgb(0 0 0 / 20%) 0px 3px 7px -3px;
+}
+div.container-box div.change-password div.form-container div.update-btn button:active{box-shadow: none;}
+
+
+
+/*******************ERROR**************************/
+.error{
+    color: red;
+    display: none;
+    font-family: 'Roboto', sans-serif;
+    font-size: 12.5px;
+    padding-top: 2.5px;
+    letter-spacing: 0.5px;
+}
+
+/**********************Password strength checker style*******************************/
+div#pass-suggestion{
+    display: none;
+    position: absolute;
+    left: -85%;
+    width: 80%;
+    background: white;
+    border: 1px solid #c2c2c2;
+    padding: 15px 20px;
+    border-radius: 10px;
+    transition: all 0.35s ease-in-out;
+    box-shadow: rgb(0 0 0 / 40%) 0px 0px 10px;
+}
+div#pass-suggestion div.triangle-point{
+    height: 20px;
+    width: 20px;
+    position: absolute;
+    border: 1px solid #c2c2c2;
+    right: -11px;
+    top: 35px;
+    rotate: 45deg;
+    border-left: none;
+    border-bottom: none;
+    background: white;
+}
+div#pass-suggestion h4{
+    font-size: 18px;
+    font-family: 'Roboto';
+    font-weight: 400;
+    margin: 0px;
+    margin-bottom: 5px;
+}
+div#pass-suggestion div.strength-indicator{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: auto;
+    margin-top: 10px;
+}
+div#pass-suggestion div.strength-indicator div{
+    width: 25%;
+    height: 3px;
+    border-radius: 20px;
+    margin: 0 5px;
+    background-color: lightgray;
+}
+div#pass-suggestion div.suggestions{
+    margin-top: 10px;
+    width: 100%;
+}
+div#pass-suggestion div.suggestions span{
+    font-size: 15px;
+    font-family: 'Roboto';
+    color: black;
+}
+div#pass-suggestion div.suggestions span::after{content: '';}
+div#pass-suggestion div.suggestions{padding-top: 5px;}
+div#pass-suggestion div.suggestions li{
+    font-size: 14px;
+    font-family: 'Roboto';
+    font-weight: 400;
+    margin-bottom: 4px;
+}
+
+.strike-through{
+    color: darkgray;
+    text-decoration: line-through;
+}

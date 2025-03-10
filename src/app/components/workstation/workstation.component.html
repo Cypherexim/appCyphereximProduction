@@ -1,0 +1,179 @@
+<div class="workstation-box" [ngStyle]="{'height': isAnalysisTabActive?'91.5%':'100%'}">
+    <div class="top-bar d-flex align-items-center position-relative">
+        <button class="btn btn-danger float-left" *ngIf="openWorkSpaceTable" (click)="backToFolders()">Back</button>
+        <h4 class="w-100">{{type | uppercase}}&nbsp;&nbsp;{{openWorkSpaceTable ? ('('+currentDirName+')' | titlecase) : ''}}</h4>
+        <div class="view-type position-absolute d-flex align-items-center" *ngIf="type == 'workspace' && !openWorkSpaceTable">
+            <span title="{{item | titlecase}} View" class="list-type" (click)="setViewType(item)" *ngFor="let item of ['list','grid']">
+                <img src="assets/images/{{item}}-view.png" alt="" />
+            </span>
+        </div>
+
+        <div *ngIf="type=='favourites'" class="remaining-points position-absolute {{favouritePoints>=20 && favouritePoints<50 ? 'orange' : favouritePoints<10 ? 'red':'green'}}">
+            <span>Remaining:</span>{{favouritePoints}}
+        </div>
+    </div>
+
+    <div class="filter-bar" *ngIf="(type != 'favourites' && openWorkSpaceTable) || type == 'download'">
+        <div class="input-box" *ngFor="let item of searchBars[type]">
+            <div class="d-flex" *ngIf="!['direction','type','date'].includes(item)">
+                <input (keyup)="onFilterSearch(type, item, $event)" type="text" placeholder="Search {{item}}">
+                <span class="search-btn"><img src="assets/images/dateIcon.png" alt="" /></span>
+            </div>
+
+            <div class="d-flex" *ngIf="item=='direction' || item=='type'">
+                <select [(ngModel)]="directionType" (change)="onFilterSearch(type, 'type', $event)">
+                    <option value="">--Select {{item}}--</option>
+                    <option value="export">Export</option>
+                    <option value="import">Import</option>
+                </select>
+            </div>
+
+            <div class="d-flex" *ngIf="item=='date'">
+                <span class="date-search">
+                    <label for="Start">Start:</label>
+                    <input type="date" (change)="onFilterSearch(type, 'start', $event)" />
+                </span>
+                <span class="date-search">
+                    <label for="Start">End:</label>
+                    <input type="date" (change)="onFilterSearch(type, 'end', $event)"/>
+                </span>
+            </div>
+
+            <div class="total-count"><span>Total:</span> {{copyDataArr.length || workspaceFolders.length}}</div>
+        </div>
+    </div>
+    
+    <div class="table-container {{type}}" *ngIf="type == 'workspace'">
+        <!-- Folder View Table -->
+        <div class="folder-container h-100 pt-3" *ngIf="!openWorkSpaceTable">
+            <table *ngIf="folderViewType=='list'">
+                <thead>
+                    <th style="width:5%">S.No.</th>
+                    <th>Folder Name</th>
+                    <th style="width:30%">Created On</th>
+                </thead>
+                <tbody *ngIf="!isLoading">
+                    <tr *ngFor="let item of workspaceFolders;let i=index;">
+                        <td class="text-center">{{i+1}}.</td>
+                        <td><div class="folder">
+                            <img src="assets/images/folder.png" alt="" />
+                            <span (click)="openWorkSpaceFolder(item?.folder)">{{item?.folder | titlecase}}</span>
+                        </div></td>
+                        <td class="text-center">{{item?.createdOn | date:'yyyy-MM-dd hh:mm:ss a'}}</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <div class="folder-grid-container pt-3" *ngIf="folderViewType=='grid'">
+                <div class="inner-folders">
+                    <div class="grid-folder" (click)="openWorkSpaceFolder(item?.folder)" *ngFor="let item of workspaceFolders;let i=index;">
+                        <img src="assets/images/folder-lg.png" alt="" />
+                        <div class="folder-name">{{item?.folder | titlecase}}</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Folder's Item List -->
+        <div class="folder-table" *ngIf="openWorkSpaceTable">
+            <table>
+                <thead>
+                    <th *ngFor="let head of tableHeads;">
+                        {{head | titlecase}}
+                    </th>
+                </thead>
+                <tbody *ngIf="!isLoading">
+                    <tr *ngFor="let item of copyDataArr;">
+                        <td (click)="gotoSearch(item?.Searchbar, item?.Sidefilter, item?.Id, item?.foldername, item?.CustomAnalysis)">{{item?.Searchbar?.name}}</td>
+                        <td>{{item?.Searchbar?.country}}</td>
+                        <td>{{item?.Searchbar?.type}}</td>
+                        <td>{{item?.Searchbar?.tariffCode}}</td>
+                        <td title="{{item?.Searchbar?.buyer}}">{{getEllipsedTd(item?.Searchbar?.buyer)}}</td>
+                        <td title="{{item?.Searchbar?.vender}}">{{getEllipsedTd(item?.Searchbar?.vender)}}</td>
+                        <td>{{item?.Searchbar?.desc}}</td>
+                        <td>{{item?.Searchbar?.records || 'N/A'}}</td>
+                        <td>{{item?.Searchbar?.start}}</td>
+                        <td>{{item?.Searchbar?.end}}</td>
+                        <td>{{item?.Searchbar?.transaction | date:'yyyy-MM-dd hh:mm:ss a'}}</td>
+                        <td class="delete">
+                            <div><i class="fa-solid fa-trash" ngbTooltip="Delete Workspace ({{item?.Searchbar?.name}})" (click)="onClickDelete(item?.Id, item?.Searchbar?.name)"></i></div>
+                        </td>
+                    </tr>
+                </tbody>  
+            </table>
+        </div>
+    </div>
+
+    <div class="table-container favourite-table" *ngIf="type == 'favourites'">
+        <app-favourites [favouritesArr]="favouriteDataArr"></app-favourites>
+    </div>
+
+    <div class="table-container favourite-table" *ngIf="false">
+        <table>
+            <thead><th class="actions">Action</th><th *ngFor="let head of tableHeads2;">{{head | titlecase}}</th></thead>
+            <tbody *ngIf="!isLoading">
+                <tr *ngFor="let item of favouriteDataArr;">
+                    <td class="left-bar">
+                        <img class="info" src="assets/images/info.png" title="info"
+                        (click)="showDetailModal(item)"
+                        (mouseover)="changeInfo($event,'in')"
+                        (mouseout)="changeInfo($event,'out')" alt="">
+
+                        <img class="delete" src="assets/images/bin.png" title="delete"
+                        (click)="onRemoveItem($event, item?.RecordID)" />
+                    </td>
+                    <!-- <td style="min-width:7rem;">{{item?.Date | date:'yyyy-MM-dd'}}</td> -->
+                    <td *ngFor="let key of tableHeads2">
+                        <a *ngIf="key=='Exp_Name' || key=='Imp_Name'" target="_blank" [href]="setGoogleLink(getHeadsValue(item, key))">{{getHeadsValue(item, key)}}</a>
+                        <span *ngIf="key!='Exp_Name' && key!='Imp_Name'">{{getHeadsValue(item, key)}}</span>
+                    </td>
+                </tr>
+            </tbody>  
+        </table>
+    </div>
+
+    <div id="downloadTable" class="table-container download-table" *ngIf="type == 'download'">
+        <table>
+            <thead>
+                <th>Date</th>
+                <th>Type</th>
+                <th>Country</th>
+                <th style="width:8%">Records</th>
+                <th style="width:25%;position:relative;">
+                    <input type="checkbox" *ngIf="userRights?.Share" (click)="selectAllItems($event)"/>Filename
+                    <img title="Share Multiple Files" *ngIf="userRights?.Share" (click)="onClickShare(null)" src="assets/images/share-white.png" alt="" />
+                </th>
+                <th>Status</th>
+                <!-- <th *ngIf="!isDownloadingAllowed">Share</th> -->
+            </thead>
+            <tbody *ngIf="!isLoading">
+                <tr *ngFor="let item of copyDataArr;" title="{{item?.workspacename}}">
+                    <td>{{item?.datetime | date:'yyyy-MM-dd hh:mm:ss a'}}</td>
+                    <td>{{item?.direction}}</td>
+                    <td>{{item?.countryname}}</td>
+                    <td>{{item?.totalrecords}}</td>
+                    <td class="filename">
+                        <div class="d-flex align-items-center justify-content-between">
+                            <span>
+                                <input type="checkbox" [checked]="isAllSelected" (click)="selectOneByOne(item?.Id)" *ngIf="userRights?.Share && item?.status=='Completed' && !isMultipleSharing"/>
+                                {{item?.workspacename}}
+                            </span>
+                            <span>
+                                <img class="download" title="Download File" *ngIf="userRights?.DownloadsAccess && item?.status=='Completed'" (click)="downloadFile(item)" src="assets/images/downloadFile.png" alt="" />
+                                <!-- <img class="sharing" title="Share File" *ngIf="userRights?.Share && item?.status=='Completed' && !isMultipleSharing" (click)="onClickShare(item?.Id)" src="assets/images/share.png" alt="" /> -->
+                            </span>
+                        </div>
+                    </td>
+                    <td class="status-td"><div class="status">
+                        <div class="success" *ngIf="item?.status=='Completed'">COMPLETED</div>
+                        <div class="error" *ngIf="item?.status == 'Error'">FAILED</div>
+                        <div class="progress-td" *ngIf="item?.status == 'In-Progress'">IN PROGRESS<span class="loaderDot">.</span><span class="loaderDot">.</span><span class="loaderDot">.</span></div>
+                    </div></td>
+                    <!-- <td *ngIf="!isDownloadingAllowed" class="text-center">Share</td> -->
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <div class="workstation-loader" *ngIf="isLoading"><img src="assets/images/tableLoader.gif" alt="" /></div>
+</div>

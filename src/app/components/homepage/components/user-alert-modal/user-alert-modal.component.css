@@ -1,0 +1,52 @@
+div.alert-container{
+    width: 100%;
+    height: 100%;
+    padding: 40px 20px;
+    position: relative;
+}
+
+div.alert-container div.info-box{
+    text-align: center;
+    margin-bottom: 4rem;
+}
+div.alert-container div.info-box img{
+    height: 100px;
+    margin-bottom: 2rem;
+}
+div.alert-container div.info-box p{
+    font-size: 20px;
+    font-family: 'Roboto';
+    letter-spacing: 0.4px;
+    margin: 0 auto;
+    width: 80%;
+}
+
+div.alert-container div.btn-box{
+    width: 100%; 
+    width: 100%;
+    text-align: center;
+    position: absolute;
+    left: 50%;
+    top: 85%;
+    transform: translate(-50%, -50%);    
+}
+div.alert-container div.btn-box button{}
+
+
+@media screen and (max-width: 1366px) {
+    div.alert-container div.info-box img{
+        height: 75px;
+        margin-bottom: 1rem;
+    }
+    div.alert-container div.info-box p{
+        font-size: 16px;
+        width: 95%;
+    }
+    div.alert-container div.btn-box button{
+        width: 25%;
+        padding: 5px 0px;
+        font-size: 15px;
+    }
+    
+}
+

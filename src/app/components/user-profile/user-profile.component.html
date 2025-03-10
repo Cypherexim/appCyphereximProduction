@@ -1,0 +1,146 @@
+<div class="container-box">
+    <div 
+        [class]="profileBoxCls"  
+        *ngIf="!isProfileBoxBig"
+        [ngStyle]="{'width': currentTab=='password'?'45%':'35%'}"> <!--for testing-->
+        <h1>Profile</h1>
+        <div class="user-setting-box">
+            <div class="user-detail">
+                <img src="assets/images/account.png" alt="" />
+                <div class="user-data">
+                    <span class="username">{{userDetails?.FullName | titlecase}}</span>
+                    <span class="userpost">{{userDetails?.Designation | titlecase}}</span>
+                </div>
+                <!-- <span class="link">Edit</span> -->
+            </div>
+
+            <div class="user-more-options">
+                <div class="option contact">
+                    <img src="assets/images/contact.png" alt="">
+                    <span class="info">+91{{userDetails?.MobileNumber}}</span>
+                    <!-- <span class="link">Edit</span> -->
+                </div>
+                <div class="option mail">
+                    <img src="assets/images/settingMail.png" alt="">
+                    <span class="info">{{userDetails?.Email}}</span>
+                </div>
+                <div class="option company">
+                    <img src="assets/images/company.png" alt="">
+                    <span class="info">{{userDetails?.CompanyName | titlecase}}</span>
+                    <!-- <span class="link">Edit</span> -->
+                </div>
+                <div class="option role">
+                    <img src="assets/images/settingAdmin.png" alt="">
+                    <span class="info pointer">{{userService.getUserRoleName() | titlecase}}</span>
+                </div>
+                <div class="option team" *ngIf="!authService.isUserSubuser()">
+                    <img src="assets/images/profile.png" alt="">
+                    <span class="info pointer" (click)="toggleSidebar('team')">Team</span>
+                </div>
+                <div class="option password">
+                    <img src="assets/images/password.png" alt="">
+                    <span class="info">Password</span>
+                    <span class="link" (click)="toggleSidebar('password')">Change password</span>
+                </div>
+                <div class="option plan">
+                    <img src="assets/images/enterprise.png" alt="">
+                    <span class="info button green-button">{{userPlanDetails?.PlanName}}</span>
+                    <span class="link">
+                        <span class="upgrade" (click)="toggleSidebar('plans')">Upgrade</span> or
+                        <span class="renew">Renew</span>
+                    </span>
+                </div>
+                <div class="option download">
+                    <img src="assets/images/downloading.png" style="height:25px;" alt="">
+                    <span class="info">Downloading Points: {{userPlanDetails?.Downloads>=unlimited.download ? 'UNLIMITED' : userPlanDetails?.Downloads}}</span>
+                </div>
+                <div class="option search">
+                    <img src="assets/images/search1.png" alt="">
+                    <span class="info">Searching Points: {{userPlanDetails?.Searches>=unlimited.search ? 'UNLIMITED' : userPlanDetails?.Searches}}</span>
+                </div>
+                <div class="option duration">
+                    <img src="assets/images/duration.png" alt="">
+                    <span class="info">{{userPlanDetails?.remainingdays}} Days</span>
+                </div>
+                <div class="option duration">
+                    <img src="assets/images/logout.png" alt="" style="height:27px;">
+                    <a href="#" (click)="onClickSingOut()" style="text-decoration:none;">
+                        <span class="info" style="cursor:pointer;">Log Out</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="plans-section {{isCurrentTabCls?'active':'deactive'}}" *ngIf="currentTab == 'plans'">
+        <h1>Subscription Plans</h1>
+        <div class="plans">
+            <app-plan-template [planData]="planValues[0]"></app-plan-template>
+            <app-plan-template [planData]="planValues[1]"></app-plan-template>
+            <app-plan-template [planData]="planValues[2]"></app-plan-template>
+        </div>
+    </div>
+
+    <div class="team-profile popup-{{isCurrentTabCls?'active':'deactive'}}" *ngIf="currentTab == 'team'">
+        <app-team-profile [boxHeight]="teamProfileBoxHeight" (onClickZoom)="onTeamProfileZoomClick($event)"></app-team-profile>
+    </div>
+
+    <div class="change-password popup-{{isCurrentTabCls?'active':'deactive'}}" *ngIf="currentTab == 'password'">
+        <div class="form-container">
+            <h3>Change Password</h3>
+            <div class="input-box">
+                <div class="input-field">
+                    <span>Old Password</span>
+                    <div class="input">
+                        <input type="password" [(ngModel)]="password.oldP" name="old-pass" id="old" />
+                        <img src="assets/images/password.png" alt="">
+                    </div>
+                    <span class="error">Old password is required</span>
+                </div>
+                <div class="input-field new-pass" #newpassinput>
+                    <span>New Password</span>
+                    <div class="input">
+                        <input 
+                            [(ngModel)]="password.newP"
+                            type="password" autocomplete="off"
+                            (focus)="onFocusNewPass(newpassinput)" 
+                            (focusout)="onFocusOutNewPass(newpassinput)" 
+                            (keyup)="onChangeNewPass($event)" 
+                            name="new-pass" id="new" />
+                        <img src="assets/images/password.png" alt="">
+                    </div>
+                    <span class="error">New password is required</span>
+
+                    <div id="pass-suggestion">
+                        <div class="triangle-point"></div>
+                        <h4>{{passwordStatus | titlecase}}</h4>
+                        <div class="strength-indicator">
+                            <div [ngStyle]="{'background-color': hintColorBools?.weak?'#fb0000':'lightgray'}"></div>
+                            <div [ngStyle]="{'background-color': hintColorBools?.average?'#dbdb0b':'lightgray'}"></div>
+                            <div [ngStyle]="{'background-color': hintColorBools?.good?'#00e53c':'lightgray'}"></div>
+                            <div [ngStyle]="{'background-color': hintColorBools?.excellent?'#00e53c':'lightgray'}"></div>
+                        </div>
+                        <div class="suggestions">
+                            <span>It's better to have:</span>
+                            <ul>
+                                <li [class]="(indicator.average && indicator.weak) && 'strike-through'">Upper and lower case letter</li>
+                                <li [class]="indicator.excellent && 'strike-through'">A symbol (#$&)</li>
+                                <li [class]="indicator.good && 'strike-through'">Numbers (1234)</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                <div class="input-field">
+                    <span>Confirm Password</span>
+                    <div class="input">
+                        <input [(ngModel)]="password.confirmP" type="text" name="retype-pass" id="confirm" />
+                        <img src="assets/images/password.png" alt="">
+                    </div>
+                    <!-- <span class="error">Confirm password is required</span> -->
+                    <span class="error d-block" *ngIf="isMismatch">Mismatch Confirm password</span>
+                </div>
+            </div>
+            <div class="update-btn"><button class="blue-bgColor" type="button" [disabled]="isUpdateClicked" (click)="onChangePasswordSubmit($event)">Update</button></div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,34 @@
+div.notFound-container{
+    height: 80vh;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+div.notFound-container div.not-found-msg{text-align: center;}
+div.notFound-container div.not-found-msg img{
+    height: 10rem;
+    margin-bottom: 1rem;
+}
+div.notFound-container div.not-found-msg h1{
+    font-size: 2rem;
+    font-family: 'Roboto';
+    font-weight: 900;
+    text-transform: uppercase;
+    letter-spacing: -0.10px;
+    color: #345934;
+}
+div.notFound-container div.not-found-msg button{
+    width: 30%;
+    border-radius: 0;
+    font-size: 16px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-top: 2.5rem;
+    color: white;    
+    border: 0;
+    padding: 5px 0;
+    background-color: #94c13d;
+}
+

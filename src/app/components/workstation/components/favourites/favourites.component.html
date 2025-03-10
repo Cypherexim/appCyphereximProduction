@@ -1,0 +1,29 @@
+<div class="favourite-container h-100">
+    <div class="row" *ngIf="!isLoading">
+        <div *ngFor="let item of favouritesArr" class="col-3 justify-content-center align-items-center {{favouritesArr.length==0 ? 'd-none': 'd-flex'}}">
+            <div class="favourite-card position-relative">
+                <div class="btn-bar d-flex align-items-center justify-content-end">
+                    <i class="fa-solid fa-trash" (click)="onRemoveItem(item?.RecordID)"></i>
+                </div>
+                <div class="content-box">
+                    <h2>{{item?.Type=='IMPORT' ? item?.Exp_Name : item?.Imp_Name}}</h2>
+                    <div class="key-points">
+                        <div class="point"><span>Shipment Date:</span><span>{{item?.Date | date:'dd MMM, yyyy'}}</span></div>
+                        <div class="point"><span>Value($):</span><span>{{convertValueInUsd(item?.ValueInUSD)}}</span></div>
+                        <div class="point"><span>HS Code:</span><span>{{item?.HsCode}}</span></div>
+                        <div class="point"><span>Country:</span><span>{{item?.Type=='IMPORT' ? item?.CountryofOrigin : item?.CountryofDestination}}</span></div>
+                    </div>
+                    <!-- <div class="date"><span>26 June, 2024</span></div> -->
+                </div>
+                <div class="view-btn position-absolute" (click)="showDetailModal(item)">VIEW</div>
+            </div>
+        </div>
+
+        <div class="{{favouritesArr.length==0 ? 'd-block': 'd-none'}} no-data text-center position-absolute">No Favourites Available</div>
+    </div>
+
+    <div class="loader" *ngIf="isLoading">
+        <img src="assets/images/loader.png" alt="">
+        <span>Please wait...</span>
+    </div>
+</div>

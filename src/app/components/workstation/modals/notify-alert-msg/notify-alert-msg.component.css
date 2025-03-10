@@ -1,0 +1,41 @@
+/* ===========================alert message================== */
+div.alert-container div.msg-container{
+    display: flex;
+    align-items: center;
+    justify-content: space-evenly;
+    padding: 0 20px;
+    margin-bottom: 1rem;
+    margin-top: 2rem;
+}
+
+div.alert-container div.msg-container div.right{
+    font-size: 18px;
+    font-family: 'Roboto';
+    font-weight: 400;
+    letter-spacing: 0.5px;
+    text-align: justify;
+    width: 85%;
+    overflow: auto;
+    height: 25vh;
+}
+div.alert-container div.msg-container div.right div:first-child{font-weight: 500;}
+div.alert-container div.msg-container div.right span{font-weight: 600;color: red;}
+div.alert-container div.btn-box{text-align: center;}
+div.alert-container div.btn-box button{width: 20%;padding: 8px 0;}
+
+
+@media screen and (max-width: 1600px) {
+    div.alert-container div.msg-container{margin-bottom: 1.5rem;margin-top: 1.5rem;}
+    div.alert-container div.msg-container div.left img{height: 55px;}
+    div.alert-container div.msg-container div.right{font-size: 16px;}
+    div.alert-container div.btn-box button{width: 17%;padding: 5px 0;}
+}
+
+
+@media screen and (max-width: 1366px) {
+    div.alert-container div.msg-container{margin-bottom: 2rem;margin-top: 1.5rem;}
+    div.alert-container div.msg-container div.left img{height: 50px;}
+    div.alert-container div.msg-container div.right{font-size: 14px;}
+    div.alert-container div.btn-box button{width: 20%;padding: 4px 0;font-size: 15px;}
+}
+

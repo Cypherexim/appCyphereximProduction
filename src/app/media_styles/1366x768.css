@@ -1,0 +1,255 @@
+@media screen and (max-width: 1366px) {
+    /* nav bar head */
+    div.header{padding-top: 0px !important;}
+    
+    div.header-container img.login{height: 40px !important;}
+    div.header div.title span.choosen-country img.logo{
+        margin-top: -5px !important;
+        height: 40px !important;
+    } 
+    div.header div.title span.choosen-country span.country-name{
+        font-size: 12px !important;
+        margin-top: -3px !important;
+    }
+    div.header div.title img.cr{
+        height: 40px !important;
+        margin-top: -5px !important;
+    }
+    div.header div.user-package span{font-size: 12px !important;}
+    div.header div.right-header div.setting span.username{font-size: 13px !important;}
+    div.header div.setting img.team{height: 29px !important;}
+    div.header div.setting img.team.setting{height: 25px !important;}
+
+    div.header div.user-package div.user-points{
+        padding: 3px 10px 5px 10px !important;
+        width: 13% !important;
+    }
+
+
+    div.header div.setting-options div.user-profile img{height: 40px !important;}
+    div.header div.setting-options div.user-profile div.user-detail span:first-child{font-size: 16px !important;}
+    div.header div.setting-options div.other-options span img, div.header div.setting-options span.logout img{height: 28px !important;}
+    body > app-root > app-nav-menu > div > div.header > div.right-header > div > div > div > div.other-options > span:nth-child(3) > img[alt="call"]{height: 26px !important;}
+    body > app-root > app-nav-menu > div > div.header > div.right-header > div > div > div > div.other-options > span:nth-child(5) > img[alt="team"]{height: 33px !important;}
+    body > app-root > app-nav-menu > div > div.header > div.right-header > div > div > div > div.other-options > span:nth-child(7) > img[alt="download"]{height: 23px !important;}
+    div.header div.setting-options div.other-options span p, div.header div.setting-options span.logout p{font-size: 13px !important;}
+
+    div.header div.title div.flag-log img.flag{
+        left: 65% !important;
+        top: -60% !important;
+    }
+    div.header div.title div.flag-log img.rocket{
+        height: 3.5rem !important;
+        right: -25% !important;
+        top: -35% !important;
+    }
+
+    /* home page */
+    div.content div.feature div.feat div.custom-dropdown div.dropdown-box{
+        padding: 4px 12px !important;
+        height: 27px !important;
+        font-size: 12px !important;
+        width: 9rem !important;
+    }
+    div.content div.feature div.feat div.custom-datepicker div.date-input{
+        height: 85% !important;
+        font-size: 12px !important;
+    }
+
+    div.dropdown-container div.dropdown-input div.type-text span.selected{font-size: 13px !important;}
+
+    .direct.hscode select.hscode-type{padding: 5px 12px !important;}
+
+    select{font-size: 13px !important;}
+    
+    .opt1.fit-height{height: 30px !important;}
+
+    .opt1{font-size: 12px !important;}
+
+    .direct div.selected-val{height: 30px !important;}
+    
+    div.content div.feature div.feat{margin-top: 3px !important;}
+
+    .direct span{padding-right: 5px !important;}
+
+    .mainsearch{
+        padding: 5px 0px !important;
+        width: 5rem !important;
+        font-size: 15px !important;
+    }
+
+    div.content div.feature div.feat div.firstDrop span.label, 
+    div.feature  > div.feat  > div.secondDrop.d-flex.align-items-center  > span.label, 
+    div.content div.feature div.feat div.custom-datepicker span.label{margin-right: 5px !important;}
+
+    div.content div.feature img.up-arrow, 
+    div.content div.feature img.down-arrow{height: 17px !important;}
+
+    div.datavaluesmain div.left-elements div.records p{font-size: 14px !important;line-height: 20px !important;}
+
+    div.datavaluesmain div.right-elements img.bookmark-icon{
+        height: 20px !important;
+        width: 20px !important;
+    }
+
+    div.content div.data-table table thead th{padding: 2px 10px !important;}
+    div.content div.data-table table tbody td{padding: 4.5px 5px !important;}
+    div.content div.data-table{margin-top: 5px !important;}
+
+    div.datavaluesmain div.right-elements img.download-icon{height: 23px !important;}
+
+    div.datavaluesmain div.right-elements div.pagination img.left-arr,
+    div.datavaluesmain div.right-elements div.pagination img.right-arr{height: 25px !important;}
+
+    div.datavaluesmain div.right-elements span.pagination-tab input[type="text"]{
+        font-size: 12px !important;
+        width: 25px !important;
+    }
+    
+    div.datavaluesmain div.right-elements div.pages-num{font-size: 10px !important;}
+
+    div.datavaluesmain div.right-elements span.drop-label{font-size: 12px !important;}
+
+    div.datavaluesmain div.right-elements div.pageselect{width: 4rem !important;height: 28px !important;}
+
+    div.datavaluesmain div.right-elements div.pageselect select{font-size: 12px !important;}
+
+    div.pageselect img.down-arr{height: 17px !important;}
+
+
+    /* side filter css */
+    div.side-options div.option-name p{font-size: 13px !important;}
+    div.mainsidebox{font-size: 12.5px !important;}
+    
+    div.top-head-bar div.head-title, 
+    div.bottom-head-bar div.head-title{font-size: 14px !important;}
+    
+    div.bottom-head-bar img,
+    div.top-head-bar img{height: 20px !important;}
+
+    div.sub-options ul li{
+        font-size: 11px !important;
+        letter-spacing: 0.4px !important;
+    }
+    div.dropdown-data input[type="text"]{
+        padding: 4px !important; 
+        font-size: 12px !important;
+    }
+    div.dropdown-data div.submit-btn button{
+        padding: 2px 10px !important;
+        font-size: 11px !important;
+        letter-spacing: 0.8px !important;
+    }
+    div.mainsidebox.bottom div.filter-options{min-height: calc(35vh - 10px) !important;}
+    div.side-options{padding: 5px 20px !important;}
+    /* div.sub-options{padding: 0px 20px !important;} */
+
+
+    /* workstation ----> workspace */
+
+    div.workstation-box div.filter-bar input[type="text"]{font-size: 12px !important;}
+    div.workstation-box div.filter-bar select{
+        width: 150px !important;
+        font-size: 12px !important;
+    }
+    div.workstation-box div.filter-bar span.date-search label{font-size: 13px !important;}
+    div.workstation-box div.filter-bar input[type="date"]{
+        padding: 3px 5px !important;
+        font-size: 13px !important;
+    }
+    div.workstation-box div.table-container{height: 80% !important;}
+    div.workstation-box table thead th{padding: 5px 10px !important;}
+    div.table-container.workspace div.folder-container div.folder-grid-container div.grid-folder img{height: 65px !important;}
+    div.table-container.workspace div.folder-container div.folder-grid-container div.grid-folder div.folder-name{font-size: 11.5px !important;letter-spacing: 0.7px !important;}
+    div.workstation-box div.top-bar div.view-type span img{height: 17px !important;}
+
+    /* graph analysis */
+    div.analysis-container div.summary-container{height: 90vh !important;}
+    div.analysis-container div.summary-container div.summary-table{height: 70% !important;}
+    div.analysis-container div.summary-container div.control-btns{margin-top: 1.5rem !important;}
+    div.analysis-container div.summary-container div.control-btns button{
+        width: 8% !important;
+        padding: 3px 0 !important;
+        font-size: 15px !important;
+    }
+
+    div.analysis-container div.summary-container div.summary-table table th div{font-size: 16px !important;}
+    div.analysis-container div.summary-container div.summary-table table th div img{height: 18px !important;}
+    div.analysis-container div.summary-container div.summary-table table th, 
+    div.analysis-container div.summary-container div.summary-table table td, 
+    div.analysis-container div.line-pie-first div.graph-table div.table-data table td, 
+    div.analysis-container div.line-pie-last div.graph-table div.table-data table td, 
+    div.analysis-container div.line-pie-first div.graph-table div.table-data table th, 
+    div.analysis-container div.line-pie-last div.graph-table div.table-data table th, 
+    div.analysis-container div.vertical-bars-box div.graph-table div.table-data table th, 
+    div.analysis-container div.horizontal-bars-box div.graph-table div.table-data table th, 
+    div.analysis-container div.vertical-bars-box div.graph-table div.table-data table td, 
+    div.analysis-container div.horizontal-bars-box div.graph-table div.table-data table td{
+        font-size: 15px !important;
+        padding: 4px 10px !important;
+    }
+
+    /* div.analysis-container div.vertical-bars-box{height: 210vh !important;}
+    div.analysis-container div.vertical-bars-box.hide{height: 105vh !important;}
+    div.analysis-container div.horizontal-bars-box div.graph-table div.graph-container{height: 150vh !important;}
+    div.analysis-container div.horizontal-bars-box{height: 310vh !important;}
+    div.analysis-container div.horizontal-bars-box.hide{height: 165vh !important;}
+    div.analysis-container div.line-pie-first, 
+    div.analysis-container div.line-pie-last{height: 315vh !important;}
+    div.analysis-container div.line-pie-first.hide, 
+    div.analysis-container div.line-pie-last.hide{height: 185vh !important;} */
+
+
+    /* login page */
+    div.log-sign-cont div.signcont form.sign-form{margin-top: 20px !important;}
+    div.log-sign-cont div.loginmain form div.login-email-pswd, 
+    div.log-sign-cont div.loginmain form div.login-emails, 
+    div.log-sign-cont div.signcont form.sign-form div.sign-email-box, 
+    div.log-sign-cont div.signcont form.sign-form div.sign-comp-box{
+        height: 30px !important;
+        margin-top: 12px !important;
+    }
+    div.log-sign-cont div.loginmain form div.login-email-pswd input, 
+    div.log-sign-cont div.loginmain form div.login-emails input, 
+    div.log-sign-cont div.signcont form.sign-form div.sign-email-box input, 
+    div.log-sign-cont div.signcont form.sign-form div.sign-comp-box input, 
+    div.log-sign-cont div.signcont form.sign-form div.sign-comp-box select{font-size: 13px !important ;}
+    div.log-sign-cont div.signcont form.sign-form div.sign-email-box img.emailimg, 
+    div.log-sign-cont div.signcont form.sign-form div.sign-comp-box img.emailimg{height: 25px !important;}
+    .balance-img{height: 20px !important;}
+    div.log-sign-cont div.signcont form.sign-form div.agreement{margin-bottom: 15px !important;}
+    div.log-sign-cont div.signcont div.sign-mem-btn{
+        margin-top: 10px;
+        margin-bottom: 15px;
+    }
+    div.log-sign-cont div.arrow-container img{height: 70px !important;}
+    div.loginmain div.login-title-box img.login-title-img{height: 3.2rem !important;}
+    div.log-sign-cont div.loginmain form div.login-email-pswd img.emailimg, 
+    div.log-sign-cont div.loginmain form div.login-emails img.emailimg{height: 20px !important;}
+    div.log-sign-cont div.loginmain ul.list{
+        font-size: 11.5px !important;
+        letter-spacing: 0.55px !important;
+    }
+    div.log-sign-cont div.signcont form.sign-form div.agreement p{font-size: 12px !important;}
+
+
+}
+
+
+
+@media screen and (max-width: 1601px){} 
+@media screen and (max-width: 1281px){
+    div.table-container div.table-body div.client-list-container div.table{
+        font-size: 13.5px;
+    }
+}
+@media screen and (max-width: 1025px){
+    div.table-container div.table-body div.client-list-container div.table{
+        font-size: 12px;
+    }
+} 
+@media screen and (max-width: 961px){
+    div.table-container div.table-body div.client-list-container div.table{
+        font-size: 10px;
+    }
+} 

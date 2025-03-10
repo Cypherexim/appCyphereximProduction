@@ -1,0 +1,455 @@
+@import '../node_modules/alertifyjs/build/css/alertify.min.css';
+*{scroll-behavior: smooth;}
+body{
+    box-sizing: border-box;    
+    -webkit-font-smoothing: antialiased;
+    font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+    -moz-font-feature-settings: "salt";
+    -webkit-font-feature-settings: "salt";
+    font-feature-settings: "salt";
+    user-select: none;
+}
+
+input:-internal-autofill-selected{background-color: white !important;}
+
+img{user-select: none;}
+
+/****************world map******************/
+countries-map#worldMap1 .cm-map-content{
+    height: calc(30rem - 20px);
+    display: flex;
+    justify-content: center;
+}
+countries-map#worldMap1 .cm-map-content svg{
+    height: 100%;
+}
+countries-map#worldMap1 .major-block.cm-caption-container{display: none;}
+/*******************************************/
+
+app-multiselect-dropdown#homepage-dropdown .type-text{
+    border-top-right-radius: 17px;
+    border-bottom-right-radius: 17px;
+}
+/* app-multiselect-dropdown#commodityDropdown,
+app-multiselect-dropdown#tariffDropdown, 
+app-multiselect-dropdown#countryDropdown {z-index: 1;} selected*/
+app-multiselect-dropdown#commodityDropdown div.dropdown-container,
+app-multiselect-dropdown#tariffDropdown div.dropdown-container,
+app-multiselect-dropdown#analysisDropdown div.dropdown-container,
+app-multiselect-dropdown#countryDropdown div.dropdown-container{background-color: #d7dae3;}
+app-multiselect-dropdown#commodityDropdown div.dropdown-container span.selected,
+app-multiselect-dropdown#tariffDropdown div.dropdown-container span.selected,
+app-multiselect-dropdown#analysisDropdown div.dropdown-container span.selected,
+app-multiselect-dropdown#countryDropdown div.dropdown-container span.selected{width: fit-content;}
+app-multiselect-dropdown#commodityDropdown div.dropdown-container span.nameholder,
+app-multiselect-dropdown#tariffDropdown div.dropdown-container span.nameholder,
+app-multiselect-dropdown#analysisDropdown div.dropdown-container span.nameholder,
+app-multiselect-dropdown#countryDropdown div.dropdown-container span.nameholder{background-color: #d7dae3;}
+app-multiselect-dropdown#countryDropdown div.dropdown-container div.dropdown-options{position: absolute;top: 2.3rem;z-index: 9999;}
+app-multiselect-dropdown#tariffDropdown div.dropdown-container div.dropdown-options,
+app-multiselect-dropdown#analysisDropdown div.dropdown-container div.dropdown-options,
+app-multiselect-dropdown#commodityDropdown div.dropdown-container div.dropdown-options{position: absolute;top: -17.5rem;z-index: 9999;}
+app-multiselect-dropdown#commodityDropdown div.dropdown-container div.type-text,
+app-multiselect-dropdown#tariffDropdown div.dropdown-container div.type-text,
+app-multiselect-dropdown#analysisDropdown div.dropdown-container div.type-text,
+app-multiselect-dropdown#countryDropdown div.dropdown-container div.type-text{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    height: 33px;
+    padding: 0 10px;
+}
+
+#multiDropList{overflow: hidden;}
+
+
+.row>*{
+    padding-right: 0 !important; 
+    padding-left: 0 !important;
+}
+.row {--bs-gutter-x: 0rem !important;}
+
+/*scrollbar css style*/
+div::-webkit-scrollbar {width: 13px;height: 13px;}
+div::-webkit-scrollbar-track {background: #c9c9c9;}
+div::-webkit-scrollbar-thumb {background: #818181;border-radius: 30px;}
+div::-webkit-scrollbar-thumb:hover {background: #555;}
+
+/*modal background opacity*/
+.modal-backdrop.show {opacity: 0.7 !important;}
+
+/*country custom window modal css*/
+app-country-list{height: 100%;}
+.countryModalClass{max-width: 100%;}
+.countryModalClass .modal-content{overflow: hidden;height: 80vh;}
+.profileDetailModal .modal-content{overflow: hidden;height: 70vh;}
+.profileDetailModal .modal-dialog,
+.countryModalClass .modal-dialog{
+    max-width: 90%;
+    padding: 0 5% 0 5%;
+    width: 100%;
+    position: absolute;
+    top: 45%;
+    left: 50%;
+    transform: translate(-50%, -50%) !important;
+}
+.profileDetailModal .modal-dialog{max-width: 80%;}
+
+/*Notification modal css*/
+/*Locator custom window modal css*/
+.notification-msg .modal-dialog{margin-top: 0;height: 97%;}
+.notification-msg .modal-dialog .modal-content{
+    height: 60%;
+    padding: .5rem 1.5rem;
+    padding-top: 0;
+    border-radius: 0;
+    letter-spacing: 0.25px;
+    font-size: 14.5px;
+    font-weight: 500;
+    line-height: 25px;
+    overflow: auto;
+}
+.notification-msg .modal-dialog .modal-content notification-modal-content .modal-box .modal-header{padding: 5px 0;}
+.notification-msg .modal-dialog .modal-content notification-modal-content .modal-box .modal-header i{
+    color: red;
+    font-size: 1.5rem;
+    margin-left: auto;
+    cursor: pointer;
+}
+.notification-msg .modal-dialog .modal-content notification-modal-content .modal-box .modal-content{border: 0;padding: 0.5rem;}
+.notification-msg .modal-dialog .modal-content notification-modal-content .modal-box .modal-content div.company-img img{
+    height: 50px;
+    margin-bottom: 0.35rem;
+    margin-left: -10px;
+}
+.notification-msg .modal-dialog .modal-content notification-modal-content .modal-box .modal-content div.company-img p{font-size: 13.5px; font-weight: 500;}
+
+.notification-msg,
+app-locator-modal{height: 100%;}
+
+/*Locator custom window modal css*/
+app-locator-modal{height: 100%;}
+.locatorModalClass{max-width: 100%;}
+.locatorModalClass .modal-content{overflow: hidden;height: 65vh;}
+.locatorModalClass .modal-dialog{
+    max-width: 60% !important;
+    padding: 0 5% 0 5% !important;
+    width: 100%;
+    position: absolute;
+    top: 45%;
+    left: 50%;
+    transform: translate(-50%, -50%) !important;
+}
+
+ngb-pagination ul{
+    justify-content: center;
+    font-size: 0.8125rem;
+    margin-bottom: 0;
+    margin-top: 1rem;
+}
+ngb-pagination ul li input[type="text"]{font-size: 0.8rem;}
+
+/*download custom model css*/
+.addUpdateCountry,
+.downloadModalClass{max-width: 100%;}
+.downloadModalClass .modal-content{overflow: hidden;height: 42vh;}
+.addUpdateCountry .modal-dialog,
+.downloadModalClass .modal-dialog{
+    max-width: 35% !important;
+    width: 100%;
+    position: absolute;
+    top: 45%;
+    left: 50%;
+    transform: translate(-50%, -50%) !important;
+}
+
+/* addUpdateCountry model css    <height: 50vh;> */
+.addUpdateCountry .modal-content{overflow: hidden;}
+.addUpdateCountry .modal-dialog{max-width: 40% !important;}
+
+/*alert-warning custom model css*/
+.alertWarningClass2,.timeoutClass,
+.alertWarningClass{max-width: 100%;}
+.alertWarningClass .modal-content{overflow: hidden;height: 30vh;}
+.alertWarningClass2 .modal-content{overflow: hidden;height: 40vh;}
+.alertWarningClass2 .modal-dialog,
+.alertWarningClass .modal-dialog{
+    width: 100%;
+    position: absolute;
+    top: 45%;
+    left: 50%;
+    transform: translate(-50%, -50%) !important;
+}
+.alertWarningClass2 .modal-dialog{max-width: 40% !important;}
+.alertWarningClass .modal-dialog{max-width: 25% !important;}
+.timeoutClass .modal-content{height: 25vh; overflow: hidden;animation-name: none;}
+.timeoutClass .modal-dialog{
+    min-width: 40% !important;
+    top: 12%;
+    position: absolute;
+    left: 50%;
+    animation: alertTimeout 0.5s ease-in-out;
+    transform: translate(-50%, -50%) !important;
+    transition: all 0.3s ease-in-out !important;
+}
+
+@keyframes alertTimeout {
+    0% {top: -20%;}
+    100% {top: 12%;}
+}
+
+/*see more checkboxes filter modal css*/
+.filterModalClass{max-width: 100%;}
+.filterModalClass .modal-content{
+    overflow: hidden;
+    height: 60vh;
+    margin: auto;
+    margin-top: 12.5rem;
+}
+
+/*save changes modal css*/
+.saveFileModalClass .modal-content,
+.counterFileModalClass .modal-content,
+.alertModalClass .modal-content,
+.confirmShareModalClass .modal-content,
+.confirmModalClass .modal-content{
+    overflow: hidden;
+    height: 40vh;
+    margin: auto;
+    margin-top: 12.5rem;
+}
+.alertModalClass .modal-content{height: 40vh !important;margin-top: 19rem !important;}
+.alertModalClass .modal-dialog{max-width: 50% !important;}
+.counterFileModalClass .modal-content{height: 45vh !important;margin-top: 15.5rem !important;}
+.confirmShareModalClass .modal-dialog{max-width: 40%;}
+.confirmShareModalClass .modal-content{margin-top: 17rem;}
+
+.addUpdateCountry .modal-content app-edit-modal,
+.countryModalClass .modal-content app-preview,
+.profileDetailModal .modal-content app-profile-popup,
+.alertWarningClass2 .modal-content app-user-alert-modal,
+.saveFileModalClass .modal-content app-save-file,
+.locatorModalClass .modal-content app-filter-data-list,
+.confirmModalClass .modal-content app-confirmation,
+.timeoutClass .modal-content app-download-model,
+.downloadModalClass .modal-content app-download-model{
+    height: 100%;
+    width: 100%;
+}
+
+.confirmModalClass .modal-content{
+    height: 25vh;
+    margin-top: 21rem;
+}
+
+
+/*table onClick data show modal css*/
+.tableDataPopUpModalClass .modal-content{
+    overflow: hidden;
+    max-height: 90vh;
+    width: 40%;
+    margin: auto;
+    margin-top: 3rem;
+}
+.tableDataPopUpModalClass .modal-dialog{max-width: 100%;}
+.tableDataPopUpModalClass .modal-content app-edit-plan-form,
+.tableDataPopUpModalClass .modal-content app-edit-user-form,
+.tableDataPopUpModalClass .modal-content app-table-data-modal,
+.tableDataPopUpModalClass .modal-content app-list-modal {
+    height: 100%;
+    width: 100%;
+}
+
+.modal-content{
+    animation-name: pop-up;
+    animation-duration: 0.3s;
+}
+
+@keyframes pop-up {
+    0%   {transform: scale(0.5)}
+    75%  {transform: scale(1.1)}
+    100% {transform: scale(1)}
+}
+
+/*global button styles*/
+.green-button{
+    user-select: none;
+    background: #8affb7;
+    background: linear-gradient(0deg, #8affb7 0%, #009333 34%, #028e31 49%, #179942 64%, #8affb7 100%);
+    text-shadow: -1px -1px 0 #6e6e6e, 1px -1px 0 #6e6e6e, -1px 1px 0 #6e6e6e, 1px 1px 0 #6e6e6e;
+}
+.green-button:hover{
+    box-shadow: #32325d3d 0px 2px 10px -2px, #00000033 0px 3px 7px -3px;
+}
+.green-button:active{box-shadow: none !important;}
+
+.blue-bgColor {
+    user-select: none;
+    background: rgb(138, 229, 255);
+    background: linear-gradient(0deg, #8ae5ff 0%, #007193 34%, #026e8e 49%, #177c99 64%, #8ae5ff 100%);
+}
+
+.gray-bgColor {
+    user-select: none;
+    background: rgb(217, 217, 217);
+    background: linear-gradient(0deg, #d9d9d9 0%, #858585 34%, #747474 49%, #858585 64%, #d9d9d9 100%);
+}
+
+.cypher-btn{
+    width: 30%;
+    color: white;
+    padding: 10px 0px;
+    border: none;
+    outline: none;
+    border-radius: 10px;
+    font-size: 15px;
+    font-weight: 500;
+    letter-spacing: 0.5px;
+    text-shadow: -1px -1px 0 #6e6e6e, 1px -1px 0 #6e6e6e, -1px 1px 0 #6e6e6e, 1px 1px 0 #6e6e6e;
+}
+.cypher-btn.disabled{
+    box-shadow: none;
+    opacity: 0.5;
+}
+.cypher-btn:hover{
+    box-shadow: rgb(50 50 93 / 24%) 0px 2px 10px -2px, rgb(0 0 0 / 20%) 0px 3px 7px -3px;
+}
+.cypher-btn:active{box-shadow: none;}
+
+
+/****data loader style****/
+div.loader{
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+div.loader img{
+    height: 35px;
+    animation:spin 1s linear infinite;
+}
+div.loader span{
+    font-size: 14px;
+    margin-top: 5px;
+    letter-spacing: 0.3px;
+    font-family: 'Roboto';
+    font-weight: 500;
+}
+
+@keyframes spin {
+    from {transform: rotate(0deg);}
+    to {transform: rotate(360deg);}
+}
+
+@keyframes blinking {
+    0% {background-color: blue;}
+    25% {background-color: violet;}
+    50% {background-color: green;}
+    75% {background-color: yellow;}
+    100% {background-color: red;}
+}
+
+
+
+cdk-virtual-scroll-viewport::-webkit-scrollbar {width: 13px;height: 10px;}
+cdk-virtual-scroll-viewport::-webkit-scrollbar-track {background: #c9c9c9;}
+cdk-virtual-scroll-viewport::-webkit-scrollbar-thumb {background: #818181;border-radius: 30px;}
+cdk-virtual-scroll-viewport::-webkit-scrollbar-thumb:hover {background: #555;}
+
+select::-webkit-scrollbar {width: 5px;height: 8px;}
+select::-webkit-scrollbar-track {background: #c9c9c9;}
+select::-webkit-scrollbar-thumb {background: #818181;border-radius: 30px;}
+select::-webkit-scrollbar-thumb:hover {background: #555;}
+
+.custom-tooltip {
+    position: absolute;
+    background: white;
+    border: 1px solid black;
+    padding: 5px;
+    pointer-events: none;
+    white-space: nowrap;
+    z-index: 1000;
+}
+
+.skeleton {
+    background-color: #e2e5e7;
+    background-image: linear-gradient(90deg, rgba(255, 255, 255, 0), rgba(255, 255, 255, 0.5), rgba(255, 255, 255, 0));
+    background-size: 40px 100%;
+    background-repeat: no-repeat;
+    background-position: left -40px top 0;
+    animation: shine 1s ease infinite;
+}
+@keyframes shine {
+    to {
+      background-position: right -40px top 0;
+    }
+}
+
+@media screen and (max-width: 1680px) {
+    .countryModalClass .modal-dialog{max-width: 90% !important;}
+}
+@media screen and (max-width: 1600px) {
+    .alertModalClass .modal-content{margin-top: 13.5rem !important; height: 45vh !important;}
+    .alertWarningClass .modal-content{height: 35vh;}
+    .timeoutClass .modal-dialog{min-width: 30% !important;}
+    .confirmShareModalClass .modal-content{
+        margin-top: 10rem;
+        height: 50vh;
+    }
+}
+@media screen and (max-width: 1440px) {
+    .alertModalClass .modal-content{height: 35vh !important;margin-top: 17rem !important;}
+    .countryModalClass .modal-dialog{max-width: 90% !important;}
+    .confirmModalClass .modal-content{height: 28vh;margin-top: 17rem;}
+}
+@media screen and (max-width: 1400px) {
+    .timeoutClass .modal-content{height: 20vh;}
+    .confirmShareModalClass .modal-content{margin-top: 20rem;height: 40vh;}
+    .alertModalClass .modal-content{height: 40vh !important; margin-top: 18rem !important;}
+}
+@media screen and (max-width: 1366px) {
+    .timeoutClass .modal-content{height: 28vh;}
+    .alertModalClass .modal-content{height: 52vh !important;margin-top: 8rem !important;}
+    div::-webkit-scrollbar {
+        width: 10px;
+        height: 10px;
+    }
+    .confirmModalClass .modal-content{
+        height: 35vh;
+        margin-top: 10rem;
+    }
+    .confirmShareModalClass .modal-content{
+        margin-top: 10rem;
+        height: 55vh;
+    }
+}
+
+@media screen and (max-width: 1360px) {
+    .timeoutClass .modal-content{height: 24vh;}
+    .timeoutClass .modal-dialog{min-width: 25% !important;}
+}
+
+@media screen and (max-width: 1280px) {
+    @media screen and (max-height: 1024px){
+        .alertModalClass .modal-content{height: 40vh !important;margin-top: 17rem !important;}
+    }
+    @media screen and (max-height: 800px){
+        .alertModalClass .modal-content{height: 50vh !important;margin-top: 10rem !important;}
+        .saveFileModalClass .modal-content{height: 45vh !important;}
+    }
+    @media screen and (max-height: 768px){
+        .counterFileModalClass .modal-content{margin-top: 10rem !important;}
+    }
+    @media screen and (max-height: 720px){
+        .alertModalClass .modal-content{height: 55vh !important;margin-top: 7rem !important;}
+        .saveFileModalClass .modal-content{
+            margin-top: 9rem;
+            height: 50vh !important;
+        }
+        .downloadModalClass .modal-content{height: 50vh;}
+    }
+    
+}

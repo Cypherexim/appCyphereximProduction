@@ -1,0 +1,586 @@
+div.company-profile-container{
+    /* background-image: linear-gradient(to right, #0298b1, #7bd759); */
+    background-color: white;
+}
+
+div.company-profile-container div.loader{
+    height: 83.5vh;
+    position: absolute;
+    z-index: 99;
+    background-color: #fff;
+    backdrop-filter: blur(5px);
+}
+div.profile-container div.toggler{
+    top: 22%;
+    left: 50%;
+    transform: translateX(-50%);
+}
+div.profile-container div.toggler div.lbel{
+    color: black;
+    font-size: 15px;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+}
+div.profile-container div.toggler div.lbel:first-child{color: #0d6efd;}
+div.profile-container div.toggler div.lbel:last-child{color: #ff0000;}
+div.profile-container div.company-headbar{background-color: #278ba8;}
+div.profile-container div.company-headbar h2 {
+    color: white;
+    font-size: 25px;
+    font-weight: 500;
+    letter-spacing: -0.25px;
+}
+div.profile-container div.company-headbar div.switch-box{
+    width: 7rem;
+    border-radius: 7px;
+    overflow: hidden;
+    left: 2%;
+}
+
+div.profile-container div.company-headbar h5{color: black;font-size: 1.35rem;}
+div.profile-container div.company-headbar div.company-title div.company-avatar{height: 40px;width: 40px;}
+div.profile-container div.company-headbar div.company-title div.company-name{
+    font-size: 1.75rem;
+    font-weight: 400;
+    color: black;
+}
+
+div.company-profile-container div.no-data{width: 95%;border-bottom: 1px solid #c2c2c2;}
+div.company-profile-container div.no-data p{font-size: 22px;font-weight: 700;}
+div.company-profile-container div.no-data i{font-size: 1.5rem;color: #E91E63;margin-right: 10px;}
+
+div.company-profile-container div.details-box{padding-top: 3rem;}
+div.company-profile-container div.details-box div.left-container{
+    width: 35%;
+    min-height: 85vh;
+    max-height: 85vh;
+    overflow: auto;
+    background-color: whitesmoke;
+    padding: 15px;
+    border-radius: 10px;
+    box-shadow: 0.5px 1px 5px 0px #0000006e;
+}
+div.company-profile-container div.details-box div.left-container::-webkit-scrollbar{width: 7px;}
+/* div.company-profile-container div.details-box div.left-container div.company-title{} */
+div.company-profile-container div.details-box div.left-container div.company-title div.company-avatar{
+    background-color: black;
+    padding: 10px;
+    border-radius: 50%;
+    height: 50px;
+    width: 50px;
+}
+div.company-profile-container div.details-box div.left-container div.company-title div.company-name span{
+    font-size: 18px;
+    letter-spacing: -0.5px;
+    color: #a019e2;
+    white-space: nowrap;
+}
+div.company-profile-container div.details-box div.left-container div.company-title div.company-name{
+    font-size: 22px;
+    font-weight: 700;
+    line-height: 25px;
+    color: black;
+}
+div.company-profile-container div.details-box div.left-container div.company-info{margin-left: 4rem;}
+div.company-profile-container div.details-box div.left-container div.company-info div.company-data{color: black;}
+div.company-profile-container div.details-box div.left-container div.company-info div.company-data i{font-size: 14px;    margin-top: 5px;}
+div.company-profile-container div.details-box div.left-container div.company-info div.company-data p{font-weight: 500;font-size: 13.5px;letter-spacing: 0.75px;}
+
+div.company-profile-container div.details-box div.left-container div.company-info div.social-links{margin-top: 3rem;}
+div.company-profile-container div.details-box div.left-container div.company-info div.social-links div.link{margin-bottom: 0.5rem;display: flex;align-items: center;}
+div.company-profile-container div.details-box div.left-container div.company-info div.social-links div.link i{
+    margin-right: 15px;
+    font-size: 18px;
+    cursor: pointer;    
+}
+div.company-profile-container div.details-box div.left-container div.company-info div.social-links div.link i:hover{color: blue;}
+div.company-profile-container div.details-box div.left-container div.company-info div.social-links div.link a{
+    font-weight: 500;
+    font-size: 13.5px;
+    letter-spacing: 0.75px;
+}
+
+div.company-profile-container div.details-box div.right-container{width: 62%;}
+div.company-profile-container div.details-box div.right-container div.top-counts{
+    background-color: whitesmoke;
+    padding: 2.8rem 20px;
+    box-shadow: 0.5px 1px 5px 0px #0000006e;
+    border-radius: 10px;
+}
+div.company-profile-container div.details-box div.right-container div.top-counts div.side-intro{}
+div.company-profile-container div.details-box div.right-container div.top-counts div.side-intro h3{font-weight: 600;color: black;}
+div.company-profile-container div.details-box div.right-container div.top-counts div.side-intro p{font-size: 15px;color: black;}
+
+div.company-profile-container div.details-box div.right-container div.top-counts div.count-container{row-gap: 3rem;}
+div.company-profile-container div.details-box div.right-container div.top-counts div.count-container div.count-box{
+    color: black;
+    cursor: pointer;    
+    transition: all 0.4s ease;
+}
+div.company-profile-container div.details-box div.right-container div.top-counts div.count-container div.count-box:active div.count-value,
+div.company-profile-container div.details-box div.right-container div.top-counts div.count-container div.count-box:active div.count-type{text-shadow: none;}
+div.company-profile-container div.details-box div.right-container div.top-counts div.count-container div.count-box:hover{
+    transform: scale(1.15);
+    transform-origin: center;
+    text-shadow: 0px 5px 5px #00000054;
+}
+div.company-profile-container div.details-box div.right-container div.top-counts div.count-container div.count-box div.count-value{font-size: 30px;font-weight: 700;}
+div.company-profile-container div.details-box div.right-container div.top-counts div.count-container div.count-box div.count-type{font-size: 17px;font-weight: 500;}
+div.company-profile-container div.details-box div.below-map{height: 50vh;margin-top: 4rem;}
+div.company-profile-container div.details-box div.below-map img{object-fit: contain;}
+
+div.company-profile-container div.grid-box-container::before{
+    content: "Contact List";
+    position: absolute;
+    margin-top: -4.5rem;
+    font-size: 25px;
+    font-weight: 400;
+    width: 100%;
+    text-align: center;
+}
+div.company-profile-container div.grid-box-container{
+    padding: 20px 0;
+    min-height: 75vh;
+    position: relative;
+    border-radius: 10px;
+    background-color: #f5f5f5;
+    box-shadow: 0.5px 1px 5px 0px #0000006e;
+}
+div.company-profile-container div.grid-box-container div.position-tabs{
+    width: 45%;
+    padding-left: 20px;
+    margin-bottom: 20px;
+}
+div.company-profile-container div.grid-box-container div.position-tabs span{
+    padding: 0 5px;
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+}
+div.company-profile-container div.grid-box-container div.linkedIn-table{
+    overflow: auto;
+    max-height: 70vh;
+    min-height: 60vh;
+}
+div.company-profile-container div.grid-box-container table{border-collapse: collapse;}
+div.company-profile-container div.grid-box-container table th,
+div.company-profile-container div.grid-box-container table td{border-bottom: 1px solid #c2c2c2;padding: 4px 20px;}
+div.company-profile-container div.grid-box-container table th{
+    letter-spacing: 0.75px;
+    font-size: 14px;
+    font-weight: 400;
+    background-color: #f5f5f5;
+}
+div.company-profile-container div.grid-box-container table th:not(:first-child) {text-align: center;}
+div.company-profile-container div.grid-box-container table td i{font-size: 19px;cursor: pointer;}
+div.company-profile-container div.grid-box-container table td{
+    background-color: #f5f5f5;
+    font-size: 13.5px;
+    white-space: nowrap;
+    font-weight: 400;
+    letter-spacing: 0.4px;
+    text-align: center;
+}
+
+div.company-profile-container div.grid-box-container table td div.contact-persion span:first-child{
+    font-size: 15px;
+    font-weight: 600;
+    letter-spacing: 0.35px;
+    margin-bottom: 2px;
+}
+div.company-profile-container div.grid-box-container table td div.contact-persion span:last-child{
+    font-size: 12px;
+    font-weight: 400;
+    font-family: 'Roboto';
+    letter-spacing: 0.5px;
+}
+div.company-profile-container div.grid-box-container table td div.contact-info{height: 6rem;}
+div.company-profile-container div.grid-box-container table td div.contact-info div.hq span:first-child,
+div.company-profile-container div.grid-box-container table td div.contact-info div.hq span:last-child{
+    font-size: 12px;
+    font-weight: 500;
+    font-family: 'Roboto';
+    letter-spacing: 0.35px;
+}
+div.company-profile-container div.grid-box-container table td div.contact-info div.personal span:first-child{
+    font-size: 12px;
+    font-weight: 500;
+    letter-spacing: 0.35px;
+}
+div.company-profile-container div.grid-box-container table td div.contact-info div.personal button i{font-size: 14px;}
+div.company-profile-container div.grid-box-container table td div.contact-info div.personal button {
+    padding: 0px 5px 2px;
+    font-size: 12px;
+    font-weight: 500;
+    letter-spacing: 0.5px;
+    border-radius: 3px;
+    width: 45%;
+}
+div.company-profile-container div.grid-box-container table td div.contact-info div.personal button.updated{
+    padding: 0 0;
+    background-color: transparent;
+    color: #26846f;
+    letter-spacing: 0.95px;
+    text-decoration: underline;
+    border-color: transparent;
+}
+div.company-profile-container div.grid-box-container table td div.contact-info div:first-child,
+div.company-profile-container div.grid-box-container table td div.contact-info div.icons{align-content: center;text-align: center;}
+div.company-profile-container div.grid-box-container table td div.contact-info div.icons{
+    top: 0;
+    position: absolute;
+    align-content: center;
+    text-align: center;        
+}
+.blurred-info{backdrop-filter: blur(4px);}
+.selected-tab{border-bottom: 2px solid black;}
+
+
+
+
+
+
+
+
+
+
+div.profile-container{
+    height: 100%;
+    width: 100%;
+    overflow: auto;
+    background-color: #f7f8f8;
+}
+
+div.profile-container div.search-bar{
+    padding: 0 5%;
+    margin-top: 40px;
+    margin-bottom: 4rem;
+}
+div.profile-container div.search-bar div.input-field img{
+    rotate: 45deg;
+    margin-right: 1rem;
+    height: 27px;
+    cursor: pointer;
+}
+div.profile-container div.search-bar div.input-field input{
+    border: 1px solid #c2c2c2;
+    font-size: 18px;
+    width: 20%;
+    outline: none;
+    padding: 3px 10px;
+    font-family: 'Roboto';
+}
+div.profile-container div.search-bar div.input-field button{
+    padding: 4px 10px;
+    border-radius: 3px;
+    margin-top: -5px;
+    margin-left: 3px;
+}
+div.profile-container div.company-list-container{}
+div.profile-container div.company-list-container div.row{
+    width: 90%;
+    margin: auto;
+    margin-bottom: 2rem;
+}
+div.profile-container div.company-list-container div.row div.col-4{
+    margin-bottom: 5px;
+    font-size: 17px;
+    font-weight: 500;
+    cursor: pointer;
+    color: #5391d8;
+    font-family: 'Roboto';
+}
+div.profile-container div.company-list-container div.row div.col-4:hover{color: black;}
+
+div.profile-container div.company-desc{
+    display: flex;
+    align-items: flex-start;
+    padding: 0 5rem;
+}
+
+div.profile-container div.company-desc div.left-sec{width: 30%; margin-right: 5%;}
+div.profile-container div.company-desc div.left-sec h3{margin-bottom: 2rem;}
+div.profile-container div.company-desc div.left-sec div.detail{
+    font-size: 18px;
+    font-weight: 400;
+    font-family: 'Roboto';
+    text-align: justify;
+    letter-spacing: 0.3px;
+    line-height: 25px;
+    margin-bottom: 1.5rem;
+}
+div.profile-container div.company-desc div.left-sec div.social-links{
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 60%;
+    cursor: pointer;
+}
+div.profile-container div.company-desc div.left-sec div.social-links img{transition: all 0.3s ease-in-out;}
+div.profile-container div.company-desc div.left-sec div.social-links img:hover{scale: 1.15;}
+
+div.profile-container div.company-desc div.right-sec{
+    height: 66vh;
+    width: 65%;
+    position: relative;
+}
+div.profile-container div.company-desc div.right-sec div.inner-box{
+    height: 100%;
+    width: 100%;
+    overflow: auto;
+    padding-right: 5px;
+}
+div.profile-container div.company-desc div.right-sec div.inner-box::-webkit-scrollbar{width: 5px;}
+div.profile-container div.company-desc div.right-sec div.exporter,
+div.profile-container div.company-desc div.right-sec div.importer{
+    z-index: 9;
+    top: -3.5rem;
+    cursor: pointer;
+    position: absolute;
+    padding: 20px 40px;
+    background-color: #a0b8ca;
+    border-top-right-radius: 50%;
+    border-top-left-radius: 50%;
+    color: black;
+    font-size: larger;
+    font-weight: 500;
+    font-family: 'Roboto';
+    letter-spacing: 0.7px;
+}
+div.profile-container div.company-desc div.right-sec div.importer{left: 7rem;}
+div.profile-container div.company-desc div.right-sec div.exporter.active,
+div.profile-container div.company-desc div.right-sec div.importer.active{
+    z-index: 99 !important;
+    color: black !important;
+    background-color: white !important;
+}
+
+div.profile-container div.company-desc div.right-sec div.detail-items{
+    background-color: white;
+    position: relative;
+    padding: 5rem 0px;
+    z-index: 999;
+    display: grid;
+    row-gap: 5rem;    
+    height: 60vh;
+    overflow: auto;
+    grid-template-columns: 1fr 1fr 1fr 1fr;
+}
+div.profile-container div.company-desc div.right-sec div.detail-items div.detail-item{}
+div.profile-container div.company-desc div.right-sec div.detail-items div.detail-item h4{color: #a6a6a6;}
+div.profile-container div.company-desc div.right-sec div.detail-items div.detail-item h6{
+    letter-spacing: 0.5px;
+    font-size: 17px;
+    margin-top: 10px;
+    font-weight: 400;
+    font-family: 'Roboto';
+}
+div.profile-container div.company-desc div.right-sec div.detail-items:hover{ cursor: pointer; }
+
+div.profile-container div.company-desc div.right-sec div.contact-details{
+    width: 100%;
+    height: 0vh;
+    overflow: auto;
+    margin-top: 2rem;
+    background-color: white;
+    transition: height 0.3s ease-in-out;
+}
+.up-height{height: 60vh !important;}
+
+div.profile-container div.company-desc div.right-sec div.contact-details div.arrow{height: 10%;display: flex;align-items: center;}
+div.profile-container div.company-desc div.right-sec div.contact-details div.arrow img{
+    rotate: 45deg;
+    height: 28px;
+    margin-left: 15px;
+    cursor: pointer;
+}
+
+div.profile-container div.company-desc div.right-sec div.contact-details div.contacts-container{height: 90%;overflow: auto;padding: 0 40px;}
+div.right-sec div.contact-details div.contacts-container div.contact-box{width: 55%;margin-bottom: 5rem;}
+div.right-sec div.contact-details div.contacts-container div.contact-box h4{
+    color: #a6a6a6;
+    font-size: 30px;
+    font-family: 'Roboto';
+    letter-spacing: -0.3px;
+}
+div.right-sec div.contact-details div.contacts-container div.contact-box h6{
+    font-size: 15.5px;
+    font-family: 'Roboto';
+    letter-spacing: 0.8px;
+    color: #515151;
+}
+div.right-sec div.contact-details div.contacts-container div.contact-box div.contact-types{
+    display: grid;
+    grid-template-columns: auto auto;
+    row-gap: 10px;
+    margin-top: 20px;
+}
+div.right-sec div.contact-details div.contacts-container div.contact-box div.contact-types div.contact{display: flex; align-items: center;}
+div.right-sec div.contact-details div.contacts-container div.contact-box div.contact-types div.contact img{height: 23.5px;margin-right: 10px;}
+div.right-sec div.contact-details div.contacts-container div.contact-box div.contact-types div.contact span{font-size: 16.5px;font-family: 'Roboto';}
+
+
+
+div.modal-popup{
+    top: 0%;
+    transform-origin: center;
+    transform: scale(0);
+    transition: all 0.3s ease-in-out;
+    background-color: #00000039;
+    backdrop-filter: blur(5px);
+    z-index: 1025;
+}
+div.modal-popup.active{transform: scale(1) !important;}
+div.modal-popup div.card{    
+    width: 90%;
+    height: 60%;
+    min-height: 75%;
+    max-height: 80%;
+}
+div.modal-popup div.card div.card-body div.btns i,
+div.modal-popup div.card div.card-header i{cursor: pointer;transition: all 0.25s ease;}
+div.modal-popup div.card div.card-header i:hover,
+div.modal-popup div.card div.card-body div.btns i:hover{scale: 1.15;}
+div.modal-popup div.card div.card-body{overflow: hidden;}
+div.modal-popup div.card div.card-body div.overflow-auto{
+    padding: 0% 3%;
+    margin-top: 0.5%;
+    height: 95%;
+}
+
+div.modal-popup div.card div.card-body div.btns{width: 94%;}
+
+div.modal-popup div.card div.card-body details.level1 summary.level1-sum,
+div.modal-popup div.card div.card-body details.level1 details.level2 summary.level2-sum,
+div.modal-popup div.card div.card-body details.level1 details.level2 details.level3 summary.level3-sum{
+    /* border: 1px solid #c2c2c2;*/
+    font-weight: 500; 
+    color: #000000;
+    letter-spacing: 0.65px;
+    padding: 2px 10px;  
+}
+div.modal-popup div.card div.card-body details.level1 summary.level1-sum:hover,
+div.modal-popup div.card div.card-body details.level1 details.level2 summary.level2-sum:hover,
+div.modal-popup div.card div.card-body details.level1 details.level2 details.level3 summary.level3-sum:hover{opacity: 0.65;}
+div.modal-popup div.card div.card-body details.level1{margin-bottom: 0.25rem;}
+div.modal-popup div.card div.card-body details.level1 summary.level1-sum {background-color: #4cbfa6b3;font-size: 15px;}
+
+div.modal-popup div.card div.card-body details.level1 details.level2{padding-left: 1.75rem;}
+div.modal-popup div.card div.card-body details.level1 details.level2 summary.level2-sum {
+    background-color: #bebebe8f;
+    font-size: 14px;
+    margin-top: 3px;
+}
+details summary span.float-right{float: right;margin-right: 12px;}
+div.modal-popup div.card div.card-body details.level1 details.level2 details.level3 summary.level3-sum{
+    background-color: #fff6d582;
+    margin-left: 1.75rem;
+    margin-top: 3px;
+    pointer-events: none;
+    list-style: none;
+    font-size: 13px;
+    font-weight: 400;
+}
+div.modal-popup div.card div.card-body details.level1 details.level2 details.level3 p{
+    padding: 1rem 0;
+    padding-left: 2rem;
+    font-size: 17.5px;
+    letter-spacing: 0.75px;
+    font-weight: 600;
+}
+div.modal-popup div.card div.card-body details.level1 details.level2 details.level3 p span{color: green;}
+
+div.modal-popup div.card div.card-body table th,
+div.modal-popup div.card div.card-body table td{
+    padding: 5px 20px;
+    font-weight: 500;
+    white-space: nowrap;
+    border-left: 1px solid #c2c2c2;
+    border-bottom: 1px solid #c2c2c2;
+}
+div.modal-popup div.card div.card-body table th:first-child,
+div.modal-popup div.card div.card-body table td:first-child{border-left: 0;}
+div.modal-popup div.card div.card-body table th{
+    color: white;    
+    font-size: 18px;
+    background-color: #4cbfa6;
+}
+.highlighter{
+    background-color: #e0ffeb;
+    border-radius: 4px;
+    /* padding: 1.5px 5px; */
+}
+
+
+/*switch box toggle*/
+.toggle {
+    position: relative;
+    height: 32px;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    box-sizing: border-box;
+  }
+  .toggle input[type="checkbox"] {
+    position: absolute;
+    left: 0;
+    top: 0;
+    z-index: 10;
+    width: 100%;
+    height: 100%;
+    cursor: pointer;
+    opacity: 0;
+  }
+  .toggle label {
+    position: relative;
+    display: flex;
+    height: 100%;
+    width: 100%;
+    align-items: center;
+    box-sizing: border-box;
+  }
+  .toggle label:before {
+    content: '';
+    background: #c0e7e3;
+    height: 32px;
+    width: 100%;
+    position: relative;
+    display: inline-block;
+    box-sizing:border-box;
+    transition: 0.2s ease-in;
+  }
+  .toggle label:after {
+    content: 'EXPORT';
+    position: absolute;
+    border-radius: 5px;
+    font-size: 13.5px;
+    top: 4px;
+    left: 4px;
+    width: 60%;
+    height: 24px;
+    z-index: 2;
+    display: grid;
+    place-content: center;
+    font-family: arial;
+    font-weight: bold;
+    box-sizing:border-box;
+    color:#FFF;
+    background: #21bf73;
+    transition: 0.25s ease-in-out;
+  }
+  
+  .toggle input[type="checkbox"]:checked + label:before {
+    background: #ffefbf;
+  }
+  .toggle input[type="checkbox"]:checked + label:after {
+    content: 'IMPORT';
+    background: #edb200;
+    transform: translatex(55%);
+  }
+/*******************/
+
+.hide-data{
+    filter: blur(4px);
+    pointer-events: none;
+}
+

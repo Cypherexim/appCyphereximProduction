@@ -1,0 +1,25 @@
+@media screen and (max-width: 1280px) {
+    @media screen and (max-height: 1024px){
+        div.contentmain.toggle-on{padding: 10px 0.5rem !important;}
+        div.contentmain span.header-btns{
+            padding: 10px 11px !important;
+            font-size: 11px !important;
+        }
+    }
+
+    @media screen and (max-height: 800px){
+    }
+    
+    @media screen and (max-height: 768px){
+        /* home page */
+        div.datavaluesmain div.left-elements div.records p{
+            font-size: 13.5px !important;
+            line-height: 18px !important;
+        }
+        div.datavaluesmain div.left-elements div.records{width: 4.5rem !important;}
+    }
+
+    @media screen and (max-height: 720px){
+        div.content div.feature div.feat{height: 43px !important;}
+    }
+}

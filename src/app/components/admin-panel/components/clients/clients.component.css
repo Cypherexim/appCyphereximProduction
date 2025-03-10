@@ -1,0 +1,285 @@
+@import url("../../../../media_styles/1600x900.css");
+
+div.team-profile-container{
+    /* height: calc(80vh + 10px); */
+    height: 100%;
+    width: 100%;
+    padding: 0px 20px;
+    margin-top: 20px;
+    /* background-color: #f1f3f4; */
+}
+
+div.team-profile-container div.table-container{height: 100%;}
+
+div.team-profile-container div.table-container div.search-bar{
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    column-gap: 1rem;
+    background-color: #f1f3f4;
+    padding-bottom: 10px;
+    padding-left: 5px;
+    position: relative;
+}
+div.team-profile-container div.table-container div.search-bar div.input-box{
+    display: flex;
+    align-items: center;
+}
+div.team-profile-container div.table-container div.search-bar div.input-box input{
+    border: none;
+    /* border: 1px solid #c2c2c2; */
+    padding: 3px 5px;
+    outline: none;
+}
+div.team-profile-container div.table-container div.search-bar div.input-box span.search-btn{
+    background-color: #8a9ea0;
+    display: block;
+    height: 100%;
+    cursor: pointer;
+}
+div.team-profile-container div.table-container div.search-bar div.input-box span.search-btn img{
+    height: 30px;
+    padding: 5px 7px;
+}
+
+div.team-profile-container div.table-container div.search-bar div.input-box select{
+    border: none;
+    padding: 3px 10px;
+    outline: none;
+}
+div.team-profile-container div.table-container div.search-bar div.input-box select option{
+    font-size: 17px;
+    font-weight: 600;
+    margin-bottom: 5px;
+    font-family:'Roboto';
+    letter-spacing: 0.5px;
+}
+div.team-profile-container div.table-container div.search-bar div.input-box select option:nth-child(1) {font-weight: 400;}
+div.team-profile-container div.table-container div.search-bar div.input-box select option:nth-child(2) {color: #343a40;}
+div.team-profile-container div.table-container div.search-bar div.input-box select option:nth-child(3) {color: #fe0101;}
+div.team-profile-container div.table-container div.search-bar div.input-box select option:nth-child(4) {color: #d39e00;}
+div.team-profile-container div.table-container div.search-bar div.input-box select option:nth-child(5) {color: #4cbfa6;}
+div.team-profile-container div.table-container div.search-bar div.total-user span{font-weight: 500;}
+div.team-profile-container div.table-container div.search-bar div.total-user{
+    position: absolute;
+    right: 20px;
+    font-size: 20px;
+    font-family: 'Roboto';
+    letter-spacing: 0.5px;
+}
+
+div.table-container div.table-head{
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    padding: 15px 20px;
+    background: #f1f3f4;
+    position: relative;
+}
+div.table-container div.table-head select{ 
+    border: none;
+    padding: 3px 10px;
+    outline: none;
+    position: absolute;
+    left: 5px;
+}
+div.table-container div.table-head h5{
+    flex: 1;
+    text-align: center;
+    font-size: 25px;
+}
+div.table-container div.table-head span.input-box{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    background-color: lightgreen;
+}
+div.table-container div.table-head span.input-box:hover{background-color: #69ee69;}
+div.table-container div.table-head span.input-box input{
+    width: 20rem;
+    border: none;
+    padding: 5px 15px;
+    margin-right: 5px;
+    font-size: 15px;
+    outline: none;
+}
+div.table-container div.table-head span.input-box span.search-btn{
+    display: block;
+    width: auto;
+    height: 100%;
+    padding: 0px 5px;
+    margin-left: -3px;
+}
+div.table-container div.table-head span.input-box span.search-btn img{
+    height: 25px;
+    margin-top: -3px;
+}
+
+div.table-container div.table-body{height: 82%;overflow: auto;}
+div.table-container div.table-body table{width: 100%;}
+div.table-container div.table-body table thead{
+    top: 0;
+    z-index: 1;
+    width: 100%;
+    position: sticky;
+    background-color: #8a9ea0;
+}
+div.table-container div.table-body table thead th{
+    font-size: 16px;
+    font-family: "Roboto", sans-serif;
+    text-align: center;
+    padding: 10px 0;
+    color: white;
+}
+/* div.table-container div.table-body table tbody{background-color: #f2f2f2;} */
+div.table-container div.table-body table tbody tr:nth-child(even){background-color: #e5e5e5;}
+div.table-container div.table-body table tbody tr td{
+    font-size: 15px;
+    font-family: "Roboto", sans-serif;
+    text-align: center;
+    padding: 10px 0;
+    color: black;
+}
+div.table-container div.table-body table tbody tr td span.edit-btn{
+    background-color: #008dd2;
+    padding: 5px 3.5rem;
+    color: white;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+    letter-spacing: 0.5px;
+}
+div.table-container div.table-body table tbody tr td div.account-status{
+    width: 10px;
+    height: 10px;
+    border-radius: 20px;
+    margin: auto;
+}
+div.table-container div.table-body table tbody tr td span.edit-btn:hover{
+    box-shadow: rgb(50 50 93 / 24%) 0px 2px 10px -2px, rgb(0 0 0 / 20%) 0px 3px 7px -3px;
+}
+div.table-container div.table-body table tbody tr td span.edit-btn:active{
+    box-shadow: none;
+}
+
+div.table-container div.table-body div.workstation-loader{
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+div.table-container div.table-body div.workstation-loader img{height: 4rem;}
+
+div.table-container div.table-body div.client-list-container{width: 125%;}
+div.table-container div.table-body div.client-list-container div.table div.headers{background-color: #8a9ea0;}
+div.table-container div.table-body div.client-list-container div.table div.headers div.th{
+    padding: 5px 0;
+    color: white;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+div.table-container div.table-body div.client-list-container div.table div.body div.tr{border-bottom: 1px solid #cccccc;}
+div.table-container div.table-body div.client-list-container div.table div.body div.tr div.td div span.edit-btn{
+    background-color: #008dd2;
+    padding: 5px 0;
+    color: white;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+    letter-spacing: 0.5px;
+}
+div.table-container div.table-body div.client-list-container div.table div.body div.tr div.td div div.account-status{
+    width: 10px;
+    height: 10px;
+    border-radius: 20px;
+    margin: auto;
+}
+div.table-container div.table-body div.client-list-container div.table div.body div.tr div.td-parent{
+    transition: all 0.3s ease;
+    min-height: 0rem;
+    max-height: 0rem;
+    padding: 0;
+    overflow: hidden;
+}
+div.table-container div.table-body div.client-list-container div.table div.body div.tr div.td-parent div.td{
+    padding:5px;
+    background-color: #f9f9f9;
+}
+.rotate90Deg{rotate: 90deg;}
+.activeSubUser{max-height: 100rem !important;}
+.tdEllipses{
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    -webkit-line-clamp: 1;
+    -webkit-box-orient: vertical;    
+}
+div.table-container div.table-body div.client-list-container div.table div.body div.tr div.word-break i{
+    font-size: 15px;
+    cursor: pointer;
+    color: #ff1515;
+}
+div.table-container div.table-body div.client-list-container div.table div.body div.tr div.word-break i:hover{color: #4cbfa6;}
+
+/*account status colors*/
+.failed{background-color: red;}
+.success{background-color: #44d900;}
+.pending{background-color: orange;}
+.dead{background-color: black;}
+
+
+
+/* toggle button to switch charts type */
+input[type=checkbox]{
+    height: 0;
+    width: 0;
+    visibility: hidden;
+  }
+  
+  label.toggle-switch {
+    cursor: pointer;
+    text-indent: -9999px;
+    width: 40px;
+    height: 15px;
+    background: #e16868;
+    display: block;
+    border-radius: 100px;
+    position: relative;
+  }
+  
+  label.toggle-switch:after {
+    content: '';
+    position: absolute;
+    top: 2px;
+    left: 2px;
+    width: 12px;
+    height: 11px;
+    background: #fff;
+    border-radius: 126px;
+    transition: 0.3s;
+  }
+  
+  input:checked + label {
+    background: #2ca949a6 ;
+  }
+  
+  input:checked + label:after {
+    left: calc(100% - 2px);
+    transform: translateX(-100%);
+  }
+  
+  label.toggle-switch:active:after {
+    width: 20px;
+  }
+
+  .word-break{word-break: break-all;}
+
+
+
+
+
+
+

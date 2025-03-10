@@ -1,0 +1,83 @@
+<div class="list-container">
+    <div class="h-100 first" *ngIf="pageHeadName=='country'">
+        <h1>{{pageHeadName | titlecase}} List</h1>
+        <div class="input-bar">
+            <button class="btn btn-danger" (click)="getFormModal()">+ Add Country</button>
+        </div>
+        <div class="other-table">
+            <table>
+                <thead>
+                    <th 
+                        *ngFor="let head of tableHeads?.country;let i=index;"
+                        [class]="setClassName(i, tableHeads?.country)" 
+                        [ngStyle]="{'width': (head=='active'||head=='action')?'10%':'auto'}">
+                        {{head | titlecase}}
+                    </th>
+                </thead>
+    
+                <tbody *ngIf="!isLoading">
+                    <tr *ngFor="let head of allCountryList;let i=index;">
+                        <td class="left-sticky1">{{head?.CountryName}}</td>
+                        <td class="left-sticky2" style="text-transform:uppercase;">{{head?.hasOwnProperty('Import') ? "Import" : "Export"}}</td>
+    
+    
+                        <td *ngFor="let filterItem of filterHeads;let j=index;">
+                            <div class="d-flex justify-content-center align-items-center w-100">
+                                <input [checked]="head?.filters[filterItem]" (click)="updateSideFilterAccess($event, filterItem, head)" type="checkbox" id="switch-{{i}}-{{j}}"/><label class="toggle-switch" for="switch-{{i}}-{{j}}">Toggle</label>
+                            </div>
+                        </td>
+    
+    
+                        <td class="right-sticky2">
+                            <div class="d-flex justify-content-center align-items-center w-100">
+                                <input [checked]="head?.hasOwnProperty('Import') ? head?.Import : head?.Export" type="checkbox" id="switch-{{i}}"/>
+                                <label class="toggle-switch" for="switch-{{i}}">Toggle</label>
+                            </div>
+                        </td>
+                        <td class="right-sticky1">
+                            <img title="Record Details" src="assets/images/info-data.png" (click)="showSideFilterDetail(head)" alt="" />
+                            <img title="Edit Record" src="assets/images/edit-data.png" (click)="getFormUpdateModal(head?.Countrycode)" alt="" />
+                            <!-- <img title="Delete Record" src="assets/images/delete-data.png" alt="" /> -->
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+            <div class="workstation-loader" *ngIf="isLoading"><img src="assets/images/tableLoader.gif" alt="" /></div>
+        </div>
+    </div>
+
+    <div class="h-100 second" *ngIf="pageHeadName=='date'">
+        <h1>Update Country Latest Date</h1>
+
+        <div class="update-form">
+            <div class="input-box">
+                <span>Country</span>
+                <select [(ngModel)]="countryDateObj.countryName">
+                    <option value="">--Select Country--</option>
+                    <option value="{{item?.Countrycode}}" *ngFor="let item of dropdownCountries;">
+                        {{item?.CountryName}}
+                    </option>
+                </select>
+            </div>
+
+            <div class="input-box">
+                <span>Direction</span>
+                <select [(ngModel)]="countryDateObj.direction" (change)="getLastUpdatedDate()">
+                    <option value="">--Select Direction--</option>
+                    <option value="export">Export</option>
+                    <option value="import">Import</option>
+                </select>
+            </div>
+
+            <div class="input-box">
+                <span>Set Date</span>
+                <input [(ngModel)]="countryDateObj.latestDate" type="date" onfocus="this.showPicker()"/>
+            </div>
+
+            <div class="error-msg" [hidden]="errorMsg.length==0">{{errorMsg}}</div>
+            <!-- <div class="error-msg">The quick brown fox jumps over the lazy dog</div> -->
+
+            <div class="btn-box"><button class="btn btn-danger" (click)="updateLatestDate()">{{updateBtn}}</button></div>
+        </div>
+    </div>
+</div>

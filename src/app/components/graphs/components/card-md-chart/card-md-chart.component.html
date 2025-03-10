@@ -1,0 +1,42 @@
+<div class="md-chart-card {{isLeftSide?'left-side-chart':''}}" >
+    <div class="top-header position-relative">
+        <div class="heading">
+            <h5>{{getTitle(type, 'mainHead')}}</h5>
+            <span class="sub-head">{{getTitle(type, 'subHead')}}</span>
+        </div>
+        <div class="corner-btn position-absolute" *ngIf="type!='bar'">
+            <span class="bottom-arrow" (click)="isMultiSelectOn = !isMultiSelectOn"><i class="fa-solid fa-angle-down"></i></span>
+
+            <ul [class]="isMultiSelectOn ? 'visible': 'invisible'">
+                <li *ngIf="type=='pie'" (click)="setGraphInterval(10)">Top 10</li>
+                <li *ngIf="type=='pie'" (click)="setGraphInterval(15)">Top 15</li>
+                <li *ngIf="type=='pie'" (click)="setGraphInterval(20)">Top 20</li>
+
+                <li *ngIf="['radar','line'].includes(type)" (click)="setGraphInterval(3)">3 Months</li>
+                <li *ngIf="['radar','line'].includes(type)" (click)="setGraphInterval(6)">6 Months</li>
+                <li *ngIf="['radar','line'].includes(type)" (click)="setGraphInterval(12)">Full Year</li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="graph-header" *ngIf="type=='line'&&!isAPIinProcess">
+        <h1>{{currentLineValue}} Bn $</h1>
+
+        <div class="radio-bullet">
+            <p>
+                <span *ngIf="currentLinePercentage>0" style="color: green;">&uarr;</span> 
+                <span *ngIf="currentLinePercentage<=0" style="color: red;">&darr;</span>
+                {{currentLinePercentage}}%</p>
+        </div>
+    </div>
+
+    <div class="chart-container {{type}}">
+        <div *ngIf="isAPIinProcess" class="loader-img m-auto d-flex flex-column">
+            <img src="assets/images/graph_loader.gif" alt="" />
+            <span>Please wait...</span>
+        </div>
+        <canvas class="{{isAPIinProcess?'d-none':''}}" id="chart_{{chartOption?.id}}"></canvas>
+        
+        <!-- <div *ngIf="type=='pie'"></div> -->
+    </div>
+</div>

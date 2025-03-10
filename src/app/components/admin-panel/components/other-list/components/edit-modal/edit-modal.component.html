@@ -1,0 +1,79 @@
+<div class="update-container h-100">
+    <div class="add-new-country" *ngIf="isCountryForm">
+        <div *ngIf="!isSubmitted">
+            <span class="close-icon" (click)="closeModal('direct')"><img src="assets/images/cross.png" alt="" /></span>
+            <h1>{{isUpdateMode ? 'Update' : 'Add'}} Country</h1>
+    
+            <div class="input-field">
+                <span class="label">Country Name</span>
+                <input type="text" [(ngModel)]="countryName" name="" id="" />
+            </div>
+            <p [ngStyle]="{'visibility': !isError ? 'hidden' : 'visible'}">Country name field is required</p>
+    
+            <div class="toggle-fields d-flex">
+                <span class="label">Country Direction</span>
+    
+                <div class="toggles d-flex">
+                    <div class="d-flex align-items-center w-100">
+                        <span>Import:</span>
+                        <input  type="checkbox" [(ngModel)]="countryDirection.Import" id="switch-import"/>
+                        <label class="toggle-switch" for="switch-import">Toggle</label>
+                    </div>
+    
+                    <div class="d-flex align-items-center w-100">
+                        <span>Export:</span>
+                        <input type="checkbox" [(ngModel)]="countryDirection.Export" id="switch-export"/>
+                        <label class="toggle-switch" for="switch-export">Toggle</label>
+                    </div>
+                </div>
+            </div>
+
+            <div class="submit-btn text-center"><button [disabled]="isSubmitted" class="btn btn-danger" (click)="onSubmit()">{{submitBtn}}</button></div>
+        </div>
+
+        <div class="download-container success-msg" *ngIf="isSubmitted">
+            <img src="assets/images/check.png" alt="">
+
+            <h3>Congratulations</h3>
+            <h5>India Country Added Successfully</h5>
+            <button class="btn btn-success" (click)="closeModal()">OK</button>
+        </div>
+    </div>
+
+
+
+    <div class="view-sideAccess" *ngIf="!isCountryForm">
+        <!-- <span class="close-icon" (click)="closeModal('direct')"><img src="assets/images/cross.png" alt="" /></span> -->
+        <div class="top-head">
+            <h5>Side Filter Details</h5>
+            <img src="assets/images/cross.png" (click)="closeModal('direct')" alt="" />
+        </div>
+        <div class="list-container">
+            <div class="country-detail">
+                <div class="detail mb-3 d-flex">
+                    <h5 class="w-50">Country:</h5>
+                    <span>{{sideFilterData?.CountryName}}</span>
+                </div>
+
+                <div class="detail d-flex">
+                    <h5 class="w-50">Direction:</h5>
+                    <span>{{direction}}</span>
+                </div>
+            </div>
+            <div class="sidefilter-access">
+                <table>
+                    <thead class="sticky-top">
+                        <th>Filter</th>
+                        <th>Enable</th>
+                    </thead>
+                    <tbody>
+                        <tr *ngFor="let head of filterHeads">
+                            <td>{{head}}</td>
+                            <td class="{{sideFilterData?.filters[head]?'yes':'no'}}">{{sideFilterData?.filters[head] ? 'Yes' : 'No'}}</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>

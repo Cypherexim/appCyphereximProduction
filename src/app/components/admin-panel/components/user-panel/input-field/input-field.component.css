@@ -1,0 +1,390 @@
+@import url("../../../../../media_styles/1600x900.css");
+@import url("../../../../../media_styles/1440x900.css");
+
+/* adduser form style*/
+div.fields-container{
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    height: 100%;
+}
+
+div.fields-container div.adduser-fields{
+    overflow: auto;
+    height: 100%;
+    width: 50%;
+    padding: 0 2rem;
+}
+div.fields-container div.adduser-fields div.form-data{
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 15px;
+}
+
+div.fields-container div.adduser-fields div.role-checks div.first-line label,
+div.fields-container div.adduser-fields div.form-data label{
+    font-size: 18px;
+    font-family: 'Roboto',sans-serif;
+    text-transform: capitalize;
+    font-weight: 500;
+    color: #505052;
+    outline: none;
+}
+
+div.fields-container div.adduser-fields div.role-checks{text-align: center;margin-top: 2rem;}
+div.fields-container div.adduser-fields div.role-checks input[type="checkbox"] {scale: 1.3;accent-color: #4cbfa6;}
+div.fields-container div.adduser-fields div.role-checks div.first-line{
+    margin-bottom: 15px;
+    display: grid;
+    grid-template-columns: auto auto auto;
+    row-gap: 10px;
+}
+div.fields-container div.adduser-fields div.role-checks div.first-line span{padding: 0 20px;text-align: left;}
+div.fields-container div.adduser-fields div.role-checks div.first-line span label{margin-right: 10px;width: 60%;}
+
+div.fields-container div.adduser-fields div.form-data span.input-field,
+div.fields-container div.plan-fields section.right div.form-data span.input-field,
+div.fields-container div.plan-fields section.left div.form-data span.input-field{
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    width: 50%;
+}
+div.fields-container div.plan-fields section.left div.form-fields div.form-data span.input-field span.error,
+div.fields-container div.plan-fields section.right div.form-data span.input-field span.error,
+div.fields-container div.adduser-fields div.form-data span.input-field span.error{
+    font-size: 12px;
+    font-family: 'Roboto';
+    letter-spacing: 0.5px;
+    color: red;
+    display: none;
+}
+.show-error{display: block !important;}
+
+
+div.fields-container div.adduser-fields div.form-data input,
+div.fields-container div.adduser-fields div.form-data select{
+    background-color: #d7dae3;
+    border: none;
+    font-family: 'Roboto',sans-serif;
+    width: 100%;
+    outline: none;
+    padding: 5px 0;
+    padding-left: 10px;
+}
+
+
+/*setup plan form style*/
+div.fields-container div.plan-fields{
+    height: 100%;
+    overflow: auto;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+}
+div.fields-container div.plan-fields div.form-section{
+    width: 100%;
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+}
+
+div.fields-container div.plan-fields section.left{flex: 0.5;margin-right: 30px;}
+div.fields-container div.plan-fields div.selectplan{margin-bottom: 20px;width: 100%;display: flex;}
+div.fields-container div.plan-fields div.selectplan div.box{width: 50%;}
+div.fields-container div.plan-fields div.selectplan div.box:nth-child(2) {
+    display: flex;
+    flex-direction: column;
+    align-items: end;
+    margin-right: 10px;
+}
+div.fields-container div.plan-fields div.selectplan div.box h3{
+    font-weight: 400;
+    font-family: 'Roboto', sans-serif;
+}
+div.fields-container div.plan-fields select{
+    width: 30%;
+    padding: 5px 5px;
+    border: none;
+    outline: none;
+    background-color: #d7dae3;
+    font-family: 'Roboto',sans-serif;
+}
+
+div.fields-container div.plan-fields section.left div.form-fields div.form-data div.validity-calender{
+    display: flex;
+    align-items: center;
+}
+div.fields-container div.plan-fields section.left div.form-fields div.form-data div.validity-calender span {
+    display: flex;
+    align-items: center;
+    font-size: 15px;
+    width: 50%;
+}
+div.fields-container div.plan-fields section.left div.form-fields div.form-data div.validity-calender span input{ margin-left: 5px;}
+div.fields-container div.plan-fields section.left div.form-fields div.form-data div.validity-calender span#toDate{margin-left: 7px;}
+
+div.fields-container div.plan-fields section.left div.form-fields div.form-data{
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 15px;
+}
+div.fields-container div.payment-fields div.amount-box label,
+div.fields-container div.plan-fields section.right div.form-data label,
+div.fields-container div.plan-fields section.left div.form-fields div.form-data label{
+    font-size: 18px;
+    font-family: 'Roboto',sans-serif;
+    text-transform: capitalize;
+    font-weight: 500;
+    color: #505052;
+    outline: none;
+}
+div.fields-container div.payment-fields div.amount-box input,
+div.fields-container div.plan-fields section.right div.form-data input,
+div.fields-container div.plan-fields section.left div.form-fields div.form-data input,
+div.fields-container div.plan-fields section.left div.form-fields div.form-data select{
+    background-color: #d7dae3;
+    border: none;
+    font-family: 'Roboto',sans-serif;
+    width: 100%;
+    outline: none;
+    padding: 3px 0;
+    padding-left: 10px;
+}
+
+
+div.fields-container div.plan-fields section.right{flex: 0.5;}
+div.fields-container div.plan-fields section.right div.form-data{
+    width: 100%;
+    display: flex;
+    align-items: center;
+    margin-bottom: 20px;
+}
+div.fields-container div.plan-fields section.right div.form-data div.toggle-input{
+    flex: 0.5;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+div.fields-container div.plan-fields section.right div.form-data div.text-input{
+    flex: 0.5;
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+}
+div.fields-container div.plan-fields section.right div.form-data div.text-input.multiselect-input app-multiselect-dropdown,
+div.fields-container div.plan-fields section.right div.form-data div.text-input input,
+div.fields-container div.plan-fields section.right div.form-data div.text-input select{
+    width: 70%;
+    margin-left: 10%;
+}
+div.fields-container div.plan-fields section.right div.form-data.antique div.toggle-input{
+    flex: none;
+    width: 42.5%;
+}
+div.fields-container div.plan-fields section.right div.form-data.antique div.text-input{
+    flex: none;
+    width: 57.5%;
+    justify-content: flex-start;
+}
+div.fields-container div.plan-fields section.right div.form-data.antique div.text-input input{
+    width: 83%;
+    margin-left: 0%;
+}
+
+
+/*payment form style*/
+div.fields-container div.payment-fields{
+    width: 95%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    margin-bottom: 10rem;
+}
+
+div.fields-container div.payment-fields h3{    
+    font-weight: 400;
+    font-family: 'Roboto', sans-serif;
+}
+
+div.fields-container div.payment-fields div.input-box{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 2rem;
+    margin-bottom: 5rem;
+}
+div.fields-container div.payment-fields div.select-box{width: 12%;position: relative;}
+div.fields-container div.payment-fields div.select-box select{
+    background-color: #e0e4ea;
+    border: none;
+    outline: none;
+    width: 100%;
+    padding: 3.5px 0;
+    padding-left: 15px;
+    /* -webkit-appearance:none;
+    appearance:none; */
+}
+div.fields-container div.payment-fields div.select-box div.dropdown-symbol{
+    position: absolute;
+    top: 0;
+    right: 0;
+    height: 100%;
+    width: 17%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+}
+div.fields-container div.payment-fields div.select-box div.dropdown-symbol img{
+    height: 13px;
+    rotate: 180deg;
+    pointer-events: none;
+}
+div.fields-container div.payment-fields div.btn-box{
+    width: 50%;
+    text-align: end;
+}
+div.fields-container div.payment-fields div.btn-box button{
+    padding: 8px 0px;
+    font-size: 16px;
+    font-family: 'Roboto',sans-serif;
+    color: white;
+    font-weight: bold;
+    cursor: pointer;
+    user-select: none;
+    border: none;
+    outline: none;
+    width: 20%;
+}
+div.fields-container div.payment-fields div.btn-box button:hover{
+    box-shadow: rgb(50 50 93 / 24%) 0px 2px 10px -2px, rgb(0 0 0 / 20%) 0px 3px 7px -3px;
+}
+div.fields-container div.payment-fields div.btn-box button:active{box-shadow: none;}
+div.fields-container div.payment-fields div.btn-box button:first-child{background-color: #008dd2;}
+div.fields-container div.payment-fields div.btn-box button:last-child{background-color: #ff0000;margin-left:10px;}
+div.fields-container div.payment-fields div.amount-box{text-align: center;}
+div.fields-container div.payment-fields div.amount-box input{
+    width: 20%;
+    padding: 3px 0;
+    padding-left: 10px;
+    margin-left: 20px;
+}
+
+
+/*toggle button style*/
+div.toggle-btn{
+    width: 15%;
+    height: 1.3rem;
+    background-color: #d9d9d9;
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    cursor: pointer;
+}
+div.toggle-btn div.toggler{
+    width: 0%;
+    height: 100%;
+    transition: all 0.3s ease;
+}
+div.toggle-btn div.indicator{
+    height: 1.5rem;
+    width: 50%;
+    background: #f20000;
+}
+div.toggle-btn.active div.toggler{width: 50% !important;}
+div.toggle-btn.active div.indicator{background-color: #00c800;}
+
+div.fields-container div.plan-fields section.left div.form-data span.input-field div.access-limit{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+div.fields-container div.plan-fields section.left div.form-data span.input-field div.access-limit select{width: 49.5%;}
+
+
+/*add more button with more input css*/
+div.fields-container div.plan-fields section.left div.form-data span.input-field span.more-field,
+div.fields-container div.plan-fields section.right div.form-data span.input-field span.more-field
+{
+    display: flex;
+    align-items: center;
+}
+div.fields-container div.plan-fields section.left div.form-data span.input-field span.more-field span.img,
+div.fields-container div.plan-fields section.right div.form-data span.input-field span.more-field span.img{padding: 0 5px;cursor: pointer;}
+div.fields-container div.plan-fields section.left div.form-data span.input-field span.more-field span.img img,
+div.fields-container div.plan-fields section.right div.form-data span.input-field span.more-field span.img img{pointer-events: none;}
+/* div.fields-container div.plan-fields section.left div.form-data span.input-field span.more-field span.img+span.input input{
+    transition: all 0.4s ease-in-out;
+    width: 0%;
+    padding: 0;
+} */
+div.fields-container div.plan-fields section.left div.form-data span.input-field span.more-field div.input,
+div.fields-container div.plan-fields section.right div.form-data span.input-field span.more-field div.input
+{
+    display: flex;
+    align-items: center;
+}
+div.fields-container div.plan-fields section.left div.form-data span.input-field span.more-field div.input,
+div.fields-container div.plan-fields section.right div.form-data span.input-field span.more-field div.input
+{
+    transition: all 0.4s ease-in-out;
+    width: 0%;
+    padding: 0;
+    overflow: hidden;
+}
+.addmore{
+    width: 100% !important;
+    margin-left: 10px !important;
+    overflow: auto !important;
+}
+
+div.fields-container div.plan-fields section.left div.form-data span.input-field span.more-field div.input button,
+div.fields-container div.plan-fields section.right div.form-data span.input-field span.more-field div.input button
+{
+    border: none;
+    background-color: #4cbfa6;
+    color: white;
+    font-family: 'Roboto';
+    font-size: 15px;
+    padding: 3px 7px;
+}
+
+div.fields-container section.left div.form-data span.input-field input[type="checkbox"].unlimited-access{
+    width: fit-content !important;
+    scale: 1.2;
+    accent-color: red;
+    margin-right: 5px;
+    margin-bottom: -10px;
+}
+
+.important-field::after{
+    content: '*';
+    color: red;
+    font-size: 16px;
+    margin-left: 2px;
+}
+
+span#dataAccessSelect div.demo-case div.from{margin-bottom: 5px;}
+span#dataAccessSelect div.demo-case div.from,
+span#dataAccessSelect div.demo-case div.to{position: relative;}
+span#dataAccessSelect div.demo-case div.from select:first-child,
+span#dataAccessSelect div.demo-case div.to select:first-child{margin-right: 3px;}
+span#dataAccessSelect div.demo-case div.from::before{content: "From:"; left: -11.5%;}
+span#dataAccessSelect div.demo-case div.to::before{content: "To:"; left: -7%;}
+span#dataAccessSelect div.demo-case div.to::before,
+span#dataAccessSelect div.demo-case div.from::before{
+    position: absolute;
+    font-size: 13px;
+    font-weight: 500;
+    font-family: 'Roboto';
+    color: #3c3c3c;
+    letter-spacing: 0.5px;
+}
+
+
+

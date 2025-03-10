@@ -1,0 +1,106 @@
+div.table-detail-container{
+    height: 100%;
+    width: 100%;
+    overflow: hidden;
+    background-color: #f2f2f2;
+}
+
+div.table-detail-container div.top-head{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: black;
+}
+div.table-detail-container div.top-head h5{
+    font-size: 24px;
+    font-family: 'Roboto';
+    font-weight: 400;
+    text-align: center;
+    color: white;
+    margin-top: 10px;
+    width: 90%;
+}
+div.table-detail-container div.top-head img{height: 25px;cursor: pointer;}
+
+div.table-detail-container div.action-bar{
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    padding-right: 15px;
+    margin-top: 10px;
+}
+div.table-detail-container div.action-bar span{
+    background-color: #4bc0a8;
+    border: 1px solid #4bc0a8;
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
+    font-family: 'Roboto';
+    font-weight: 500;
+    letter-spacing: 0.5px;
+    width: 20%;
+    padding: 6px 0px;
+    border-radius: 30px;
+    cursor: pointer;
+    user-select: none;
+    box-shadow: 0px 0px 5px 2px #c2c2c2;
+}
+div.table-detail-container div.action-bar span:active{box-shadow: none;}
+div.table-detail-container div.action-bar span.add{margin-right: 10px;}
+div.table-detail-container div.action-bar span img{
+    height: 18px;
+    margin-right: 10px;
+}
+
+div.table-detail-container div.table{
+    overflow: auto;
+    height: 90%;
+    padding: 10px 15px;
+} 
+div.table-detail-container div.table div.table-box{border: 1px solid #c2c2c2;background-color:white;}
+div.table-detail-container div.table div.table-box div.table-row{
+    width: 100%;
+    display: flex;
+}
+div.table-detail-container div.table div.table-box div.table-row span.table-data{
+    border: 1px solid #c2c2c2;
+    border-top: none;
+    padding: 5px 15px;
+    font-size: 17px;
+    font-family: 'Roboto';
+    letter-spacing: 0.5px;
+}
+div.table-detail-container div.table-box div.table-row span.left{
+    border-left: none;
+    width: 40%;
+    font-weight: bold;
+}
+div.table-detail-container div.table-box div.table-row span.right{
+    border-right: none;
+    width: 60%;
+    font-weight: 400;
+    word-wrap: break-word;
+}
+
+
+@media screen and (max-width: 1600px) {
+    div.table-detail-container div.action-bar{
+        margin-top: 5px;
+        margin-bottom: 10px;
+    }
+    div.table-detail-container div.action-bar span{
+        font-size: 14px;
+        width: 18%;
+        padding: 5px 0px;
+    }
+    div.table-detail-container div.action-bar span img{height: 15px;}
+    div.table-detail-container div.table{height: 85%;}
+    div.table-detail-container div.table div.table-box div.table-row span.table-data{
+        padding: 3px 15px;
+        font-size: 14px;
+    }
+
+}
+

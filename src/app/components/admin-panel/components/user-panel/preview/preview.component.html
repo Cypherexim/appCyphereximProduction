@@ -1,0 +1,140 @@
+<div class="preview-container w-100 bg-white" *ngIf="!isSucceed">
+    <h4 class="sub-head text-center">Preview <img src="assets/images/cross.png" (click)="closeModal()" alt=""></h4>
+    
+    <div class="loader" style="height:80%" *ngIf="isLoading"><img style="scale:1.3" src="assets/images/loader.png" alt=""></div> 
+
+    <div class="user-details-box w-100 d-flex align-items-center" *ngIf="!isLoading">
+        <div class="left-sec h-100 w-50">
+            <div class="data-container">
+                <span>Full Name:</span>
+                <span>{{combinedData?.FullName}}</span>
+            </div>
+            <div class="data-container">
+                <span>Company Name:</span>
+                <span>{{combinedData?.CompanyName}}</span>
+            </div>
+            <div class="data-container">
+                <span>Email:</span>
+                <span>{{combinedData?.Email}}</span>
+            </div>
+            <div class="data-container">
+                <span>Contact:</span>
+                <span>{{combinedData?.MobileNumber}}</span>
+            </div>
+            <div class="data-container">
+                <span>Designation:</span>
+                <span>{{combinedData?.Designation==""?'N/A':combinedData?.Designation}}</span>
+            </div>
+            <div class="data-container">
+                <span>Location:</span>
+                <span>{{combinedData?.Location==""?'N/A':combinedData?.Location}}</span>
+            </div>
+            <div class="data-container">
+                <span>Country:</span>
+                <span>{{combinedData?.country}}</span>
+            </div>
+            <div class="data-container">
+                <span>GST:</span>
+                <span>{{combinedData?.GST==""?'N/A':combinedData?.GST}}</span>
+            </div>
+            <div class="data-container">
+                <span>IEC:</span>
+                <span>{{combinedData?.IEC==""?'N/A':combinedData?.IEC}}</span>
+            </div>
+            <div class="data-container">
+                <span>Role Assign:</span>
+                <span>{{combinedData?.RoleName}}</span>
+            </div>
+        </div>
+
+        <!-- plan details -->
+        <div class="right-sec h-100 w-50">
+            <div class="data-container">
+                <span>Plan Name:</span>
+                <span>{{combinedData?.PlanName}}</span>
+            </div>
+            <div class="data-container">
+                <span>Validity:</span>
+                <span>{{combinedData?.Validity}}</span>
+            </div>
+            <div class="data-container">
+                <span>Data Access:</span>
+                <span>{{combinedData?.DataAccess}}</span>
+            </div>
+            <div class="data-container">
+                <span>Country Access:</span>
+                <span>{{combinedData?.CountryAccess}}</span>
+            </div>
+            <div class="data-container">
+                <span>Excel Point:</span>
+                <span>{{combinedData?.Downloads}}</span>
+            </div>
+            <div class="data-container">
+                <span>Search:</span>
+                <span>{{combinedData?.Searches}}</span>
+            </div>
+            <div class="data-container">
+                <span>Commodity Access:</span>
+                <span>{{combinedData?.CommodityAccess}}</span>
+            </div>
+            <div class="data-container">
+                <span>Tariff Code Access:</span>
+                <span>{{combinedData?.TarrifCodeAccess}}</span>
+            </div>
+            <div class="data-container">
+                <span>Workspace:</span>
+                <span>{{combinedData?.Workspace}}</span>
+            </div>
+            <div class="data-container">
+                <span>WSS Limit:</span>
+                <span>{{combinedData?.WSSLimit}}</span>
+            </div>
+            <div class="data-container">
+                <span>User:</span>
+                <span>{{combinedData?.User}}</span>
+            </div>
+            <div class="data-container">
+                <span>Favourite Shipment:</span>
+                <span>{{combinedData?.Favoriteshipment==""?'N/A':combinedData?.Favoriteshipment}}</span>
+            </div>
+            <div class="data-container">
+                <span>Analysis:</span>
+                <span>{{combinedData?.Analysis==""?'N/A':combinedData?.Analysis}}</span>
+            </div>            
+            <div class="data-container">
+                <span>Company Profile:</span>
+                <span>{{combinedData?.Companyprofile==""?'N/A':combinedData?.Companyprofile}}</span>
+            </div>
+            <div class="data-container">
+                <span>Download Facility:</span>
+                <span>{{combinedData?.Downloadfacility=='true' ? 'Yes' : 'No'}}</span>
+            </div>
+            <div class="data-container">
+                <span>What's Trending:</span>
+                <span>{{combinedData?.Whatstrending=='true' ? 'Yes' : 'No'}}</span>
+            </div>
+            <div class="data-container">
+                <span>Contact Details:</span>
+                <span>{{combinedData?.Contactdetails=='true' ? 'Yes' : 'No'}}</span>
+            </div>
+            <div class="data-container">
+                <span>Add-On Facility:</span>
+                <span>{{combinedData?.Addonfacility=='true' ? 'Yes' : 'No'}}</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="final-submit w-100 text-center">
+        <button class="cypher-btn green-button" [disabled]="isLoading" (click)="onFinalSubmit()">Submit</button>
+    </div>
+</div>
+
+<div class="preview-container" *ngIf="isSucceed">
+    <svg class="checkmark" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 52 52"> <circle class="checkmark__circle" cx="26" cy="26" r="25" fill="none"/> 
+        <path class="checkmark__check" fill="none" d="M14.1 27.2l7.1 7.2 16.7-16.8"/>
+    </svg>
+    <h1 class="text-center">Success</h1>
+    <h4 class="feedback-msg text-center">User {{isUpdatingMode?'Updated':'Registered'}} Successfully!</h4>
+    <div class="feedback w-100 text-center"><button (click)="closeModal('OK')">OK</button></div>
+</div>
+

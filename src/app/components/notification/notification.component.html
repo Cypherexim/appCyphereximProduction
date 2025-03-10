@@ -1,0 +1,30 @@
+<div class="notification-container">
+    <div *ngIf="!isLoading" class="h-100 w-100 d-flex justify-content-center align-items-center">
+        <div class="notification-list" *ngIf="notificationArr.length>0">
+            <h2>All Notifications</h2>
+            <div class="notifications mx-auto">
+                <div (click)="onClickNotifyMsg(item?.Id)" class="position-relative notification-card {{item?.message?.type}}-bg" id="notificationCard{{i}}" *ngFor="let item of copyNotificationArr;let i=index;">
+                    <img *ngIf="!item?.doesExist" class="position-absolute" src="assets/images/new-label.png" alt="new-label" />
+
+                    <div class="side-icon position-relative">
+                        <i class="{{item?.message?.type}} fa-duotone fa-solid fa-circle"></i>                        
+                        <i class="{{item?.message?.type}} {{item?.message?.type=='warning' ? 'fa-solid fa-message-exclamation' : item?.message?.type=='announce' ? 'fa-sharp fa-solid fa-megaphone' : 'fa-sharp fa-solid fa-message'}} position-absolute"></i>
+                    </div>
+                    <div class="main-content w-100">
+                        <p class="mb-0 w-100" [ngStyle]="{'font-weight': !item?.doesExist ? '600': '400'}">{{item?.message?.heading || item?.message?.msg}}</p>
+                        <p class="date">{{item?.created_date | date:'EEEE, MMMM d, y, h:mm a' }}</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    
+        <div class="empty-notification" *ngIf="notificationArr.length == 0">
+            <img src="assets/images/empty-notification.png" alt="" />
+            <h3 class="msg">No Notification</h3>
+        </div>
+    </div>
+    <div class="loader" *ngIf="isLoading">
+        <img src="assets/images/loader.png" alt="">
+        <span>Please wait...</span>
+    </div>
+</div>

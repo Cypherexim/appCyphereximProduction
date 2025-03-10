@@ -1,0 +1,58 @@
+div.table-detail-container{
+    height: 100%;
+    width: 100%;
+    overflow: hidden;
+    background-color: #f2f2f2;
+}
+
+div.table-detail-container div.top-head{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: black;
+}
+div.table-detail-container div.top-head h5{
+    font-size: 24px;
+    font-family: 'Roboto';
+    font-weight: 400;
+    text-align: center;
+    color: white;
+    margin-top: 10px;
+    width: 90%;
+}
+div.table-detail-container div.top-head img{height: 25px;cursor: pointer;}
+
+div.table-detail-container div.table{
+    overflow: auto;
+    max-height: 85vh;
+    padding: 10px 15px;
+} 
+div.table-detail-container div.table div.table-box{border: 1px solid #c2c2c2;background-color:white;}
+div.table-detail-container div.table div.table-box div.table-row{
+    width: 100%;
+    display: flex;
+}
+div.table-detail-container div.table div.table-box div.table-row span.table-data{
+    border: 1px solid #c2c2c2;
+    border-top: none;
+    padding: 2px 15px;
+    font-size: 17px;
+    font-family: 'Roboto';
+    letter-spacing: 0.5px;
+}
+div.table-detail-container div.table-box div.table-row span.left{
+    border-left: none;
+    width: 40%;
+    font-weight: bold;
+}
+div.table-detail-container div.table-box div.table-row span.right{
+    border-right: none;
+    width: 60%;
+    font-weight: 400;
+}
+
+@media screen and (max-width: 1600px) {
+    div.table-detail-container div.table{height: 91%;}
+    div.table-detail-container div.table div.table-box div.table-row span.table-data{font-size: 14px;}
+}
+

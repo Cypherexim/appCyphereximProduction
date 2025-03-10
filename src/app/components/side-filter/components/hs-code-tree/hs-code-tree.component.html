@@ -1,0 +1,66 @@
+<div class="dropdown-container">
+    <div class='side-options' appRotateArrow>
+        <div class='option-name'>
+            <p>{{filterName}}</p>
+        </div>
+        <div class="drop-icon"><img src="assets/images/upArrow.png" alt="" /></div>
+    </div>
+
+    <div class="dropdown-data" id="nested-checkboxes">
+        <div class="selected-items" *ngIf="selectedHsCodes.length>0">            
+            <span [title]="item" *ngFor="let item of selectedHsCodes;">{{item}}<a><img (click)="removeItemFromBox(item)" src="assets/images/cross.png" alt=""></a></span>
+        </div>
+
+        <ul class="list-box mb-0">
+            <li class="checkbox-container" *ngFor="let item of hsCodesObj | keyvalue;let i=index;">
+
+                <div class="dropdown-container">
+                    <div class="side-options" appRotateArrow>
+                        <div class='option-name d-flex'>
+                            <input type="checkbox" id="{{filterNames.HsCode.key}}_{{item.key}}" (click)="onClickCheckbox($event, '2digit')" value="{{item.key}}" />
+                            <p>{{item.key}}</p>
+                            <span *ngIf="hsCodesSumObj[item?.key]['total']['totalValue']" title="Value" class="value">&nbsp;({{convertor(hsCodesSumObj[item?.key]['total']['totalValue'])}})</span>
+                        </div>
+                        <div class="drop-icon"><img src="assets/images/upArrow.png" alt="" /></div>
+                    </div>
+
+                    <div class="dropdown-data">
+                        <ul class="list-box">
+                            <li class="checkbox-container" *ngFor="let item2 of item.value | keyvalue">
+
+                                <div class="dropdown-container">
+                                    <div class="side-options" appRotateArrow>
+                                        <div class='option-name d-flex'>
+                                            <input type="checkbox" id="{{filterNames.HsCode.key}}_{{item2.key}}" (click)="onClickCheckbox($event, '4digit')" value="{{item2.key}}" />
+                                            <p>{{item2.key}}</p>                                            
+                                            <span *ngIf="hsCodesSumObj[item?.key][item2?.key]['totalValue']" title="Value" class="value">&nbsp;({{convertor(hsCodesSumObj[item?.key][item2?.key]['totalValue'])}})</span>
+                                        </div>
+                                        <div class="drop-icon"><img src="assets/images/upArrow.png" alt="" /></div>
+                                    </div>
+
+                                    <div class="dropdown-data">
+                                        <ul class="list-box">
+                                            <li class="checkbox-container" style="padding-left:1.5rem;" *ngFor="let item3 of item2.value;">
+                                                <input type="checkbox" id="{{filterNames.HsCode.key}}_{{item3?.HsCode}}" [checked]="getCheckSignal(item3?.HsCode)" (click)="onClickCheckbox($event, '8digit')" value="{{item3?.HsCode}}" />
+                                                <span class="label">{{item3['HsCode']}}</span>
+                                                <span *ngIf="item3['valueinusd']" title="Value" class="value">&nbsp;({{convertor(item3['valueinusd'])}})</span>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </div>
+
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+
+            </li>
+        </ul>
+        <div class="submit-btn">
+            <span style="display: inline-block; margin-left: auto;">
+                <button type="button" (click)="onClickApply('clear')" [disabled]="selectedHsCodes.length==0">Clear</button>
+                <button type="button" (click)="onClickApply('apply')" [disabled]="selectedHsCodes.length==0">Apply</button>
+            </span>
+        </div>
+    </div>
+</div>

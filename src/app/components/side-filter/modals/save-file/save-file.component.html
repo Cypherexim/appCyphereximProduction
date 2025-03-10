@@ -1,0 +1,50 @@
+<div class="save-container" *ngIf="currentModal=='save-modal'">
+    <div class="top-header"><img src="assets/images/cross.png" (click)="onDismissModal()" alt=""/></div>
+    <h3>{{saveTitle}}</h3>
+    <div class="input-field mb-3">
+        <label for="name">Folder Name:</label>
+        <div class="folder-options">
+            <input [(ngModel)]="foldername" type="text" class="inside-inp" id="folderInput" *ngIf="isAddFolderClick"/>
+            <select [(ngModel)]="foldername" class="inside-inp" *ngIf="!isAddFolderClick">
+                <option value="{{item}}" *ngFor="let item of folderArr;">{{item | titlecase}}</option>
+            </select>
+            <img *ngIf="!isAddFolderClick" title="Add Folder" (click)="toggleFolderSetting('addFolder')" src="assets/images/addFolder.png" alt="" />
+            <button class="btn btn-danger" *ngIf="isAddFolderClick" (click)="toggleFolderSetting('addedFolder')">Add</button>
+        </div>
+    </div>
+
+    <div class="input-field">
+        <!-- <label for="name">Name</label> -->
+        <input [(ngModel)]="fileName" type="text" placeholder="Filename" />
+    </div>
+    
+    <span class="error" *ngIf="isError">{{errorMsg}}</span>
+    <span class="hint"><mark>Hint: name should be in this order - file_name</mark></span>
+
+    <div class="buttons">
+        <button title="Save Exist" class="save-btn cypher-btn blue-bgColor" (click)="onSave('save')">Save</button>
+        <button *ngIf="isAlreadySaved" title="Save New" class="dont-save cypher-btn" (click)="onSave('saveAs')">Save As</button>
+        <button class="cancel cypher-btn" (click)="onDismissModal()">Cancel</button>
+    </div>
+</div>
+
+
+<div class="table-counter save-container" *ngIf="currentModal=='counter-modal'">
+    <div class="top-header">{{listTitle | titlecase}} List ({{totalItems}})<img src="assets/images/cross.png" (click)="onDismissModal()" alt=""/></div>
+
+    <input type="text" [(ngModel)]="searchInpt" (keyup)="onSearchItem()" placeholder="Search here..." />
+    <div class="item-list-container" *ngIf="hasDataReceived">
+        <cdk-virtual-scroll-viewport [itemSize]="5" style="height: 100%;">
+            <div class="item-data" (click)="selectCompany(item)" *cdkVirtualFor="let item of copyItemList;">
+                <!-- <span>{{getCounterVal(item)}}</span> -->
+                <span>{{item[filterKey]}}&nbsp;<span *ngIf="item.valueinusd" class="valueUsd">({{convertor(item['valueinusd'])}})</span></span>
+            </div>
+        </cdk-virtual-scroll-viewport>
+    </div>
+
+    <div class="loader" *ngIf="!hasDataReceived">
+        <img src="assets/images/loader.png" alt="">
+        <span>Please wait...</span>
+    </div>
+</div>
+

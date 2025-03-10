@@ -1,0 +1,16 @@
+<div class="alert-container save-container">
+    <div class="top-header"><img src="assets/images/cross.png" (click)="onDismissModal()" alt=""/></div>
+
+    <div class="msg-container">
+        <!-- <div class="left"><img src="assets/images/danger.png" alt="" /></div> -->
+        <div class="right" [innerHTML]="alertMsg">
+            <!-- <div class="mb-3">🎉 New Update in Cypher! 🎉</div>
+            <div class="mb-3">Introducing Direct Google Linking! 🔍</div>
+            <div class="mb-4">Now, simply click on any buyer or supplier name in Cypher and get directed to Google instantly. No more manual searching!</div>
+            <div class="mb-1">Happy exploring,</div>
+            <div>The Cypher Team</div> -->
+        </div>
+    </div>
+
+    <div class="btn-box"><button class="cypher-btn green-button" (click)="onDismissModal()">OK</button></div>
+</div>

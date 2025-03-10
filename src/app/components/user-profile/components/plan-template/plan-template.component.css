@@ -1,0 +1,73 @@
+div.plan-container{
+    border-radius: 40px;
+    padding: 2rem 1rem;
+    height: calc(70vh - 35px);
+    text-align: center;
+    box-shadow: rgb(0 0 0 / 35%) 0px 5px 15px;
+    width: 100%;
+    overflow: hidden;
+}
+
+div.plan-container h5.plan-level{
+    color: #525252;
+    font-weight: 400;
+    font-size: 18px;
+    margin-bottom: 20px;
+    font-family: 'Roboto', sans-serif;
+    background: #e1e1e1;
+    margin-left: -20px;
+    margin-right: -20px;
+    padding: 5px 0;
+}
+
+div.plan-container h1.plan-price{
+    color: #4cbfa6;
+    font-size: 3.6rem;
+    font-weight: 700;
+    margin-bottom: 20px;
+    font-family: 'Roboto', sans-serif;
+}
+
+div.plan-container div.plan{margin-bottom: 5rem;}
+
+div.plan-container div.plan p{
+    margin: 0;
+    color: #808080;
+    font-size: 22px;
+    padding: 10px 25px;
+    border-bottom: 1px solid #c2c2c2;
+    font-family: 'Roboto', sans-serif;
+}
+div.plan-container div.plan p:last-child{border: none;}
+
+
+div.plan-container span.select-btn{
+    color: white;
+    font-weight: bold;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    letter-spacing: 0.6px;
+    font-family: 'Roboto', sans-serif;
+}
+div.plan-container span.select-btn:hover{
+    box-shadow: rgb(50 50 93 / 24%) 0px 2px 10px -2px, rgb(0 0 0 / 20%) 0px 3px 7px -3px;
+}
+
+@media screen and (max-width: 1600px) {
+    div.plan-container{
+        padding: 1.5rem 1rem;
+        height: calc(75vh - 50px);
+    }
+    div.plan-container h1.plan-price{font-size: 3rem;}
+    div.plan-container div.plan{margin-bottom: 6rem;}
+    div.plan-container div.plan p{
+        font-size: 20px;
+        padding: 7px 25px;
+    }
+}
+
+@media screen and (max-width: 1400px) { 
+    div.plan-container{height: calc(65vh - 50px);}
+}
+

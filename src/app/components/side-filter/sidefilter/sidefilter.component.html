@@ -1,0 +1,172 @@
+<div class="sidebar-box" [ngStyle]="{'transform': isSidebarHide ? 'translateX(-20rem)': 'translateX(0rem)'}">
+    <div class='mainsidebox top' [ngStyle]="{'max-height': isFilterUp ? alertService.setAsPerRes('sidefilter') : '100vh'}">
+      <div class='custom top-head-bar collapsed'>
+        <div class='head-title'>Menu</div>
+        <img id="sidebarHandle" class="close-img" (click)="toggleSidebar($event)" src="assets/images/downarrow.png" alt="">
+      </div>
+      
+      <div class="main-sidebar {{filterBarVisibility?'filter-added':''}}">
+        <div class='side-options' appRotateArrow (click)="onSideOptionClick('home')" *ngIf="getAdvanceAccess()">
+          <div class='option-img ship1'><img class='shipimg3' src="assets/images/points.png" /></div>
+          <div class='option-name'><p class='advsearch'>Advance Search</p></div>
+        </div>
+  
+        <div class='more-side-options'>
+          <div class='side-options' (click)="onSideOptionClick('admin')" *ngIf="userService.hasPermission()">
+            <div class='option-img'><img class='shipimg3' src="assets/images/admin2.png" /></div>
+            <div class='option-name'><p class='shiptext'>Admin Panel</p></div>
+          </div>
+          
+          <!-- <div class='side-options' *ngIf="userService.hasPermission()">
+            <div class='option-img'><img class='shipimg3' src="assets/images/analysis.png" /></div>
+            <div class='option-name'><p class='shiptext'>Analysis</p></div>
+          </div> -->
+
+          <div class='side-options' (click)="onSideOptionClick('favourites')">
+            <div class='option-img'><img class='shipimg3' src="assets/images/star-green.png" /></div>
+            <div class='option-name'><p class='shiptext'>Shipments</p></div>
+          </div>  
+  
+          <span class="side-option-box">
+            <div class='side-options' appRotateArrow>
+              <div class='option-img'><img class='shipimg3' src="assets/images/work.png" /></div>
+              <div class='option-name'><p class='shiptextwork'>WorkStation</p></div>
+              <div class="drop-icon"><img src="assets/images/upArrow.png" alt="" /></div>
+            </div>
+  
+            <div class='sub-options'>
+              <ul><li class="sub-option-name" (click)="onSideOptionClick('workspace')">WorkSpace</li>
+              <li class="sub-option-name" (click)="onSideOptionClick('download')">Downloads</li></ul>
+            </div>
+          </span>        
+  
+          <!-- -->
+          <div class='side-options' (click)="onSideOptionClick('notification')" appRotateArrow>
+            <div class='option-img'><img class='shipimg3' src="assets/images/not.png" /></div>
+            <div class='option-name'><p class='shiptext'>Notification</p></div>
+            <!-- <div class="drop-icon"><img src="assets/images/upArrow.png" alt="" /></div> -->
+          </div>
+          
+          <span class="side-option-box" *ngIf="false">
+            <div class='side-options' appRotateArrow>
+              <div class='option-img'><img class='shipimg3' src="assets/images/duplicacy.png" /></div>
+              <div class='option-name'><p class='shiptextwork'>Reduce Records</p></div>
+              <div class="drop-icon"><img src="assets/images/upArrow.png" alt="" /></div>
+            </div>
+  
+            <div class='sub-options'>
+              <ul class="btn-group">
+                <button class="bg-success me-2">Duplicacy</button>
+                <button class="bg-success me-2">No Name</button>
+                <button class="bg-danger">Reset</button>
+              </ul>
+            </div>
+          </span> 
+        </div>
+      </div>
+    </div>
+  <!-- <div> -->
+    <!-- *ngIf="filterBarVisibility" [hidden]="!filterBarVisibility"> -->
+    <div class="mainsidebox bottom" *ngIf="filterBarVisibility">
+      <div class="horzontal-gap" style="height:5px;width:100%;background-color:white;"></div>
+      <div class='custom bottom-head-bar'>
+        <img src="assets/images/filter.png" alt="" />
+        <div class='head-title'>Custom Filter</div>
+        <div class="drop-icon sub-head-arrow {{isFilterUp ? 'active' : ''}}"><img src="assets/images/downarrow.png" alt="" (click)="isFilterUp=!isFilterUp"/></div>
+      </div>
+
+      <div class='more-side-options filter-options' [ngStyle]="{'max-height': isFilterUp?'82vh':'54vh'}">
+        <!-- exporter filter -->
+        <app-dropdown-box *ngIf="sideFilterAccess.Exp_Name" [filterOptions]="filterOptions.Exp_Name" [filterName]="sideFilterNaming.Exp_Name"></app-dropdown-box>
+        
+        <!-- importer filter -->
+        <app-dropdown-box *ngIf="sideFilterAccess.Imp_Name" [filterOptions]="filterOptions.Imp_Name" [filterName]="sideFilterNaming.Imp_Name"></app-dropdown-box>     
+        
+        <!-- Product Description/Commodity description/Hs Product Description/Product description Native search filter -->
+        <!-- *ngIf="sideFilterAccess.ProductDesc" -->
+        <div class="dropdown-container">
+          <div class='side-options' appRotateArrow>
+            <div class='option-name'><p>{{sideFilterNaming.ProductDesc.name}}</p></div>
+            <div class="drop-icon"><img src="assets/images/upArrow.png" alt="" /></div>
+          </div>
+
+          <div class="dropdown-data">
+            <div class="submit-btn" tabindex="1">
+              <div class="input-box">
+                <div class="selected-val" *ngIf="productDescSearch.length>0">
+                  <span class="item-val" *ngFor="let item of productDescSearch">{{item.length>27 ? item.substring(0,27)+'...' : item}}<a (click)="clearProductValues()">&#10006;</a></span>
+                </div>
+                <input type="text" 
+                  *ngIf="productDescSearch.length==0"
+                  [(ngModel)]="word"
+                  (focus)="setVisibility(true)" 
+                  (focusout)="setVisibility(false)"
+                  (keyup)="onClickEnter($event, sideFilterNaming.ProductDesc.key)"  
+                  placeholder="Search Product Description" />
+
+                <div class="option-container" *ngIf="isDropVisible && word.length>=3">
+                  <span (click)="setVisibility(false, item?.Product)" *ngFor="let item of wordsArr">{{item?.Product}}</span>
+                </div>
+              </div>
+              <span style="display: inline-block; margin-left: auto;">
+                <button type="button" (click)="onSearchProductDesc(sideFilterNaming.ProductDesc.key, 'clear')" style="margin-left: auto;">Clear</button>
+                <button type="button" (click)="onSearchProductDesc(sideFilterNaming.ProductDesc.key, 'add')" style="margin-left: auto;">Apply</button>            
+              </span>
+            </div>
+          </div>
+        </div>
+
+        <!-- HsCode/Tariff code filter -->
+        <app-hs-code-tree [filterName]="sideFilterNaming.HsCode.name" *ngIf="sideFilterAccess.HsCode"></app-hs-code-tree>
+        
+        <!-- country of destination filter -->
+        <app-dropdown-box *ngIf="sideFilterAccess.CountryofDestination" [filterOptions]="filterOptions.CountryofDestination" [filterName]="sideFilterNaming.CountryofDestination"></app-dropdown-box>
+        
+        <!-- Port of Origin  Filter -->
+        <app-dropdown-box *ngIf="sideFilterAccess.PortofOrigin" [filterOptions]="filterOptions.PortofOrigin" [filterName]="sideFilterNaming.PortofOrigin"></app-dropdown-box>
+        <!-- Port of Destination Filter -->
+        <app-dropdown-box *ngIf="sideFilterAccess.PortofDestination" [filterOptions]="filterOptions.PortofDestination" [filterName]="sideFilterNaming.PortofDestination"></app-dropdown-box>
+        <!-- Country of Origin Filter -->
+        <app-dropdown-box *ngIf="sideFilterAccess.CountryofOrigin" [filterOptions]="filterOptions.CountryofOrigin" [filterName]="sideFilterNaming.CountryofOrigin"></app-dropdown-box>
+        <!-- Month wise Filter -->
+        <app-dropdown-box *ngIf="sideFilterAccess.Month" [filterOptions]="filterOptions.Month" [filterName]="sideFilterNaming.Month"></app-dropdown-box>
+        <!-- Year wise Filter -->
+        <app-dropdown-box *ngIf="sideFilterAccess.Year" [filterOptions]="filterOptions.Year" [filterName]="sideFilterNaming.Year"></app-dropdown-box>
+        <!-- Notify part name Filter -->
+        <app-dropdown-box *ngIf="sideFilterAccess.NotifyPartyName" [filterOptions]="filterOptions.NotifyPartyName" [filterName]="sideFilterNaming.NotifyPartyName"></app-dropdown-box>
+        <!-- Loading Port Filter -->
+        <app-dropdown-box *ngIf="sideFilterAccess.LoadingPort" [filterOptions]="filterOptions.LoadingPort" [filterName]="sideFilterNaming.LoadingPort"></app-dropdown-box>
+        <!-- Currency / Value currency Filter -->
+        <app-dropdown-box *ngIf="sideFilterAccess.Currency" [filterOptions]="filterOptions.Currency" [filterName]="sideFilterNaming.Currency"></app-dropdown-box>
+        <!-- Quantity Unit/UQC/Unit Filter -->
+        <app-dropdown-box *ngIf="sideFilterAccess.uqc" [filterOptions]="filterOptions.uqc" [filterName]="sideFilterNaming.uqc"></app-dropdown-box>
+        <!-- Shipment mode Filter -->
+        <app-dropdown-box *ngIf="sideFilterAccess.Mode" [filterOptions]="filterOptions.Mode" [filterName]="sideFilterNaming.Mode"></app-dropdown-box>
+
+        <!-- Quantity Filter -->
+        <div *ngIf="sideFilterAccess.Quantity" class="dropdown-container" style="padding-bottom:5rem;">
+          <div class='side-options' appRotateArrow>
+            <div class='option-name'><p>{{sideFilterNaming?.Quantity.name}}</p></div>
+            <div class="drop-icon"><img src="assets/images/upArrow.png" alt="" /></div>
+          </div>
+
+          <div class="dropdown-data">
+            <div class="submit-btn flex-column position-relative">
+              <input type="range" min="0" max="{{filterOptions.Quantity}}" step="1" list="tickmarks" (input)="rangeChange()" [value]="inputRange" [(ngModel)]="inputRange" id="myinput" />
+              <div class="range-bottom">
+                <span>0</span>
+                <span>{{inputRange}}</span>
+                <span>{{filterOptions.Quantity}}</span>
+              </div>
+              
+              <span style="display: inline-block; margin-left: auto;">
+                <button type="button" (click)="onSearchByQuantity(sideFilterNaming?.Quantity.key, 'clear')" >Clear</button>
+                <button type="button" (click)="onSearchByQuantity(sideFilterNaming?.Quantity.key, 'apply')" >Apply</button>
+              </span>
+            </div>
+          </div>
+        </div>
+        
+      </div>
+    </div>
+</div>

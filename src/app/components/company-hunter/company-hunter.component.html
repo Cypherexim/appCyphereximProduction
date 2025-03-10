@@ -1,0 +1,304 @@
+<!-- <div class="company-hunter-container d-flex align-items-start justify-content-center">
+    <div class="score-board" *ngIf="currentSection=='search'">
+        <i class="fa-solid fa-list me-4" #listIcon id="listIcon" (click)="openFavoriteCompanies(listIcon)" title="Favourite List"></i>
+        <div class="points {{companyPoints>=20 && companyPoints<50 ? 'orange' : companyPoints<10 ? 'red':'green'}}">
+            <span>Remaining:</span>&nbsp;&nbsp;<span>{{companyPoints}}</span>
+        </div>
+    </div>
+
+    <div class="middle-box w-50" *ngIf="currentSection=='search'">
+        <div class="company-search-box w-100">
+            <h3 class="text-center">SEARCH YOUR REQUIRED COMPANY</h3>
+    
+            <div class="input-fields d-flex align-items-center">
+                <div class="search-field h-100 w-100 position-relative">
+                    <input 
+                        [(ngModel)]="typedTxt"
+                        (keyup)="onKeyUpInput('searchList')"                          
+                        [value]="typedTxt" 
+                        type="search" 
+                        placeholder="Search company here" 
+                        class="h-100 w-100" id="" 
+                    />
+                    <ul id="searchList" tabindex="1" (focusout)="onFocusOutSearch()" class="searched-list position-absolute" *ngIf="companyList.length>0">
+                        <li (click)="onClickListItem(item?.company_name)" *ngFor="let item of companyList">{{item?.company_name}}</li>
+                    </ul>
+                </div>
+            </div>
+    
+            <div class="bttn text-center">
+                <button class="btn btn-danger" (click)="onSearchCompany()">Search</button>
+            </div>
+        </div>
+
+        <div *ngIf="hasDataReceived" class="company-search-details">
+            <i class="fa-{{isFavoriteCompany ? 'solid' : 'regular'}} fa-heart {{!isPadLockUnlocked && 'd-none'}}" ngbTooltip="Add to favorites" (click)="saveIntoFavorites()"></i>
+            <i *ngIf="companyData.length>0" class="lock-icon fa-solid fa-{{!isPadLockClicked ? 'lock': 'spinner fa-spin-pulse'}} {{isPadLockUnlocked && 'd-none'}}" (click)="unlockPad()"></i>
+            <div class="load-box w-100 d-flex align-items-center justify-content-center" *ngIf="companyData.length==0">
+                <div class="loader">
+                    <img *ngIf="isLoading" src="assets/images/loader.png" alt="" />
+                    <span *ngIf="isLoading">Please wait...</span>
+                    <h4 *ngIf="!isLoading && !hasAppliedForNewCompany">No Data Available</h4>
+
+                    <div class="bottom-btn" *ngIf="!isLoading">
+                        <button *ngIf="!hasAppliedForNewCompany" class="btn btn-success" (click)="requestForNewCompany()">
+                            <i *ngIf="isApplyInProgress" class="fa-solid fa-spinner fa-spin-pulse"></i>
+                            <span *ngIf="!isApplyInProgress">Request</span>
+                        </button>
+                        <span class="req-msg" *ngIf="hasAppliedForNewCompany">Company details request is sent. Data would be available within or upto 24Hrs.</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="w-100 h-100 {{!isPadLockUnlocked ? 'blurred': ''}}" *ngIf="companyData.length>0">                
+                <h2 class="text-center">{{companyData?.companyName}}</h2>
+    
+                <div class="basic-data w-75 mx-auto">
+                    <div class="data d-flex align-items-center mb-3 {{companyData[item?.key]=='NA' && 'd-none'}}" *ngFor="let item of companyInfoPoints">
+                        <i class="fa-solid fa-{{item?.icon}} me-3"></i>
+                        <p class="mb-0">{{companyData[item?.key]}}</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="favorites-list-container" *ngIf="currentSection=='list'">
+        <div class="table-heading text-center w-100">
+            <i class="fa-solid fa-arrow-left" title="Go Back" (click)="currentSection='search'"></i>
+            <span class="{{favoriteCompanyList.length==0 && 'invisible'}}">Favourite Companies</span>
+            <i *ngIf="favoriteCompanyList.length>0" (click)="onDownloadExcelFile()" class="fa-solid fa-download me-4" title="Download Excel"></i>
+        </div>
+
+        <div *ngIf="favoriteCompanyList.length>0" class="table-box">
+            <table class="w-100">
+                <thead>
+                    <th>S. no.</th>
+                    <th>Company</th>
+                    <th>IEC</th>
+                    <th>Contact</th>
+                    <th>Email</th>
+                    <th>Contact Person</th>
+                    <th>Location</th>
+                    <th>Address</th>
+                </thead>
+    
+                <tbody>
+                    <tr *ngFor="let item of favoriteCompanyList;let i=index">
+                        <td>{{i+1}}</td>
+                        <td>{{item?.company_name || 'N/A'}}</td>
+                        <td>{{item?.iec || 'N/A'}}</td>
+                        <td>{{item?.contact || 'N/A'}}</td>
+                        <td>{{item?.email || 'N/A'}}</td>
+                        <td>{{item?.person_name || 'N/A'}}</td>
+                        <td>{{item?.location || 'N/A'}}</td>
+                        <td>{{item?.address || 'N/A'}}</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div *ngIf="favoriteCompanyList.length==0" class="empty-msg d-flex align-items-center justify-content-center">
+            <i *ngIf="isListInFetching" class="fa-solid fa-circle-notch fa-spin" style="color:#4cbfa6;font-size:1.8rem;"></i>
+            <span *ngIf="!isListInFetching">No Favorites</span>
+        </div>
+    </div>
+</div> -->
+
+
+<div class="container d-flex flex-column justify-content-start">
+    <div class="d-flex align-items-center">
+        <div class="search-bar position-relative w-100">
+            <i class="fa-solid fa-magnifying-glass"></i>
+            <input
+                type="text"
+                [(ngModel)]="typedTxt"
+                (keyup)="onKeyUpInput('searchList')" 
+                [value]="typedTxt"
+                placeholder="Search company here"
+            class="w-100">
+            <button (click)="onSearchCompany()">Search</button>
+    
+            <ul id="searchList" tabindex="1" (focusout)="onFocusOutSearch()" class="searched-list position-absolute" *ngIf="companyList.length>0">
+                <li (click)="onClickListItem(item?.company_name)" *ngFor="let item of companyList">{{item?.company_name}}</li>
+            </ul>
+        </div>
+        
+        <div ngbTooltip="Favourite List" class="favorite-list d-flex align-items-center justify-content-center" #listIcon id="listIcon" (click)="openFavoriteCompanies(listIcon)">
+            <i class="fa-solid fa-heart"></i>
+        </div>
+    </div>
+
+    <div class="d-flex justify-content-between h-90">
+        <div class="sidebar h-100">
+            <div class="feedback">
+                <h4>Feedback</h4>
+                <p>Suggest below how to Improve by submitting feedback</p>
+                <input type="text" #feedbackInp placeholder="Please specify title" class="feedback-input w-100">
+                <button class="feedback-submit" (click)="submitFeedback(feedbackInp)">Submit</button>
+            </div>
+            
+            <div class="commodities">
+                <div class="loader h-100" *ngIf="commoditiesList.length==0">
+                    <i class="fa-solid fa-circle-notch fa-spin" style="color:#4cbfa6;font-size:1.8rem;"></i>
+                </div>
+
+                <div class="h-100" *ngIf="commoditiesList.length>0">
+                    <div class="text-icon">
+                        <h4>Commodities</h4>
+                    </div>
+                    <ul [ngStyle]="{'max-height': !isSeeMoreOpen ? '65%': '85%'}">
+                        <li *ngFor="let item of commoditiesList | slice:0: !isSeeMoreOpen?10:commoditiesList.length">
+                            <label>{{item?.commodity}}</label><span class="digit">({{item?.export_total}})</span>
+                        </li>
+                    </ul>
+                    <a class="show-more" (click)="isSeeMoreOpen=!isSeeMoreOpen">See {{!isSeeMoreOpen ? 'more': 'less'}}</a>
+                </div>
+            </div>
+        </div>
+        
+        <div class="main-content list h-100" *ngIf="currentSection=='dashboard'">
+            <div class="trending-companies">
+                <h4 class="trading">Trending Companies</h4>
+                <div class="companies-list">
+                    <div class="company-card" *ngFor="let item of topCompaniesList.topFive|slice:0:3">
+                        <img src="/assets/images/company-info/{{item?.img}}.png" alt="{{item.company_name}}">
+                        <h4>{{item?.company_name}}</h4>
+                        <p class="About">{{item?.location}}</p>
+                        <div class="button">
+                            <button class="show-jobs" (click)="onSearchCompanyByBlurredEye(item?.company_name)">Show Details</button>
+                            <button class="follwing follow-button disabled"> 
+                                <i class="fa-solid fa-heart"></i>
+                                <p>Favorites</p>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Contact List -->
+            <h4 class="Contact text-center ">Company List</h4>
+            <div class="contact-list">
+                <div class="loader" *ngIf="topCompaniesList.topTen.length==0">
+                    <i class="fa-solid fa-circle-notch fa-spin" style="color:#4cbfa6;font-size:1.8rem;"></i>
+                    <span>Please wait...</span>
+                </div>
+
+                <!-- Contact List Table -->
+                <table class="contact-table w-100" *ngIf="topCompaniesList.topTen.length>0">
+                    <thead class="sticky-top">
+                        <tr>
+                            <th>Name</th>
+                            <th class="text-center">Location</th>
+                            <th class="text-center">Email</th>
+                            <th class="text-center">Contact</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr *ngFor="let item of topCompaniesList.topTen">
+                            <td class="first-td">
+                                <div><span>{{item?.person_name}}</span></div>
+                                <div class="bttom-box">{{item?.company_name}}</div>
+                            </td>
+                            <td class="text-center">{{item?.location}}</td>
+                            <td class="eya-mail text-center">
+                                <label>********@****.com</label>
+                                <i (click)="onSearchCompanyByBlurredEye(item?.company_name)" class="eye-blur fa-solid fa-eye"></i>
+                            </td>
+                            <td class="eya-mail text-center">
+                                <label>**********</label>
+                                <i (click)="onSearchCompanyByBlurredEye(item?.company_name)" class="eye-blur fa-solid fa-eye"></i>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div class="main-content result h-100" *ngIf="currentSection=='search'">
+            <div class="trending-companies h-100">
+                <div class="manu-bar d-flex justify-content-between align-items-center">
+                    <i class="fa-solid fa-arrow-left ms-2" title="Go Back" (click)="currentSection='dashboard'"></i>
+                    
+                    <div class="d-flex justify-content-evenly align-items-center">
+                        <h4 class="trading">Result</h4>                        
+                    </div>
+                </div>
+
+                <div class="form-box">
+                    <div class="loader h-100 w-100" *ngIf="companyData.length==0">
+                        <i *ngIf="isLoading" class="fa-solid fa-circle-notch fa-spin" style="color:#4cbfa6;font-size:1.8rem;"></i>
+                        <span *ngIf="isLoading">Please wait...</span>
+                        <h4 *ngIf="!isLoading">No Data Available</h4>
+                    </div>
+
+                    <div class="h-100 w-100" *ngIf="!isLoading && companyData.length>0">
+                        <div class="top-box">
+                            <div class="company-form">
+                                <div class="text-heart-icon d-flex justify-content-between">
+                                    <h5 class="company-name mb-1">{{companyData?.companyName}}</h5>
+                                    <!-- <i class="fa-solid fa-heart"></i> -->
+                                    <i class="fa-{{isFavoriteCompany ? 'solid' : 'regular'}} fa-heart" ngbTooltip="Add to favorites" (click)="saveIntoFavorites()"></i>
+                                </div>
+                                <p class="sub-text">Suggest below how to improve by submitting feedback</p>
+                            </div>
+                        </div>
+    
+                        <div class="company-info">
+                            <strong>Company Information</strong>
+    
+                            <ul>
+                                <li class=" {{companyData[item?.key]=='NA' && 'd-none'}}" *ngFor="let item of companyInfoPoints">
+                                    <i class="fa-solid fa-{{item?.icon}} me-3"></i>
+                                    <p class="mb-0">{{companyData[item?.key]}}</p>
+                                </li>
+                            </ul>
+                            <a class="profile-link">Company Profile</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="favorites-list-container w-75" *ngIf="currentSection=='list'">
+            <div class="table-heading text-center w-100">
+                <i class="fa-solid fa-arrow-left" title="Go Back" (click)="currentSection='dashboard'"></i>
+                <span class="{{favoriteCompanyList.length==0 && 'invisible'}}">Favourite Companies</span>
+                <i *ngIf="favoriteCompanyList.length>0" (click)="onDownloadExcelFile()" class="fa-solid fa-download me-4" title="Download Excel"></i>
+            </div>
+    
+            <div *ngIf="favoriteCompanyList.length>0" class="table-box">
+                <table class="w-100">
+                    <thead class="sticky-top">
+                        <th>S. no.</th>
+                        <th>Company</th>
+                        <th>IEC</th>
+                        <th>Contact</th>
+                        <th>Email</th>
+                        <th>Contact Person</th>
+                        <th>Location</th>
+                        <th>Address</th>
+                    </thead>
+        
+                    <tbody>
+                        <tr *ngFor="let item of favoriteCompanyList;let i=index">
+                            <td>{{i+1}}</td>
+                            <td>{{item?.company_name || 'N/A'}}</td>
+                            <td>{{item?.iec || 'N/A'}}</td>
+                            <td>{{item?.contact || 'N/A'}}</td>
+                            <td>{{item?.email || 'N/A'}}</td>
+                            <td>{{item?.person_name || 'N/A'}}</td>
+                            <td>{{item?.location || 'N/A'}}</td>
+                            <td>{{item?.address || 'N/A'}}</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+    
+            <div *ngIf="favoriteCompanyList.length==0" class="empty-msg d-flex align-items-center justify-content-center">
+                <i *ngIf="isListInFetching" class="fa-solid fa-circle-notch fa-spin" style="color:#4cbfa6;font-size:1.8rem;"></i>
+                <span *ngIf="!isListInFetching">No Favorites</span>
+            </div>
+        </div>
+    </div>
+</div>

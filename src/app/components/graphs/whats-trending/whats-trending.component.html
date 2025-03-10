@@ -1,0 +1,98 @@
+<div class="navigation-container w-100" [ngSwitch]="currentPage" [ngStyle]="{'height': isAnalysisTabActive ? containerHeight[0] : containerHeight[1]}">
+    <!--  -->
+    <span *ngSwitchCase="'companyProfile'"><app-company-profile class="position-relative" currentAnalysis="company"></app-company-profile></span>
+    <span *ngSwitchCase="'hsCodeAnalysis'"><app-all-analysis currentAnalysis="hs code"></app-all-analysis></span>
+    <span *ngSwitchCase="'countryAnalysis'"><app-all-analysis currentAnalysis="country"></app-all-analysis></span>
+    <span *ngSwitchCase="'timeAnalysis'"><app-all-analysis currentAnalysis="time"></app-all-analysis></span>
+    <span *ngSwitchCase="'exporterAnalysis'"><app-all-analysis currentAnalysis="supplier"></app-all-analysis></span>
+    <span *ngSwitchCase="'importerAnalysis'"><app-all-analysis currentAnalysis="buyer"></app-all-analysis></span>
+    <div class="h-100 w-100" *ngSwitchCase="'customizeAnalysis'"><app-custom-analysis currentAnalysis="custom" class="d-block position-relative h-100"></app-custom-analysis></div>
+
+    <div class="whats-trending-container" *ngSwitchDefault>
+        <!-- <app-navbar></app-navbar> -->
+        <section class="top-container">
+            <div class="left-container">
+                <div class="upper-card-charts">
+                    <app-card-chart radioId="exportBullet" cardTypeName="export rate" [currentPercent]="exportValue" performPercent="-28.12" [chartOption]="smChartOptions[0]"></app-card-chart>
+                    <app-card-chart radioId="importBullet" cardTypeName="import rate" [currentPercent]="importValue" performPercent="2.12" [chartOption]="smChartOptions[1]"></app-card-chart>
+                    <app-card-chart cardTypeName="total value" [currentPercent]="totalValue" performPercent="39.15" [chartOption]="smChartOptions[2]"></app-card-chart>
+                </div>
+                <div class="below-card-charts">
+                    <app-card-md-chart [chartOption]="mdChartOptions[0]" type="radar"></app-card-md-chart>
+                    <app-card-md-chart [chartOption]="mdChartOptions[3]" type="line"></app-card-md-chart>
+                </div>
+            </div>
+            <div class="right-container">
+                <app-card-md-chart [chartOption]="mdChartOptions[1]" type="pie"></app-card-md-chart>
+                <app-card-md-chart [chartOption]="mdChartOptions[2]" type="bar"></app-card-md-chart>
+            </div>
+        </section>
+    
+        <section class="mid-container">
+            <div class="table-container">
+                <app-commodity-table></app-commodity-table>
+            </div>
+        </section>
+    
+    
+        <!-- bottom country map with testimonials -->
+        <section class="bottom-container">
+            <div *ngIf="isAPIinProcess" class="loader-img h-100 w-100 d-flex flex-column justify-content-center align-items-center">
+                <img src="assets/images/graph_loader.gif" alt="" />
+                <span>Please wait...</span>
+            </div>
+
+            <div class="bottom-left h-100" *ngIf="!isAPIinProcess">
+                <div class="country-chart">
+                    <div class="country-map">
+                        <div class="map">
+                            <div class="w-100 h-100" id="whatsTrandingWorldMap"></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="chart-table">
+                    <table>
+                        <thead class="sticky-top">
+                            <th *ngFor="let head of tableHeads;">{{head | titlecase}}</th>
+                        </thead>
+                        <tbody>
+                            <tr *ngFor="let item of worldMapList | slice:0:5;">
+                                <td>{{item?.country}}</td>
+                                <td>{{item?.total_exporters}}</td>
+                                <td>{{item?.total_importers}}</td>
+                                <td>{{item?.exp_share}}%</td>
+                                <td>{{item?.imp_share}}%</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+    
+            <!-- <div class="bottom-right d-none">
+                <div class="testimonial-container">
+                    <div class="testimonial-list">
+                        <div class="testimonial-card" *ngFor="let item of [1,2,3,4]">
+                            <p>Cypher is a revolutionary tool that helped our company more than its worth. We've been using this for years now and are more than satisfied with its performance.</p>
+                            
+                            <div class="user-info">
+                                <span class="name-logo">ZC</span>
+                                <h4>Zuck Chan <span>Design Lead, Hencework</span></h4>
+                                <span class="rating">
+                                    <img src="assets/images/{{item}}-rate.png" *ngFor="let item of ratingArr" alt="">
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="recent-activity">
+                    <div class="top-head">
+                        <h4>Recent Activity</h4>
+                        <img src="assets/images/dots.png" alt="">
+                    </div>
+                </div>
+            </div> -->
+        </section>
+    </div>
+</div>
+
+

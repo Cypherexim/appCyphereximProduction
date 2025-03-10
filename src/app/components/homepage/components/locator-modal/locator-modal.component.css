@@ -1,0 +1,237 @@
+div.locator-box{
+    height: 100%;
+}
+
+div.locator-box div.exceed-popup{
+    position: absolute;
+    z-index: 100;
+    top: 6.5%;
+    width: 100%;
+    background-color: #00000096;
+    height: 86.5%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    transform-origin: center;
+    animation-name: showAlert;
+    animation-duration: 300ms;
+}
+@keyframes showAlert {
+    0% {transform: scale(0);}
+    50% {transform: scale(1.1);}
+    100% {transform: scale(1);}
+}
+div.locator-box div.exceed-popup p{
+    margin: 0;
+    background-color: white;
+    padding: 10% 30px;
+    text-align: center;
+    width: 50%;
+    line-height: 25px;
+    font-size: 18px;
+    letter-spacing: 0.5px;
+    font-family: 'Roboto';
+    font-weight: 400;
+    position: relative;
+}
+div.locator-box div.exceed-popup p span{
+    background-color: black;
+    border-radius: 30px;
+    position: absolute;
+    top: 5%;
+    right: 2%;
+    padding: 2px 5px;
+    cursor: pointer;
+}
+div.locator-box div.exceed-popup p span img{height: 20px;margin-top: -1px;}
+
+div.locator-box div.head-bar{
+    background-color: black;
+    display: flex;
+    justify-content: space-between;
+    padding: 5px 1rem;
+    padding-left: 2rem;
+    align-items: center;
+}
+div.locator-box div.head-bar h5{color: white;}
+div.locator-box div.head-bar img{height: 25px;cursor: pointer;}
+
+div.locator-box div.table-container{height: 85%;width: 100%;overflow-y: hidden;}
+div.locator-box div.alphabets-search{ display: flex; justify-content: space-evenly; background-color: white; }
+div.locator-box div.alphabets-search span{
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    color: #5c5c5c;
+    text-decoration: underline;
+}
+div.locator-box div.alphabets-search span:hover{color: blue; }
+div.locator-box div.copy-tab-head{background-color: #4cbfa6;}
+div.locator-box div.copy-tab-head span{
+    display: inline-block;
+    padding: 5px;
+}
+div.locator-box div.copy-tab-head span:last-child{width: 100%;text-align: right;padding-right: 5px;}
+div.locator-box div.copy-tab-head span:last-child input[type="text"]{
+    width: 100%;
+    border: 1px solid #4cbfa6;
+    outline: none;
+    padding: 5px 10px;
+    font-size: 15px;
+    font-family: 'Roboto';
+    letter-spacing: 0.5px;
+    font-weight: 400;
+}
+
+div.locator-box div.table-container div.copy-tab-foot{
+    width: 100%;
+    text-align: right;
+    position: sticky;
+    bottom: 0;
+    background-color: white;
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    padding: 5px 0;
+    border-top: 1px solid #d9d9d9;
+}
+div.locator-box div.table-container div.copy-tab-foot div.pagination{
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+div.locator-box div.table-container div.copy-tab-foot div.pagination img{
+    height: 34px;
+    background-color: #e5e5e5;
+    border-radius: 30px;
+    cursor: pointer;
+    padding: 4px 4px;
+    box-shadow: 0px 0px 5px 0px #0000009e;
+}
+div.locator-box div.table-container div.copy-tab-foot div.pagination img:active{box-shadow: none;}
+div.locator-box div.table-container div.copy-tab-foot div.pagination img:first-child{rotate: 180deg;}
+div.locator-box div.table-container div.copy-tab-foot div.pagination pre{
+    margin: 0;
+    margin-left: 10px;
+    position: absolute;
+    right: 28%;
+    font-size: 14px;
+    transform: translate(-50%, 10%);
+}
+div.locator-box div.table-container div.copy-tab-foot div.pagination span{
+    margin: 0 20px;
+    font-size: 18px;
+    font-weight: 400;
+    font-family: 'Roboto';
+}
+
+
+div.locator-box div.table-container div.copy-tab-foot button{
+    padding: 5px 40px;
+    border-radius: 3px;
+    margin-right: 5px;
+}
+
+div.locator-box div.table-container table{
+    width: 100%;
+    height: auto;
+}
+div.locator-box div.table-container table thead{
+    position: sticky;
+    top: 0;
+    z-index: 99;
+    background-color: #4cbfa6;
+}
+div.locator-box div.table-container table thead th{
+    color: white;
+    font-weight: 500;
+    letter-spacing: 0.6px;
+}
+div.locator-box div.table-container table thead th:last-child{ text-align: right;padding-right: 5px;}
+div.locator-box div.table-container table tbody tr:nth-child(even){background-color: #e5e5e5;}
+div.locator-box div.table-container table tbody tr{border-bottom: 1px solid #e5e5e5;}
+div.locator-box div.table-container table tbody tr.selectAll td:first-child input[type="checkbox"]{accent-color: red;}
+div.locator-box div.table-container table tbody tr.selectAll td:last-child{
+    font-weight: 500;
+}
+div.locator-box div.table-container table tbody td{
+    padding: 10px 0;
+    font-family: 'Roboto';
+    letter-spacing: 0.4px;
+}
+div.locator-box div.table-container table tbody td:first-child{text-align: center;width: 10%;}
+div.locator-box div.table-container table tbody td input[type="checkbox"]{
+    accent-color: #4cbfa6;
+    scale: 1.1;
+}
+div.locator-box div.table-container table tbody td:nth-child(2){
+    padding-left: 1rem;
+}
+div.locator-box div.table-container table tfoot{
+    position: sticky;
+    bottom: 0;
+    background-color: white;
+}
+div.locator-box div.table-container table tfoot tr td{
+    text-align: right;
+    padding: 5px 0;
+    padding-right: 10px;
+}
+div.locator-box div.table-container table tfoot tr td button{
+    padding: 5px 40px;
+    border-radius: 3px;
+}
+
+div.locator-box div.table-container h5{
+    height: 93%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+div.locator-box div.table-container cdk-virtual-scroll-viewport{height: 90%;}
+@media screen and (max-width: 1680px){
+    div.locator-box div.table-container div.copy-tab-foot div.pagination pre{right: 25%;}
+}
+@media screen and (max-width: 1600px) {
+    div.locator-box div.copy-tab-head span:last-child input[type="text"]{font-size: 14px;}
+    div.locator-box div.table-container div.copy-tab-foot button{
+        padding: 5px 25px;
+        font-size: 14px;   
+    }
+    div.locator-box div.table-container table tbody td:nth-child(2){
+        font-size: 14px;
+        letter-spacing: 0.7px;
+        padding: 5px 0;
+    }
+    div.locator-box div.table-container table tbody td input[type="checkbox"]{scale: 0.9;}
+    div.locator-box div.table-container cdk-virtual-scroll-viewport{height: 75%;}
+
+    div.locator-box div.table-container div.copy-tab-foot{bottom: 10px;}
+    div.locator-box div.table-container div.copy-tab-foot div.pagination pre{right: 25%;}
+    div.locator-box  div.table-container  div.copy-tab-foot  button{padding: 5px 40px;}
+}
+
+@media screen and (max-width: 1440px){
+    div.locator-box div.table-container div.copy-tab-foot div.pagination pre{right: 22%;}
+}
+
+@media screen and (max-width: 1400px){
+    div.locator-box div.table-container{height: 100%;}
+    div.locator-box div.table-container div.copy-tab-foot div.pagination pre{right: 20%;}
+}
+
+@media screen and (max-width: 1366px){
+    div.locator-box div.table-container{height: 89%;}
+    div.locator-box div.table-container div.copy-tab-foot{bottom: 0px;}
+    div.locator-box div.table-container div.copy-tab-foot div.pagination img{height: 30px;}
+    div.locator-box div.copy-tab-head span:last-child input[type="text"]{padding: 2px 10px;}
+}
+
+
+@media screen and (max-width: 1280px) {
+    @media screen and (max-height: 720px){
+        div.locator-box div.table-container cdk-virtual-scroll-viewport{height: 70%;}
+    }
+}

@@ -1,0 +1,85 @@
+<div class="download-container" *ngIf="modalType=='download'">
+    <div class="action-bar sticky-top"><img (click)="closeModal()" src="assets/images/cross.png" alt=""></div>
+    <div class="loader" *ngIf="currentTab=='wait'">
+        <img src="assets/images/loader.png" alt="">
+        <span>Please wait...</span>
+    </div>
+
+    <section class="first-phase" *ngIf="currentTab=='phase1'">
+        <h5>Please provide the filename for the link generation.</h5>
+        
+        <input type="text" placeholder="download filename" [(ngModel)]="downloadName" id="" />
+        <span class="error" [ngStyle]="{'visibility': isError?'visible':'hidden'}">
+            {{fileNameError}}
+        </span>
+
+        <span class="hint"><mark>Hint: name should be in this order - file_name</mark></span>
+
+        <div class="next-button"><button (click)="onClickNext()" class="cypher-btn blue-bgColor">Next</button></div>
+    </section>
+
+    <section class="second-phase" *ngIf="currentTab=='phase2'">
+        <p class="head">Your downloading points will be:</p>
+
+        <div class="calculation">
+            <div class="available"><span>Available downloading points:</span> <span>{{availablePoints>=2500000 ? 'UNLIMITED' : availablePoints}}</span></div>
+            <div class="cost-box">
+                <p>downloading cost point <span>({{numberOfRecords+" x "+costPoints}})</span>:</p>
+                <span class="right-value">
+                    <span style="color:red;">- {{numberOfRecords * costPoints}}</span>
+                    <div class="bar"></div>
+                </span>
+            </div>
+            <div class="result">
+                <span>Remaining downloading points:</span> 
+                <span id="remainingResult" [ngStyle]="{'color': remainingPoints>0?'#65c169':'red'}">{{remainingPoints>=2500000 ? 'UNLIMITED' : remainingPoints}}</span>
+            </div>
+        </div>
+        
+        <div class="agree">
+            <input #checkElem type="checkbox" />
+            <span>Do you agree to generate the donwload link</span>
+        </div>
+
+        <div class="submit-button">
+            <button (click)="onClickPrev()" class="cypher-btn blue-bgColor">Prev</button>
+            <button (click)="onClickGen(checkElem)" class="cypher-btn blue-bgColor">Generate</button>
+        </div>
+        <p class="error" *ngIf="isError">{{phase2Err}}</p>
+    </section>
+</div>
+
+<div class="download-container success-msg" *ngIf="isModalForMsg(modalType)">
+    <span><img (click)="closeModal()" src="assets/images/cross.png" alt=""></span>
+    <svg class="checkmark" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 52 52"> <circle class="checkmark__circle" cx="26" cy="26" r="25" fill="none"/> 
+        <path class="checkmark__check" fill="none" d="M14.1 27.2l7.1 7.2 16.7-16.8"/>
+    </svg>
+
+    <h3>Congratulations</h3>
+    <h5>{{getSuccessMsg()}}</h5>
+    
+    <div class="w-75 d-flex justify-content-center">
+        <button *ngIf="modalType=='download-msg'" class="btn btn-success me-2" (click)="gotoDownload('download')">Goto Downloads</button>
+        <button class="btn btn-success" (click)="closeModal()">OK</button>
+    </div>
+</div>
+
+
+<div class="credit-container" *ngIf="modalType=='credit-msg'">
+    <img src="assets/images/warning.png" alt="" />
+    <h4>{{warningMsg}}</h4>
+</div>
+
+<div class="timeout-container w-100 h-100" *ngIf="modalType=='timeout-modal'">
+    <div class="timeout-box">
+        <!-- <div class="header"><img (click)="closeModal()" src="assets/images/cross.png" alt=""></div> -->
+        <div class="content h-75">
+            <span>Session Timeout</span>
+            <span>Please login again for security reason, Thank You!</span>
+        </div>
+        <div class="btn-container text-center">
+            <button class="btn btn-success" (click)="closeModal(true)">OK</button>
+        </div>
+    </div>
+</div>
+

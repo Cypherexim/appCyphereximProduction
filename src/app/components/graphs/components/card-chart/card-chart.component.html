@@ -1,0 +1,19 @@
+<div class="sm-chart-card">
+    <div class="graph-header">
+        <h1><span>{{cardTypeName | titlecase}}</span>{{currentPercent}}</h1>
+
+        <div class="radio-bullet">
+            <span (click)="onRadioClick(radioId)" class="outer" *ngIf="cardTypeName!='total value'">
+                <span [id]="radioId" class="inner {{radioId=='importBullet' ? 'active-radio': ''}}"></span>
+            </span>
+            <select [(ngModel)]="choosenYear" (change)="onChangeYear()" *ngIf="cardTypeName=='total value'">
+                <option value="{{year}}" *ngFor="let year of yearList">{{year}}</option>
+            </select>
+            <!-- <p class="text-end">-{{performPercent}}% <span>&darr;</span></p> -->
+        </div>
+    </div>
+
+    <div class="graph-container">
+        <canvas id="line_chart_{{chartOption?.id}}"></canvas>
+    </div>
+</div>

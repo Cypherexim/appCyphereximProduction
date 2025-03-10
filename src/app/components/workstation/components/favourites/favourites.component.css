@@ -1,0 +1,71 @@
+div.favourite-container{}
+
+div.favourite-container div.row div.no-data{
+    font-size: 18px;
+    font-weight: 500;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+}
+div.favourite-container div.row div.col-3{padding: 10px;}
+
+div.favourite-container div.row div.col-3 div.favourite-card{
+    height: 17.5rem;
+    width: 95%;
+    overflow: hidden;
+    border-radius: 10px;
+    box-shadow: 0px 1px 4px 0px #00000094;
+}
+div.favourite-container div.row div.col-3 div.favourite-card:hover{box-shadow: 0px 0px 10px 0px #0000007a;}
+div.favourite-container div.row div.col-3 div.favourite-card div.btn-bar{
+    height: 10%;
+    padding: 0 15px;
+    cursor: pointer;
+}
+div.favourite-container div.row div.col-3 div.favourite-card div.btn-bar i{color: #ea4949;font-size: 15px;transition: all 0.3s ease;}
+div.favourite-container div.row div.col-3 div.favourite-card div.btn-bar i:hover{color: #e81c1c;scale: 1.15;}
+
+div.favourite-container div.row div.col-3 div.favourite-card div.content-box{
+    padding: 0 20px;
+    max-height: 70%;
+    overflow: hidden;
+}
+div.favourite-container div.row div.col-3 div.favourite-card div.content-box h2{
+    margin-bottom: 1rem;
+    text-align: left;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    -webkit-line-clamp: 1;
+    -webkit-box-orient: vertical;
+}
+div.favourite-container div.row div.col-3 div.favourite-card div.content-box div.key-points div.point{
+    font-size: 18px;
+    text-align: left;
+    display: flex;
+    align-items: center;
+    margin-bottom: 5px;
+}
+div.favourite-container div.row div.col-3 div.favourite-card div.content-box div.key-points div.point span:first-child{font-weight: 700;margin-right: 10px;}
+div.favourite-container div.row div.col-3 div.favourite-card div.content-box div.key-points div.point span:last-child{font-weight: 500;}
+div.favourite-container div.row div.col-3 div.favourite-card div.content-box div.date{text-align: end;}
+
+
+div.favourite-container div.row div.col-3 div.favourite-card div.view-btn{
+    background-color: #4cbfa6;
+    color: white;
+    height: 150%;
+    width: 150%;
+    transform: translate(-50%, -50%);
+    border-radius: 50%;
+    top: 158%;
+    left: 50%;
+    padding-top: 3%;
+    font-size: 20px;
+    font-weight: 500;
+    letter-spacing: 0.5px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+div.favourite-container div.row div.col-3 div.favourite-card div.view-btn:hover{top: 155%;text-decoration: underline;}
+

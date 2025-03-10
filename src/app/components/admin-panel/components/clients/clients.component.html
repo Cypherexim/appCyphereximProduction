@@ -1,0 +1,148 @@
+<div class="team-profile-container">
+    <div class="table-container">
+        <div class="table-head">
+            <select (change)="onChooseRole($event)" *ngIf="listType=='user'">
+                <option value="">All</option>
+                <option value="{{item?.RoleId}}" *ngFor="let item of roleListType;">{{item?.RoleName | uppercase}}</option>
+            </select>
+            <h5>{{listType | titlecase}} List</h5>
+            <!-- <span class="input-box">
+                <input type="text" placeholder="Search client, companies etc">
+                <span class="search-btn"><img src="assets/images/dateIcon.png" alt=""/></span>
+            </span> -->
+        </div>
+
+        <div class="search-bar" *ngIf="listType=='user'">
+            <div class="input-box" *ngFor="let item of tableSearches;">
+                <input type="text" placeholder="Search {{item | lowercase}}" (keyup)="onFilterSearch($event, item)">
+                <span class="search-btn"><img src="assets/images/dateIcon.png" alt=""/></span>
+            </div>
+            <div class="input-box">
+                <select (change)="onFilterStatusWise($event)">
+                    <option class="d-flex align-items-center" value="{{item?.val}}" *ngFor="let item of selectOpt;">{{item?.name}}</option>
+                </select>
+            </div>
+            <!-- [ngStyle]="{'color': countColor}" -->
+            <div class="total-user">Users: <span>{{copyTableData.length}}</span></div>
+        </div>
+
+        <div class="table-body position-relative">
+            <!-- <table *ngIf="false && listType=='user'">
+                <thead>
+                    <th style="width:20%;">Company Name</th>
+                    <th style="width:10%;">Plan Name</th>
+                    <th>Email ID</th>
+                    <th>Role</th>
+                    <th style="width:10%;">Expiry Date</th>
+                    <th style="width:8%;">Account Status</th>
+                    <th>User Name</th>
+                    <th>Enable</th>
+                    <th style="width:15%;">Manage</th>
+                </thead>
+                <tbody>
+                    <tr *ngFor="let item of copyTableData;let i=index;">
+                        <td>{{item?.CompanyName}}</td>
+                        <td>{{item?.PlanName}}</td>
+                        <td>{{item?.Email}}</td>
+                        
+                        <td>{{item?.RoleId==1 ? 'super admin': (item?.RoleId==2) ? 'admin': (item?.RoleId==3) ?'user': 'sub user'}}</td>
+                        <td>{{item?.EndDate | date:'yyyy-MM-dd'}}</td>
+                        <td><div class="account-status {{getUserStatus(todayDate, item?.EndDate)}}"></div></td>
+                        <td>{{item?.FullName}}</td>
+                        <td>
+                            <div class="d-flex justify-content-center align-items-center w-100">
+                                <input [checked]="item?.Enable" (click)="userActiveToggle($event, item)" type="checkbox" id="switch-{{i}}"/><label class="toggle-switch" for="switch-{{i}}">Toggle</label>
+                            </div>
+                        </td>
+                        <td><span class="edit-btn" (click)="showMore(item)">Manage</span></td>
+                    </tr>
+                </tbody>
+            </table> -->
+
+            <div class="client-list-container" *ngIf="listType=='user'">
+                <div class="table w-100">
+                    <div class="headers sticky-top d-flex align-items-center">
+                        <div class="th ps-1" style="width: 20%;">Company Name</div>
+                        <div class="th ps-1" style="width: 15%;">Plan Name</div>
+                        <div class="th ps-1" style="width: 15%;">Email ID</div>
+                        <div class="th text-center" style="width: 10%;">Role</div>
+                        <div class="th text-center" style="width: 7.5%;">Expiry Date</div>
+                        <div class="th text-center" style="width: 10%;">Account Status</div>
+                        <div class="th ps-1" style="width: 10%;">User Name</div>
+                        <div class="th text-center" style="width: 10%;">Enable</div>
+                        <div class="th text-center" style="width: 10%;position: sticky;right: 0;background-color:#8a9ea0;">Manage</div>
+                    </div>
+    
+                    <div class="body" *ngFor="let item of copyTableData;let i=index;">
+                        <div class="tr">
+                            <div class="td w-100 d-flex align-items-center">
+                                <div class="word-break d-flex align-items-center" style="width: 20%;">
+                                    <i class="fa-solid fa-angle-right me-2" (click)="onClickArrowToggle($event, 'subUser-'+(i+1))" *ngIf="item.subUsers"></i>
+                                    <div class="w-100 tdEllipses" style="padding-right: 15%;" ngbTooltip="{{item?.CompanyName}}">{{item?.CompanyName}}</div>
+                                </div>
+                                <div class="word-break" style="width: 15%;">{{item?.PlanName}}</div>
+                                <div class="word-break tdEllipses" style="width: 15%;" ngbTooltip="{{item?.Email}}">{{item?.Email}}</div>
+                                <!-- <td>{{getUserRole(item?.RoleId)}}</td> -->
+                                <div class="text-center word-break" style="width: 10%;text-transform: uppercase;">{{item?.RoleId==1 ? 'super admin': (item?.RoleId==2) ? 'admin': (item?.RoleId==3) ?'user': 'sub user'}}</div>
+                                <div class="text-center" style="width: 7.5%;">{{item?.EndDate | date:'yyyy-MM-dd'}}</div>
+                                <div class="text-center" style="width: 10%;"><div class="account-status {{getUserStatus(todayDate, item?.EndDate)}}"></div></div>
+                                <div class="word-break tdEllipses" style="width: 10%;" ngbTooltip="{{item?.FullName}}">{{item?.FullName}}</div>
+                                <div class="text-center" style="width: 10%;">
+                                    <div class="d-flex justify-content-center align-items-center w-100">
+                                        <input [checked]="item?.Enable" (click)="userActiveToggle($event, item)" type="checkbox" id="switch-{{i}}"/><label class="toggle-switch" for="switch-{{i}}">Toggle</label>
+                                    </div>
+                                </div>
+                                <div class="text-center bg-white" style="width: 10%;position: sticky;right: 0;"><span class="edit-btn d-block w-100" (click)="showMore(item)">Manage</span></div>
+                            </div>
+
+                            <div class="td-parent w-100" id="subUser-{{i+1}}" *ngIf="item.subUsers">
+                                <div class="td sub-users w-100 d-flex align-items-center" *ngFor="let item2 of item.subUsers;let j=index;">
+                                    <div class="word-break" style="width: 18.7%;padding-left: 1%;">{{item2?.CompanyName}}</div>
+                                    <div class="word-break" style="width: 14%;">{{item2?.PlanName}}</div>
+                                    <div class="word-break" style="width: 15.5%;">{{item2?.Email}}</div>
+                                    <!-- <td>{{getUserRole(item?.RoleId)}}</td> -->
+                                    <div class="text-center word-break" style="width: 6%;">SUB USER</div>
+                                    <div class="text-center" style="width: 10%;">{{item2?.EndDate | date:'yyyy-MM-dd'}}</div>
+                                    <div class="text-center" style="width: 6.35%;"><div class="account-status {{getUserStatus(todayDate, item?.EndDate)}}"></div></div>
+                                    <div class="word-break" style="width: 10.7%;margin-left:1.45%;">{{item2?.FullName}}</div>
+                                    <div class="text-center" style="width: 6.5%;">
+                                        <div class="d-flex justify-content-center align-items-center w-100">
+                                            <input [checked]="item?.Enable" (click)="userActiveToggle($event, item)" type="checkbox" id="switch-{{i}}"/><label class="toggle-switch" for="switch-{{i}}">Toggle</label>
+                                        </div>
+                                    </div>
+                                    <!-- <div class="text-center bg-white" style="width: 10%;position: sticky;right: 0;"><span class="edit-btn" (click)="showMore(item)">Manage</span></div> -->
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+
+            <table *ngIf="listType=='plan'">
+                <thead>
+                    <th>Plan Name</th>
+                    <th>Excel Point</th>
+                    <th>Search Point</th>
+                    <th>Workspace</th>
+                    <th>WSS Limit</th>
+                    <th>User Limit</th>
+                    <th>Action</th>
+                </thead>
+                
+                <tbody>
+                    <tr *ngFor="let item of copyTableData">
+                        <td>{{item?.PlanName}}</td>
+                        <td>{{item?.Downloads>=unlimited.download ? 'UNLIMITED' : item?.Downloads}}</td>
+                        <td>{{item?.Searches>=unlimited.search ? 'UNLIMITED' : item?.Searches}}</td>
+                        <td>{{item?.Workspace}}</td>
+                        <td>{{item?.WSSLimit}}</td>
+                        <td>{{item?.User}}</td>
+                        <td style="width:15%;"><span class="edit-btn" (click)="showMore(item)">Show More</span></td>
+                    </tr>
+                </tbody>
+            </table>
+            <div class="workstation-loader" *ngIf="isLoading"><img src="assets/images/tableLoader.gif" alt="" /></div>
+        </div>
+    </div>
+</div>

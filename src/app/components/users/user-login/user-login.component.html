@@ -1,0 +1,126 @@
+<div class="bg-video w-100 vh-100 position-absolute">
+  <video class="w-100 h-100" loop [autoplay]="true" [muted]="true" id="headVideo">
+    <source src="assets/login-bg.mp4" type="video/mp4">
+  </video>
+</div>
+
+<div id="container" class="container w-100">
+  <!-- FORM SECTION -->
+  <div class="row">
+    <!-- SIGN UP -->
+    <div class="col align-items-center flex-col sign-up">
+      <div class="logo-hero">
+        <img class="h-100 w-100" src="assets/images/login-hero.png" />
+      </div>
+
+      <div class="form-wrapper align-items-center">
+        <div class="form sign-up">
+          <div class="input-group">
+            <i class='bx bxs-user'></i>
+            <input type="text" [(ngModel)]="userName" placeholder="Full Name" />
+          </div>
+          <div class="input-group">
+            <i class='bx bx bxs-user'></i>
+            <input type="text" [(ngModel)]="companyName" placeholder="Company Name" />
+          </div>
+          <div class="input-group">
+            <i class='bx bx-mail-send'></i>
+            <input type="email" [(ngModel)]="registerEmail" placeholder="Email" />
+          </div>
+          <div class="input-group">
+            <i class='bx bx-mail-send'></i>
+            <input type="text" [(ngModel)]="mobileNumber" placeholder="Contact Number" />
+          </div>
+          <div class="input-group">
+            <i class='bx bxs-lock-alt'></i>
+            <select [(ngModel)]="countryName">
+              <option value="">--Select Country--</option>
+              <option *ngFor="let country of countrylist; let i = index" [value]="country.name">
+                {{country.name}}
+              </option>
+            </select>
+          </div>
+
+          <button (click)="createNewTrialAccout()">{{hasSignUpClicked ? 'Signning up...': 'Sign up'}}</button>
+          <p>
+            <span>
+              Already have an account?
+            </span>
+            <b (click)="toggle()" class="pointer">
+              Sign in here
+            </b>
+          </p>
+        </div>
+      </div>
+    
+    </div>
+    <!-- END SIGN UP -->
+    <!-- SIGN IN -->
+    <div class="col align-items-center flex-col sign-in">
+      <div class="logo-hero">
+        <img class="h-100 w-100" src="assets/images/login-hero.png" />
+      </div>
+
+      <div class="form-wrapper align-items-center">
+        <div class="form sign-in">
+          <div class="input-group">
+            <i class='bx bxs-user'></i>
+            <input type="email" (keyup)="onClickEnter($event)" [(ngModel)]="email" [ngModelOptions]="{standalone: true}" placeholder="Username" />
+          </div>
+          <div class="input-group">
+            <i class='bx bxs-lock-alt'></i>
+            <input type="password" #passwd (keyup)="onClickEnter($event)" [(ngModel)]="password" [ngModelOptions]="{standalone: true}" placeholder="Password">
+          </div>
+          <button
+            class="login-main-btn {{(email=='' || password=='') ? 'opacity-50 pe-none' : ''}}" 
+            [disabled]="email=='' || password=='' || isBtnClicked" 
+            (click)="login()">{{buttonLabel?.login}}</button>
+          <!-- <p>
+            <b>
+              Forgot password?
+            </b>
+          </p> -->
+          <p>
+            <span>
+              Don't have an account?
+            </span>
+            <b (click)="toggle()" class="pointer">
+              Sign up here
+            </b>
+          </p>
+        </div>
+      </div>
+      <div class="form-wrapper">
+  
+      </div>
+    </div>
+    <!-- END SIGN IN -->
+  </div>
+  <!-- END FORM SECTION -->
+  <!-- CONTENT SECTION -->
+  <div class="row content-row">
+    <!-- SIGN IN CONTENT -->
+    <div class="col align-items-center flex-col">
+      <div class="text sign-in">
+        <h2> Welcome to Cypher </h2>
+
+      </div>
+      <div class="img sign-in">
+  
+      </div>
+    </div>
+    <!-- END SIGN IN CONTENT -->
+    <!-- SIGN UP CONTENT -->
+    <div class="col align-items-center flex-col">
+      <div class="img sign-up">
+      
+      </div>
+      <div class="text sign-up">
+        <h2>Register & <br/> Have 7 days free <br />Trial</h2>
+
+      </div>
+    </div>
+    <!-- END SIGN UP CONTENT -->
+  </div>
+  <!-- END CONTENT SECTION -->
+</div>

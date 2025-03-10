@@ -1,0 +1,60 @@
+<div class="save-container" *ngIf="currentPopUp=='confirmation'">
+    <div class="top-header"><img src="assets/images/cross.png" (click)="onDismissModal()" alt=""/></div>
+    <h3>{{confirmationMsg}}</h3>
+    <!-- <div class="input-field">
+        <label for="name">Name</label>
+        <input [(ngModel)]="fileName" type="text" name="file-name" id="" />
+    </div> -->
+
+    <div class="buttons">
+        <button class="save-btn cypher-btn blue-bgColor" (click)="onRemove()">Remove</button>
+        <button class="cancel cypher-btn" (click)="onDismissModal()">Cancel</button>
+    </div>
+</div>
+
+
+
+
+<div class="share-container" *ngIf="currentPopUp=='sharing'">
+    <div class="top-header d-flex w-100"><span class="w-95 text-center">Share Download</span> <img src="assets/images/cross.png" (click)="onDismissModal()" alt=""/></div>
+
+    <div class="bottom-container" *ngIf="!hasSubmitted; else loader">
+        <h4>Share your download file to other cypher user</h4>
+        
+        <div class="action-box">
+            <h6>*Please select the user</h6>
+            <div class="select-opt w-100 position-relative" (click)="dropdownVisibility=true">
+                <div class="selected-items">
+                    <span class="selected-item" *ngFor="let item of selectedEmailArr">{{item}} <a (click)="removeItemVal(item)">🗙</a></span>
+                    <input type="text" [(ngModel)]="searchInp" (keyup)="contactFilter()"/>
+                </div>
+                
+                <div tabindex="10" (focusout)="dropdownVisibility=false" class="user-list" *ngIf="dropdownVisibility">
+                    <div class="user" *ngFor="let item of copyAllUsers">
+                        <input type="checkbox" (focusout)="dropdownVisibility=true" id="{{item?.Email}}" (change)="setItemVal($event, item)" [checked]="doesItInclude(item?.Email)" />
+                        <span><img src="assets/images/account.png" alt="" /></span>
+                        {{item?.Email}}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <ng-template #loader>
+        <div class="loader-anime" *ngIf="!hasSharedLink">
+            <img src="assets/images/tableLoader.gif" alt="" />
+            <span>Please wait while sharing...</span>
+        </div>
+
+        <div class="loader-anime part2" *ngIf="hasSharedLink">
+            <img class="successImg" src="assets/images/check.png" alt="">
+            <h1>Success</h1>
+            <h5>Link has been shared successfully</h5>
+        </div>
+    </ng-template>
+
+    <div class="submit-btn text-center">
+        <Button class="btn btn-danger" (click)="onClickShare()" *ngIf="!hasSubmitted">Send</Button>
+        <Button class="btn btn-success" (click)="onDismissModal()" *ngIf="hasSharedLink">ok</Button>
+    </div>
+</div>

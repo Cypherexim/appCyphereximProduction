@@ -1,0 +1,69 @@
+<div class="dropdown-container">
+    <!--  -->
+    <div class="dropdown-input" id="focusDiv" tabindex="0" (focusout)="hideBelowOptions()">
+        <div 
+            *ngIf="dropDownOption.enableSelectAll"
+            [id]="dropDownId"
+            (click)="isVisible=true"
+            class="type-text">
+            <span class="nameholder" *ngIf="selectedItems.length==0">-- Select {{defaultPlaceHolder}} --</span>
+            <ng-container *ngFor="let item of selectedItems;let i=index;">
+                <span class="selected" *ngIf="i==0 && !isAllChecked">{{item | titlecase}} <a (click)="onClickRemoveVal(item, 'other')">&#10006;</a></span>
+            </ng-container>
+            <span *ngIf="isAllChecked">ALL</span>
+            <span class="corner-icons"  *ngIf="selectedItems.length>0">
+                {{selectedItems.length}}
+                <!-- <a>&#x27A4;</a> onClickRemove(item)-->
+            </span>
+        </div>
+
+        <div class="type-text row" id="scrollingbox" *ngIf="!dropDownOption.enableSelectAll" (click)="isVisible=true">
+            <ng-container *ngFor="let item of selectedItems;let i=index;">
+                <span class="selected col-5" *ngIf="i<10 && !isAllChecked">{{item | titlecase}} <a (click)="onClickRemoveVal(item, 'hscode')">&#10006;</a></span>
+            </ng-container>
+            <input class="border-0 {{(selectedItems.length>0 && selectedItems.length%2==1)?'col-5 ms-1':'w-100'}}" style="outline:none;background-color:transparent;" [(ngModel)]="hscodeInp" type="text" (keyup)="onFilterSearch('hscode')" />
+        </div>
+        <span class="remaining-select {{alertCls}}" *ngIf="remainingVal!=0">Remaining: {{remainingVal - selectedItems.length}}</span>
+    </div>
+
+    <div tabindex="1" (mouseenter)="setBoxFocus(false)" (mouseleave)="setBoxFocus(true)" (click)="setBoxFocus(false)" (focusout)="hideBelowOptions()" class="dropdown-options" [ngStyle]="{'display': isVisible?'block':'none'}" >
+            <span class="waiting-load" *ngIf="isLoadingMore"><img src="assets/images/signleDropLoader.gif" alt="" /></span>
+
+            <div class="filter-bar" *ngIf="dropDownData.length>0 && dropDownOption.enableSelectAll">
+                <input type="text" [(ngModel)]="filterInp" (keyup)="onFilterSearch('multi')" placeholder="{{dropDownOption.searchPlaceholder}}" id="" />
+                <span class="select-all" *ngIf="dropDownOption.enableSelectAll">
+                    <input type="checkbox" [checked]="isAllChecked" class="ms-0" (click)="onCheckMultiple()" style="margin-right: 5px;" /> Select All
+                </span>
+            </div>
+        <div #cdkTable>
+            <cdk-virtual-scroll-viewport [itemSize] = "5" *ngIf="dropDownOption.enableSelectAll">
+                <div class="options" *ngIf="dropDownData.length>0">
+                    <span class="item" *cdkVirtualFor="let item of copiedDropDownList;">
+                        <input class="multi-select" type="checkbox" [id]="'multi_'+item[dropDownOption.key]" (click)="onCheckSingle($event, item)" [checked]="isAllChecked || getCheckedBool(item)" />
+                        <label>{{item[dropDownOption.value] | titlecase}}</label>
+                    </span>
+                </div>
+            </cdk-virtual-scroll-viewport>
+            <!-- onClickSingleOption('label-'+i, item) -->
+
+            <!-- list of without checkbox items` -->
+            <cdk-virtual-scroll-viewport [itemSize]="5" *ngIf="!dropDownOption.enableSelectAll && !isLoadingMore">
+                <div class="options" *ngIf="dropDownData.length>0">
+                    <!-- [dropDownOption.value] -->
+                    <span
+                        id="label-{{i}}"
+                        class="item single-select mb-0 pb-2 {{hasHsCodeAccess(item)?'':'unable'}}" 
+                        data-selected="no" (click)="onClickSingleVal(item, hasHsCodeAccess(item));"
+                        *cdkVirtualFor="let item of copiedDropDownList;let i=index;">
+                        <!-- [dropDownOption.value] | titlecase [dropDownOption.value]-->
+                        <label class="w-100 ms-2">{{item}}</label>
+                    </span>
+                </div>
+            </cdk-virtual-scroll-viewport>
+        </div>
+
+        <div class="no-data text-center" *ngIf="dropDownData.length==0 && !isLoadingMore">
+            <span style="font-size: 16px;font-weight: 500;">Data Unavailable</span>
+        </div>
+    </div>
+</div>

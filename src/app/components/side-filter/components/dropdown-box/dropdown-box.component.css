@@ -1,0 +1,214 @@
+span.dropdown-container div.selected-items{
+  border: 2px solid #c9c9c9;
+  border-radius: 5px;
+  padding: 0px 5px;
+  padding-top: 4px;
+  margin: 0px 20px;
+  margin-top: 5px;
+  margin-bottom: 10px;
+  
+  overflow: auto;
+  max-height: 35vh;
+}
+span.dropdown-container div.selected-items span{
+  background-color: #4cbfa6;
+  padding: 5px 10px;
+  display: inline-block;
+  width: fit-content;
+  color: white;
+  font-size: 14px;
+  font-family: 'Roboto';
+  letter-spacing: 0.3px;
+  margin-right: 3px;
+  margin-bottom: 3px;
+  border-radius: 5px;
+}
+span.dropdown-container div.selected-items span a{margin-left: 5px;}
+span.dropdown-container div.selected-items span a img{
+  height: 15px;
+  margin-top: -2.5px;
+  cursor: pointer;
+}
+
+/*sub dorpdown options*/
+div.dropdown-data{
+    max-height: 0vh;
+    overflow: hidden;
+    transition: all 0.4s ease-in;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+  }
+  div.side-options.active+div.dropdown-data{
+    /* min-height: calc(5vh - 15px);
+    height: fit-content; */
+    max-height: 100vh;
+  }
+  div.dropdown-data div.search-bar{}
+  div.dropdown-data ul.list-box{
+    padding: 0;
+    padding-left: 20px;
+    list-style: none;
+    min-height: 0vh;
+    max-height: 100vh;
+    overflow: auto;
+  }
+  div.dropdown-data ul.list-box li.checkbox-container{
+    padding: 5px 2px;
+  }
+  div.dropdown-data ul.list-box li.checkbox-container input[type="checkbox"]{
+    margin-right: 10px;
+    scale: 1.18;
+    accent-color:#4cbfa6
+  }
+  div.dropdown-data ul.list-box li.checkbox-container span.label{
+    font-size: 14px;
+    letter-spacing: 0.3px;
+    /* color: #545454; */
+    color: black;
+    font-weight: 500;
+    font-family: 'Roboto', sans-serif;
+  }
+  div.dropdown-data ul.list-box li.checkbox-container span.count{color: #397cd3;font-weight: bold;}
+  div.dropdown-data ul.list-box li.checkbox-container span.value{color: #109910;font-weight: bold;}
+  div.dropdown-data div.submit-btn{
+    margin-top: -10px;
+    padding-right: 20px;
+    padding-bottom: 10px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid #c2c2;
+  }
+  div.dropdown-data div.submit-btn span.see-more{
+    margin-left: 20px;
+    font-size: 12px;
+    color: blue;
+    font-weight: 500;
+    cursor: pointer;
+    font-family: 'Roboto', sans-serif;
+  }
+  div.dropdown-data div.submit-btn span.see-more:hover{color: blue;}
+  
+  div.dropdown-data div.submit-btn button{
+    border: 1px solid #c2c2c2;
+    padding: 0px 10px;
+    padding-bottom: 2px;
+    font-size: 12px;
+    font-weight: bold;
+    letter-spacing: 0.5px;
+    background-color: white;
+  }    
+  div.dropdown-data div.submit-btn button:nth-child(1){color: #dc3545;margin-right: 5px;}
+  div.dropdown-data div.submit-btn button:nth-child(2){color: #4cbfa6;}
+  div.dropdown-data div.submit-btn button:hover{
+    color: white;
+    box-shadow: rgb(60 64 67 / 20%) 0px 1px 2px 0px, rgb(60 64 67 / 15%) 0px 2px 6px 2px;
+  }
+  div.dropdown-data div.submit-btn button:nth-child(1):hover{background-color: #dc3545;}
+  div.dropdown-data div.submit-btn button:nth-child(2):hover{background-color: #4cbfa6;}
+  div.dropdown-data div.submit-btn button:active{box-shadow: none;}
+  
+  .stopSidebarHandle{
+    pointer-events: none;
+    opacity: 0.5;
+  }
+  
+
+  .no-border {border: none !important;}
+  div.side-options div.option-img {margin-right: 15px;}
+  div.side-options div.option-img img{
+    height: 25px;
+  }
+  div.side-options div.option-name p{
+    margin: 0;
+    font-size: 15.5px;
+    font-weight: bold;
+    /* color: #6c6c6c; */
+    color: black;
+    letter-spacing: 0.5px;
+    font-family: "Roboto", sans-serif;
+  }
+  div.side-options div.drop-icon{margin-left: auto;}
+  div.side-options div.drop-icon img{
+    height: 14px;
+    rotate: 180deg;
+    cursor: pointer;
+    animation-duration: 500ms;
+  }
+
+  div.side-options{background-color: #ecf0f3;cursor: pointer;}
+div.side-options, div.sub-options {
+  display: flex;
+  align-items: center;
+  padding: 0px 20px;
+  width: 100%;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid #d9d9d9;
+  transition: all 0.3s ease-in-out;
+}   
+
+div.side-options.active+div.sub-options{height: 6vh !important;}
+
+ul::-webkit-scrollbar {width: 8px;height: 8px;}
+ul::-webkit-scrollbar-track {background: #ffffff;}
+ul::-webkit-scrollbar-thumb {background: #adadad;}
+ul::-webkit-scrollbar-thumb:hover {background: #555;}
+
+.side-options:hover, div.sub-options ul li:hover{background-color: white;}
+
+
+@media screen and (max-width: 1600px) {
+  div.side-options, div.sub-options{
+    padding-top: 6.5px;
+    padding-bottom: 6.5px;
+  }
+  div.side-options div.option-name p{font-size: 12.5px;}
+  div.dropdown-data ul.list-box li.checkbox-container{padding: 3px 2px;}
+  div.dropdown-data ul.list-box li.checkbox-container input[type="checkbox"]{
+    margin-right: 8px;
+    scale: 1;
+  }
+  div.dropdown-data ul.list-box li.checkbox-container span.label{font-size: 12px;}
+  span.dropdown-container div.selected-items span{
+    padding: 2px 5px;
+    font-size: 12px;
+    letter-spacing: 0;
+  }
+  span.dropdown-container div.selected-items span a img{
+    height: 13px;
+    margin-top: -1.5px;
+  }
+}
+
+@media screen and (max-width: 1366px) {
+  div.dropdown-data input[type="text"]{
+    padding: 4px !important; 
+    font-size: 12px !important;
+  }
+  div.dropdown-data div.submit-btn button{
+      padding: 2px 10px !important;
+      font-size: 11px !important;
+      letter-spacing: 0.8px !important;
+  }
+}
+
+@media screen and (max-width: 1280px) {
+  @media screen and (max-height: 1024px){
+  }
+  @media screen and (max-height: 800px){
+    div.dropdown-data div.submit-btn span.see-more{font-size: 11px;}
+    div.dropdown-data div.submit-btn button{
+      padding: 2px 7px !important;
+      font-size: 10px !important;
+      letter-spacing: 0.4px !important;
+    }
+  }
+  @media screen and (max-height: 768px){
+  }
+  @media screen and (max-height: 720px){
+  }
+  
+}
+

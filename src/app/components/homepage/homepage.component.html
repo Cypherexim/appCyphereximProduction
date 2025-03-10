@@ -1,0 +1,296 @@
+<div class='content'>
+  <div class='feature' [ngStyle]="lowerPanelStyle">
+    <div class='feat'>
+      <div class="firstDrop">
+        <span class="label" style="margin-top:5px;">Direction:</span>
+        <div tabindex="1" [class]="firstSelectClass" (focusout)="setDropClass(firstSelect, 'cut')">
+          <div class="dropdown-box disable" #firstSelect id="firstSelect" (click)="setDropClass(firstSelect, 'add')">{{firstSelectVal}}</div>
+          <div class="dropdown-icon" (click)="setDropClass(firstSelect, 'add')"><img src="assets/images/downarrow.png" alt="" /></div>
+
+          <div class="dropdown-data">
+            <p *ngFor="let item of dropdownVal1"
+              (click)="onselectItem(item.value, item.placeholder, 'first', firstSelect);setDropClass(firstSelect, 'cut')"
+              id="{{item.value}}">{{item.placeholder}}</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="secondDrop d-flex align-items-center">
+        <span class="label">Duration:</span>
+        <div tabindex="1" [class]="secSelectClass" (focusout)="setDropClass(otherSelect, 'cut')">
+          <div class="dropdown-box" #otherSelect id="otherSelect" (click)="setDropClass(otherSelect, 'add')">
+            {{secSelectVal}}</div>
+          <div class="dropdown-icon" (click)="setDropClass(otherSelect, 'add')"><img src="assets/images/downarrow.png"
+              alt="" /></div>
+          <div class="dropdown-data">
+            <p *ngFor="let item of dropdownVal2"
+              (click)="onselectItem(item.value, item.placeholder, 'second', otherSelect);setDropClass(otherSelect, 'cut')"
+              id="{{item.value}}">{{item.placeholder}}</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- {{userService.isCurrentPlanDemo()?'inactive':''}} -->
+      <div class="custom-datepicker">
+        <span class="label">From:</span>
+        <div class="date-input" [ngStyle]="{'opacity':  !isCustomDate ? '0.5' : '1'}">          
+          <input 
+            type="date" [min]="min" [max]="max" 
+            id="fromDate" [disabled]="!isCustomDate" 
+            [(ngModel)]="fromDate" (change)="togglePanelView(true)" 
+            onfocus="this.showPicker()" name="fromDate" 
+          />
+          <span><img src="assets/images/dateIcon.png" alt=""></span>
+        </div>
+      </div>
+
+      <!-- {{userService.isCurrentPlanDemo()?'inactive':''}} -->
+      <div class="custom-datepicker">
+        <span class="label">To:</span>
+        <div class="date-input" [ngStyle]="{'opacity':  !isCustomDate ? '0.5' : '1'}">          
+          <input 
+            type="date" [min]="min" [max]="max" 
+            id="toDate" [disabled]="!isCustomDate" 
+            [(ngModel)]="toDate" (change)="togglePanelView(true)" 
+            onfocus="this.showPicker()" name="toDate" 
+          />
+          <span><img src="assets/images/dateIcon.png" alt=""></span>
+        </div>
+      </div>
+    </div>
+
+    <div [hidden]="!showLowerPanel">
+      <div class="lower-panel-container mx-auto">
+        <div class="row">
+          <div class="col-4 feat">
+            <div class='direct hscode'>
+              <select class="hscode-type" [(ngModel)]="hsCodeDigit" (change)="getHsCodeData()">
+                <option value="2">2 Hs</option>
+                <option value="4">4 Hs</option>
+                <option value="8">8 Hs</option>
+              </select>
+              <div class="opt1 multiselect-box">
+                <app-multiselect-dropdown id="homepage-dropdown" (onSelectVal)="onSelectHsCode($event)"
+                  [dropDownData]="dropdownList" [remainingVal]="1" selectionID="home-1"
+                  [isLoadingMore]="isSearchingHsCode" [dropDownOption]="dropdownSettings">
+                </app-multiselect-dropdown>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-4 feat">
+            <div class="direct position-relative" tabindex="1" (focusout)="hideProductBar()">
+              <span>Product</span>
+              <div class="selected-val" *ngIf="product.length>0">
+                <span class="item-val" *ngFor="let item of product">{{item.length>27 ? item.substring(0,27)+'...' :item}}<a (click)="product=[]">&#10006;</a></span>
+              </div>
+              <input *ngIf="product.length==0" class="opt1 fit-height" [(ngModel)]="word" (keyup)="getProductWords($event, 'product')" type="text" />
+
+              <div class="dropdown-panel" *ngIf="isWordDropdown">
+                <label (click)="onChooseOption(item, 'product')" *ngFor="let item of wordsArr">{{item?.Product}}</label>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-4 feat">
+            <div class="direct position-relative">
+              <span>Country</span>
+              <div class="selected-val" (click)="activeCountryDropDown(inptTag)" tabindex="1">
+                <span class="item-val" *ngFor="let item of selectedCountries">{{item?.data.length>27 ?
+                  item?.data.substring(0,27)+'...' : item?.data}}
+                  <a (click)="removeCountryWord(item?.id)">&#10006;</a></span>
+                <!-- <input [style]="innerCountryInp" type="text" [(ngModel)]="countryWord" (keyup)="getProductWords($event, 'country')" /> -->
+              </div>
+              <!-- *ngIf="product.length==0" *ngIf="selectedCountries.length>0"-->
+              <!-- <input class="opt1 fit-height" [(ngModel)]="countryWord"  (click)="isCountryDropdown=true" type="text" /> -->
+
+              <div class="dropdown-panel" [hidden]="!isCountryDropdown" (focusout)="hideProductBar()">
+                <div class="sticky-top bg-white">
+                  <input type="text" class="w-100" #inptTag [(ngModel)]="countryWord"
+                    (keyup)="getProductWords($event, 'country')" placeholder="Search here..." />
+                </div>
+                <label (click)="onChooseOption(item, 'country')"
+                  *ngFor="let item of countriesList.copy">{{item?.country}}</label>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-4 feat">
+            <div id="supplierLocatorBox" class="direct {{locatorDisable?.exporter}}">
+              <span>Supplier</span>
+              <!-- <input class='opt1 fit-height' [(ngModel)]="exporter" placeholder="Exporter" type="text" /> -->
+              <div class="selected-val" (click)="getLocatorModal($event, 'exporter')">
+                <span class="item-val" (mouseenter)="onHoverDropdown(true)" (mouseleave)="onHoverDropdown(false)"
+                  *ngFor="let item of exporterList">{{item.length>27 ? item.substring(0,27)+'...' : item}}<a
+                    (click)="rmLocData(item, 'exporter')">&#10006;</a></span>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-4 feat">
+            <div id="buyerLocatorBox" class="direct {{locatorDisable?.importer}}">
+              <span>Buyer</span>
+              <!-- <input class='opt1 fit-height' [(ngModel)]="importer" placeholder="Importer" type="text" /> -->
+              <div class="selected-val" (click)="getLocatorModal($event, 'importer')">
+                <span class="item-val" (mouseenter)="onHoverDropdown(true)" (mouseleave)="onHoverDropdown(false)"
+                  *ngFor="let item of importerList">{{item.length>27 ? item.substring(0,27)+'...' : item}}<a
+                    (click)="rmLocData(item, 'importer')">&#10006;</a></span>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-4 feat">
+            <div class="btns-container w-100 d-flex justify-content-end align-items-center">
+              <button type="button" class='mainsearch blue-bgColor' (click)="OnClickSearch()">Search</button>
+              <button type="button" class='ms-3 mainsearch blue-bgColor' (click)="onClickReset()">Reset</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- *ngIf="lowerPanelObj?.hasSearchBtnClicked || userService.isCurrentPlanDemo()" -->
+    <img (click)="togglePanelView(lowerPanelObj?.arrowBtnClassName=='down-arrow')" [class]="lowerPanelObj?.arrowBtnClassName" src="assets/images/upArrow.png" alt="">
+    <!-- <span class="round-arrow" (click)="toggleSidebar()"><img id="arrowImg" src="assets/images/leftArrow.png" alt=""></span> -->
+    <!-- <div class="hide-show-tabs-right" *ngIf="bottomTableView"><img src="assets/images/more.png" alt="" /></div> -->
+    <div class="hide-show-tabs-left" *ngIf="searchResult.length>0" (click)="isTabsVisible=!isTabsVisible">
+      <img src="assets/images/more.png" alt="" />
+    </div>
+  </div>
+
+  <div class="datavaluesmain" [hidden]="!(bottomTableView && isTabsVisible)">
+    <div class="left-elements">
+      <div class="tab-loader me-3 skeleton {{!dataCounterTabs[tab?.tab] && 'd-none'}}" [style]="{'display': (dataCounterTabs[tab?.tab]>=0) ? 'none': 'block'}" *ngFor="let tab of counterTabs"></div>
+      
+      <div tabindex="1" class="records {{tab.tab=='values'? 'green-button': tab.tab=='records'? 'blue-bgColor': 'gray-bgColor'}} {{(i==0 && i==1)?'not-allowed':''}}" 
+        [style]="{'display': dataCounterTabs[tab?.tab]>0 ? 'block': 'none'}" *ngFor="let tab of counterTabs;let i=index;" id="target-{{i}}" [appOnhoverClick]="tab.tab" (click)="showCounterModal(tab?.tab, tab?.key)">
+
+        <p>{{tab?.tab | titlecase}}</p>
+        <p>{{tab.tab=='values'? convertor(dataCounterTabs[tab?.tab]): dataCounterTabs[tab?.tab]}}</p>
+      </div>
+    </div>
+
+    <div class="right-elements position-relative">
+      <i class="fa-sharp fa-solid fa-bookmark" (click)="openSaveModal()" ngbTooltip="Save to workspace"></i>
+      
+      <i class="fa-sharp fa-solid fa-folder-arrow-down" (click)="onGenerateDownloadLink()" ngbTooltip="Download in xlsx file"></i>
+      
+      <div class="pagination d-flex align-items-center me-1">
+        <i #lftArr class="left-arr fa-regular fa-angles-left me-1" (click)="onMovePagination($event,'left')"></i>
+        <span class="pagination-tab"><input type="text" maxlength="3" [value]="currentPageNum+1" [(ngModel)]="cpyCurrentPageNum" (keyup)="onDirectPagination($event, lftArr, RhtArr, maxPages)"></span>
+        <i #RhtArr class="right-arr fa-regular fa-angles-right mx-1" (click)="onMovePagination($event,'right')"></i>
+      </div>
+
+      <div class="pages-num" #maxPages>*Max {{totalPages}} page<span *ngIf="totalPages>1">s</span></div>
+      
+      <span class="drop-label">Per Page</span>
+      <div class='pageselect'>
+        <!-- using "workspace" parameter so that Points cannot be reduced -->
+        <select #selectTag [(ngModel)]="pagePerView" (change)="onSearchPerPage()">
+          <option value="25" selected>25</option>
+          <option value="50">50</option>
+          <option value="100">100</option>
+          <option value="200">200</option>
+        </select>
+
+        <i class="fa-solid fa-angle-down" (click)="onClickSelect(selectTag)"></i>
+      </div>
+
+      <div class="column-shifter position-absolute" *ngIf="searchResult.length>0 && currentCountry=='India'">
+        <!-- <button class="btn btn-warning position-absolute">Alter Table</button> -->
+        <div class="alter-table-btn" (click)="showAlterColList()">
+          <i class="fa-sharp fa-regular fa-table-cells"></i>
+          <i class="fa-sharp fa-solid fa-wrench"></i>
+        </div>
+
+        <div class="list {{!isAlterColListShown && 'd-none'}}">
+          <div *ngIf="isColumnExchangeInProcess" class="alter-spinner position-absolute w-100 d-flex align-items-center justify-content-center">
+            <i class="fa-solid fa-spinner fa-spin-pulse" style="font-size: 1rem;"></i>
+          </div>
+
+          <div class="table-box w-100">
+            <table id="colShifter" class="w-100">
+              <tr id="{{headKey}}" *ngFor="let headKey of alterTableHeads;let i=index;">
+              <td><input type="checkbox" [checked]="preferedTableColHeads[headKey]" (change)="onTickCheckbox(headKey)"/></td>
+              <td id="tableCell{{i}}" (click)="onTapCheckVal($event)">{{getTableHeads(headKey)}}</td></tr>
+            </table>
+          </div>
+          <div class="btns text-center w-100">
+            <button class="btn btn-warning me-1" (click)="selectAllCols()">Select All</button>
+            <button class="btn btn-success me-1" (click)="submitColsOrderToUserPreference()">Apply</button>
+            <button class="btn btn-danger" (click)="backToPrevState()">Back</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- table handles to scroll left and right -->
+  <span class="arrow-btn handle {{item}}"
+    [ngStyle]="{'top': lowerPanelObj?.arrowBtnClassName=='up-arrow'?'65%':'55%', 'display': searchResult.length>0 && !isSearchingData && !isTableLoader ? 'block' : 'none'}"
+    (click)="scrollTable(item)" *ngFor="let item of ['left', 'right']">
+    <img class="side-arrow" src="assets/images/rightArrow.png" alt="">
+  </span>
+  <!-- -------------------------------------- -->
+
+  <!-- <div class="specific-analysis-bar" *ngIf="bottomTableView">
+      <app-navbar [isSpecific]="true" [isSideBarOpen]="isSideBarOpen"></app-navbar>
+    </div> -->
+
+  <div *ngIf="isColumnExchangeInProcess" class="loading-colshifter d-flex align-items-center justify-content-center" [ngStyle]="{'height': setTableHeightDynamically()}">
+    <i class="fa-solid fa-circle-notch fa-spin" style="color:#4cbfa6;font-size:3rem;"></i>
+  </div>
+
+  <div class="data-table" id="tableContainer" [ngStyle]="{'height': setTableHeightDynamically()}" *ngIf="bottomTableView && !isColumnExchangeInProcess">
+    <table *ngIf="!isSearchingData && !isTableLoader && searchResult.length>0">
+      <thead>
+        <th>
+          <input type="checkbox" (click)="onCheckboxAll($event)" style="margin-right:10px;" [checked]="isMainChecked" />
+          <span>(All)</span>
+        </th>
+        <th *ngFor="let head of tableHeads;let i=index;" id="head-{{i}}">{{getTableHeads(head)}}</th>
+      </thead>
+      <tbody>
+        <tr *ngFor="let data of perPageData;">
+          <td style="width: 7%;">
+            <div class="extra-options" *ngIf="tableHeads.length>0">
+              <input class="mainSearchCheck me-2" type="checkbox" (click)="onClickCheckbox($event,data)" [checked]="data?.isChecked" name="" id="">
+              <i class="fa-solid fa-circle-info me-2" (click)="showDetailModal(data)"></i>
+              <i class="fa-{{data?.isBookmarked?'solid':'regular'}} fa-star" (click)="onSetBookmark($event, data)"></i>
+              <!-- <img src="assets/images/info.png" class=" me-1" (click)="showDetailModal(data)" (mouseover)="changeInfo($event,'in')" (mouseout)="changeInfo($event,'out')" alt=""> -->
+              <!-- <img src="assets/images/star-{{data?.isBookmarked?'gold':'outline'}}.png" (click)="onSetBookmark($event, data)" /> -->
+            </div>
+          </td>
+          <td *ngFor="let key of tableHeads;">
+            <!-- google link to export and import companies -->
+            <span *ngIf="key==filterNames.Imp_Name.key || key==filterNames.Exp_Name.key || key==filterNames.HsCode.key">
+              <!-- <img src="assets/images/google.png" alt="" /> -->
+              <!-- <i class="fa-solid fa-globe"></i> -->
+              <a *ngIf="key==filterNames.HsCode.key" [href]="setGoogleLink(key, modifyTableData(key, data[key]))" target="_blank">{{modifyTableData(key, data[key])}}</a>
+              <span *ngIf="key==filterNames.Imp_Name.key || key==filterNames.Exp_Name.key">
+                <a [href]="setGoogleLink(key, modifyTableData(key, data[key]))" target="_blank">
+                  <img class="google-icon" src="assets/images/google.png" alt="" />
+                  <!-- <i class="fa-brands fa-google"></i> -->
+                </a>
+                <span class="ms-3" (click)="openCompanyProfile(key, modifyTableData(key, data[key]))">{{modifyTableData(key, data[key])}}</span>
+              </span>
+              <!-- <a *ngIf="key!='HsCode'" (click)="openCompanyProfile(key, modifyTableData(key, data[key]))">{{modifyTableData(key, data[key])}}</a> -->
+            </span>
+
+            <!-- rest of the columns apart from export and import companies -->
+            <span *ngIf="key!=filterNames.ProductDesc.key && key!=filterNames.Imp_Name.key && key!=filterNames.Exp_Name.key && key!=filterNames.HsCode.key" 
+              [openDelay]="200" placement="bottom" ngbTooltip="{{key==filterNames.ProductDesc.key ? data[key] : ''}}">
+              {{key=='Date' ? (alertService.dateInFormat(data[key])) : modifyTableData(key, data[key])}}
+            </span>
+
+            <span [ngStyle]="{'width':'30rem', 'user-select':'text', 'white-space':'initial'}" *ngIf="key==filterNames.ProductDesc.key" class="product-desc d-block" [innerHTML]="modifyTableData(key, data[key])"></span>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+    <h4 class="nodatamsg" *ngIf="searchResult.length==0 && !isSearchingData && !isTableLoader">{{isSearchingTimeOut ?'Connection Timeout' : 'No Data Found'}}</h4>
+    <!-- <div class="loader" *ngIf="isSearchingData"><img src="assets/images/loader.png" alt=""></div> -->
+    <!-- <div class="per-page-record-loader" [ngStyle]="{'bottom': lowerPanelObj?.arrowBtnClassName=='up-arrow'?'25%':'35%'}" *ngIf="isTableLoader"><img src="assets/images/tableLoader.gif" alt=""/></div> -->
+  </div>
+  <input type="hidden" id="savedFileName" [value]="savedStatus?.savedFileName" />
+</div>

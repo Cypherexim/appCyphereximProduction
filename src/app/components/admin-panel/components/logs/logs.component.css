@@ -1,0 +1,86 @@
+div.log-container{height: 99%;}
+div.log-container div.log-category{
+    border: 1px solid #e1e1e1;
+    width: 10%;
+    z-index: 1;
+    transition: all 0.4s ease;
+    transform: translateY(0%);
+}
+div.log-container div.log-category.active{transform: translateY(-100%) !important;}
+div.log-container div.log-category div.arrow{
+    background-color: #e67676;
+    position: absolute;
+    bottom: -20%;
+    width: 20%;
+    height: 20%;
+    text-align: center;
+    cursor: pointer;
+    border-bottom-right-radius: 10px;
+    z-index: -1;
+}
+
+div.log-container div.log-category div.arrow i{
+    font-size: 15px;
+    color: white;
+    rotate: -90deg;
+}
+div.log-container div.log-category div.arrow i.active{rotate: 90deg;}
+div.log-container div.log-category ul.log-list{
+    list-style: none;
+    width: 100%;
+    padding: 0;
+    margin: 0;    
+}
+div.log-container div.log-category ul.log-list li{
+    padding: 5px 10px;
+    font-family: 'Roboto';
+    letter-spacing: 0.5px;
+    cursor: pointer;
+    background-color: #e6e6e6;
+}
+div.log-container div.log-category ul.log-list li:hover{background-color: white;}
+div.log-container div.log-category ul.log-list li:active{background-color: #e6e6e6;}
+div.log-container div.log-category ul.log-list li:not(:last-child){border-bottom: 1px solid #cccccc;}
+
+div.log-container div.log-list div.title{
+    font-size: 30px;
+    padding: 20px 0;
+}
+
+div.log-container div.log-list div.title div.search-box{width: 18%;right: 1%;}
+div.log-container div.log-list div.title div.search-box input{
+    font-size: 15px;
+    padding: 5px 10px;
+    width: 100%;
+    border: 1px solid #c2c2c2;
+}
+div.log-container div.log-list div.title div.search-box input:focus{outline: 1px solid #4cbfa6;}
+
+div.log-container div.empty-box div.info{
+    font-size: 18px;
+    font-family: sans-serif;
+}
+
+div.log-container div.log-list div.table-box{height: 89.5%;}
+div.log-container div.log-list div.table-box table{border-collapse: collapse;}
+div.log-container div.log-list div.table-box table thead{
+    background-color: #4cbfa6;
+    color: white;
+}
+div.log-container div.log-list div.table-box table tbody tr td{
+    text-align: center;
+    padding: 5px 0px;
+    font-size: 14.5px;
+    font-family: 'Roboto';
+    letter-spacing: 0.5px;
+    border: 1px solid #c2c2c2;
+}
+
+div.log-container div.log-list div.table-box table tbody tr td i{
+    cursor: pointer;
+    font-size: 18px;
+    color: #4cbfa6;
+    transition: all 0.3s ease;
+}
+div.log-container div.log-list div.table-box table tbody tr td i:hover{scale: 1.2;color: yellow;}
+

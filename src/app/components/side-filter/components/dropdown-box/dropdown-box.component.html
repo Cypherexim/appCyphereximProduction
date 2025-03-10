@@ -1,0 +1,29 @@
+<span class="dropdown-container">
+    <div class='side-options' appRotateArrow>
+      <div class='option-name'><p>{{filterName?.name}}</p> </div>
+      <div class="drop-icon"><img src="assets/images/upArrow.png" alt="" /></div>
+    </div>
+
+    <div class="dropdown-data">
+      <div class="selected-items" *ngIf="selectedItem.length>0">
+        <span [title]="((item?.value).length>=0) ? item?.value : item?.value[filterName?.key]" 
+          *ngFor="let item of selectedItem;">{{ellipsePipe.transform(getSideFilterValue(item?.value, false), 25)}}<a><img (click)="removeItemFromBox(item?.id)" src="assets/images/cross.png" alt=""></a></span>
+      </div>
+
+      <ul class="list-box">
+        <li class="checkbox-container" *ngFor="let item of copyFilterOptions | slice:0:10;let i=index;">
+          <input [checked]="item?.isChecked" type="checkbox" id="{{replaceSpace(filterName?.name)}}_{{replaceSpace(item?.name)}}" [value]="getSideFilterValue(item?.name, false)" (click)="onSelectItem($event, item?.name, filterName?.name)" />
+          <span class="label" ngbTooltip="{{getSideFilterValue(item?.name, false)}}">{{getSideFilterValue(item?.name, false) |ellipsis :25}}</span>          
+          <span title="Value" class="value" *ngIf="item['name']['valueinusd']">&nbsp;({{convertor(item?.name['valueinusd'])}})</span>
+        </li>
+      </ul>
+      <div class="submit-btn" *ngIf="copyFilterOptions.length>0">
+        <span *ngIf="copyFilterOptions.length>=10" (click)="showMoreOptions(filterName?.name)" class="see-more">See more</span>
+        
+        <span style="display: inline-block; margin-left: auto;">       
+          <button type="button" (click)="onFilterClear()" [disabled]="this.selectedItem.length==0">Clear</button>
+          <button type="button" (click)="onFilterApply()" [disabled]="this.selectedItem.length==0">Apply</button>
+        </span>
+      </div>
+    </div>
+</span>

@@ -1,0 +1,32 @@
+<div class="graph-table-container mb-3" *ngIf="commodities.length>0">
+    <table>
+        <thead class="sticky-top bg-white text-center">
+            <th *ngFor="let head of tableHeads;">{{head | titlecase}}</th>
+        </thead>
+        
+        <tbody>
+            <tr *ngFor="let item of commodities;let i=index;">
+                <td style="width:5%;"><i class="fa-sharp-duotone fa-solid fa-diamonds-4"></i></td>
+                <td style="width:15%;">{{item}}</td>
+                <td style="width:13%;">
+                    <div class="line-graph"><app-table-card-chart [chartId]="item.replaceAll(' ','_')" [data]="arrangedData[item]"></app-table-card-chart></div>
+                </td>
+                <td *ngFor="let total of (arrangedData[item]|calculateFinancialValue: 'FY-TOTAL')">
+                    $ {{total|calculateFinancialValue}}
+                </td>
+                <td *ngFor="let month of (arrangedData[item]|calculateFinancialValue: 'CURRENT-MONTH')">
+                    $ {{month}}
+                </td>
+                <td #diff [ngStyle]="{'color': diff.innerHTML[0]!='-' ?'green':'red'}">{{arrangedData[item]|calculateFinancialValue: 'MONTH-DIFFERENCE'}}%</td>
+                <td>$ {{arrangedData[item]|calculateFinancialValue: 'GRAND-TOTAL'}}</td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+
+<div class="graph-table-container loading mb-5" *ngIf="commodities.length==0">
+    <div *ngIf="isAPIinProcess" class="loader-img m-auto d-flex flex-column">
+        <img class="m-auto" src="assets/images/graph_loader.gif" alt="" />
+        <span>Please wait...</span>
+    </div>
+</div>

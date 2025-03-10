@@ -1,0 +1,109 @@
+@import url("../../../../media_styles/1600x900.css");
+@import url("../../../../media_styles/1440x900.css");
+
+div.user-panel-container{
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+div.user-panel-container div.form-box{
+    height: 95%;
+    width: 95%;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+}
+
+div.user-panel-container div.form-box h1{
+    text-align: center;
+    margin-bottom: 2rem;
+    /* margin-top: 1rem; */
+    font-weight: 400;
+    font-family: 'Roboto', sans-serif;
+}
+
+div.user-panel-container div.form-box div.tab-indicator{
+    width: 50%;
+    margin-left: auto;
+    margin-right: auto;
+    margin-bottom: 2rem;
+}
+div.user-panel-container div.form-box div.tab-indicator div.indicator{
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+}
+div.user-panel-container div.form-box div.tab-indicator div.indicator div.loader{
+    transition: all 0.4s ease-in-out;
+    width: 15%;
+}
+div.user-panel-container div.form-box div.tab-indicator div.indicator img.pointer{
+    height: 25px;
+    rotate: 180deg;
+}
+div.user-panel-container div.form-box div.tab-indicator div.tabs{
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+div.user-panel-container div.form-box div.tab-indicator div.tabs p{
+    margin: 0;
+    width: 100%;
+    text-align: center;
+    padding: 5px 0;
+    font-family: 'Roboto',sans-serif;
+    color: white;
+    font-weight: bold;
+    letter-spacing: 0.5px;
+    cursor: pointer;
+    user-select: none;
+    background-color: #31bbff;
+}
+div.user-panel-container div.form-box div.tab-indicator div.tabs p:first-child{background-color:#b7e7ff;color:black;}
+div.user-panel-container div.form-box div.tab-indicator div.tabs p:last-child{background-color:#008dd2;}
+
+/*testing this form body css*/
+/* div.user-panel-container div.form-box div.form-body{height: 70%;} */
+div.user-panel-container div.form-box div.form-body div.nxt-btn{
+    width: 7rem;
+    height: auto;
+    text-align: center;
+    border-radius: 7px;
+    padding: 5px 0;
+    cursor: pointer;
+    margin: 0 auto 0 auto;
+    margin-top: 1rem;
+}
+div.user-panel-container div.form-box div.form-body div.nxt-btn p{
+    margin: 0;
+    color: white;
+    font-size: 17.5px;
+    font-weight: bold;
+    line-height: 25px;
+    letter-spacing: 0.5px;
+    font-family: Arial, Helvetica;
+    text-shadow: -1px -1px 0 #6e6e6e, 1px -1px 0 #6e6e6e, -1px 1px 0 #6e6e6e, 1px 1px 0 #6e6e6e;
+}
+div.user-panel-container div.form-box div.form-body div.nxt-btn:hover{
+    box-shadow: rgb(50 50 93 / 24%) 0px 2px 10px -2px, rgb(0 0 0 / 20%) 0px 3px 7px -3px;
+}
+div.user-panel-container div.form-box div.form-body div.nxt-btn:active{box-shadow: none !important;}
+
+img.loading-wheel{
+    height: 25px;
+    transform-origin: center;
+    transition: all 0.8s;
+    animation:spin 1s linear infinite;
+}
+
+.disabled-tab{
+    opacity:0.1 !important;
+    cursor:default !important;
+}
+
+@keyframes spin {
+    from {transform: rotate(0deg);}
+    to {transform: rotate(360deg);}
+}

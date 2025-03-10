@@ -1,0 +1,7 @@
+/* user profile */
+@media screen and (max-width: 1400px) {
+    div.container-box div.profile-container{height: 100% !important;}
+    div.container-box div.change-password div.form-container{height: calc(65% - 35px) !important;}
+
+}
+

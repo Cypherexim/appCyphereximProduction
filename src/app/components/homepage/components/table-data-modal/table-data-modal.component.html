@@ -1,0 +1,15 @@
+<div class="table-detail-container">
+    <div class="top-head">
+        <h5>{{popupName}} Detail</h5>
+        <img src="assets/images/cross.png" alt="" (click)="closeModal()">
+    </div>
+
+    <div class="table">
+        <div class="table-box">
+            <div class="table-row" *ngFor="let item of tableData;">
+                <span class="table-data left" *ngIf="!isExist(item.key)">{{item.key=='Tariffcode'?'HS_Code':item.key}}</span>
+                <span class="table-data right" *ngIf="!isExist(item.key)">{{getValues(item)}}</span>
+            </div>
+        </div>
+    </div>
+</div>

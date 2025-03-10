@@ -1,0 +1,86 @@
+div.sm-chart-card{
+    width:100%;
+    height:100%;
+    display: flex;
+    background-color: white;
+    flex-direction: column;
+    justify-content: space-between;
+    border-radius: 10px;
+    box-shadow: rgb(0 0 0 / 5%) -2px 2px 5px;
+}
+
+div.sm-chart-card div.graph-header{
+    display: flex;
+    justify-content: space-between;
+    padding: 0 25px;
+    padding-top: 25px;
+}
+div.sm-chart-card div.graph-header h1{
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    font-size: 30px;
+    font-family: 'Roboto';
+    font-weight: 400;
+    color: #1d1d1b;
+    white-space: nowrap;
+}
+div.sm-chart-card div.graph-header h1 span{
+    font-size: 17px;
+    margin-bottom: 10px;
+    font-weight: bolder;
+    color: #555555;
+}
+
+div.sm-chart-card div.graph-header div.radio-bullet select{
+    border: 3px solid #d9d9d8;
+    border-radius: 25px;
+    font-size: 15px;
+    font-weight: 600;
+    padding: 1px 13px;
+    outline: none;
+    margin-bottom: 10px;
+}
+div.sm-chart-card div.graph-header div.radio-bullet span.outer{
+    border: 3px solid #d9d9d8;
+    padding: 6px;
+    border-radius: 50%;
+    display: block;
+    width: fit-content;
+    margin-left: auto;
+    margin-bottom: 10px;
+    cursor: pointer;
+}
+div.sm-chart-card div.graph-header div.radio-bullet span.outer span.inner{
+    padding: 8px;
+    background-color: #d9d9d8;
+    display: block;
+    width: -moz-fit-content;
+    width: fit-content;
+    border-radius: 50%;
+}
+div.sm-chart-card div.graph-header div.radio-bullet p{
+    margin: 0;
+    font-size: 16px;
+    font-family: 'Roboto';
+}
+div.sm-chart-card div.graph-header div.radio-bullet p span{
+    color: red;
+    font-size: 15px;
+    font-weight: bolder;
+}
+
+div.sm-chart-card div.graph-container{}
+
+
+.active-radio{background-color: #4cbfa6 !important;}
+
+
+
+@media screen and (max-width: 1600px) {
+    div.sm-chart-card div.graph-header h1{font-size: 25px;}
+    div.sm-chart-card div.graph-header h1 span{font-size: 15px;}
+}
+@media screen and (max-width: 1440px) {
+    div.sm-chart-card div.graph-header h1{font-size: 22px;}
+}

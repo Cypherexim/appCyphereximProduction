@@ -1,0 +1,13 @@
+<div class="plan-container">
+    <h5 class="plan-level">{{planData?.planLevel}}</h5>
+    <h1 class="plan-price">${{planData?.planPrice}}</h1>
+    <div class="plan">
+        <p>Points: {{planData?.points}}</p>
+        <p>Since {{planData?.startFrom}}</p>
+        <p>Searches: {{planData?.searches!=''?planData?.searches:'No Limit'}}</p>
+        <p *ngIf="!planData?.hasAddOn">No Add on Points</p>
+        <p *ngIf="planData?.hasAddOn">Add on Points Facility</p>
+        <p>${{planData?.recordValue}} Per Record</p>
+    </div>
+    <span class="select-btn green-button" (click)="onSelectPlan()">SELECT</span>
+</div>

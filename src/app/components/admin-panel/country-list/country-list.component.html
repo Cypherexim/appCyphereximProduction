@@ -1,0 +1,59 @@
+<div class="country-modal">
+  <div class="modal-head d-flex justify-content-between align-items-center pe-3">
+    <h5 class="text-center w-100 mb-0">Select Country ({{totalCount.all}})</h5>
+    <img src="assets/images/cross.png" (click)="activeModal.dismiss('Cross click')" alt="" />
+  </div>
+
+  <div class="tabs d-flex w-100">
+    <div class="{{item?.key==lastTabTagId && 'active'}} tab h-100 d-flex justify-content-center align-items-center" (click)="onClickTab(item?.key)" id="{{item?.key}}" *ngFor="let item of tabs">{{item?.tabName}} ({{totalCount[item?.tabName]}})</div>
+  </div>
+
+  <div class="input-filter"><input type="text" placeholder="search here..." (keyup)="onSearch($event)" /></div>
+  <div class="modal-body">
+    <div class="d-flex align-items-center justify-content-center h-100 w-100" *ngIf="copiedCountryList.length==0 && !isApiInProcess">
+      <div class="child">Coming Soon!</div>
+    </div>
+
+    <table *ngIf="!isApiInProcess && copiedCountryList.length>0">
+      <thead>
+        <!-- <tr><td style="padding: 0 5px;padding-top: 5px;" colspan="6">
+          <input type="text" placeholder="search here..." (keyup)="onSearch($event)" />
+        </td></tr> -->
+        <th *ngFor="let head of countryHeads;let i=index;" [style]="{'width': i==0||i==5 ? '15%' : 'auto'}" class="{{i==0 ? 'text-center': ''}}">
+          <span class="head-name">
+            <span *ngIf="head != 'sample'">{{head | titlecase}}</span>
+          </span>
+        </th>
+      </thead>
+
+      <tbody *ngIf="copiedCountryList.length>0">
+        <tr *ngFor="let item of copiedCountryList;">
+          <td class="country-name">
+            <div class="countryname position-relative">
+              <img class="position-absolute" src="assets/images/new-label.png" alt="{{item?.Direction}}" *ngIf="item?.is_new && item[item?.Direction | titlecase]"/>
+              <span>{{(item?.CountryName=='Philip' ? 'philippines': item?.CountryName) | uppercase}}</span>
+            </div>
+          </td>
+          <td>
+            <span *ngIf="item?.StartDate!='N/A'">{{item?.StartDate | date:'MMM-yy'}}</span>
+            &nbsp;&nbsp;&nbsp;&nbsp; 
+            <span *ngIf="item?.LatestDate!='N/A'">{{item?.LatestDate| date:'MMM-yy'}}</span>
+          </td>
+          <td>{{item?.Direction | titlecase}}</td>
+          <td>100%</td>
+          <td class="text-start">Date, Importer, Supplier, Hs Code, Product Description, Quantity, Unit, Value, Trade Partner Countries, Ports and many more</td>
+          <td>
+            <button *ngIf="isAvailbale(item?.CountryName) && item?.active" (mouseover)="onHover($event, true)" (mouseout)="onHover($event, false)" class="cypher-btn gray-bgColor w-50" (click)="onSelectCountry(item, item?.Direction)">Select</button>
+            <span class="padlock"><i class="fa-sharp-duotone fa-solid fa-lock" *ngIf="!isAvailbale(item?.CountryName)"></i></span>
+            <button disabled class="cypher-btn gray-bgColor w-50 disabled" *ngIf="!item?.active">Coming Soon</button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+    
+    <div class="loader h-100" *ngIf="isApiInProcess">
+      <img src="assets/images/loader.png" alt="" />
+      <span>Please wait...</span>
+    </div> 
+  </div>
+</div>

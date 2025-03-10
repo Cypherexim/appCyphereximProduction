@@ -1,0 +1,714 @@
+.h-90{height: 90%;}
+/* div.company-hunter-container{position: relative;height: 90vh;}
+div.company-hunter-container div.score-board{
+    display: flex;
+    align-items: center;
+    width: 15%;
+    position: absolute;
+    right: 3%;
+    top: 3%;
+}
+div.company-hunter-container div.score-board div.points{
+    font-size: 14px;
+    letter-spacing: 0.5px;
+    font-weight: 500;
+    font-family: 'Roboto';
+    color: white;
+    padding: 8px 25px;
+    border-radius: 50%;
+}
+div.company-hunter-container div.score-board div.points.red{background-color: red;}
+div.company-hunter-container div.score-board div.points.orange{background-color: orange;}
+div.company-hunter-container div.score-board div.points.green{background-color: #4cbfa6;}
+div.company-hunter-container div.score-board i{
+    font-size: 22px;
+    color: green;
+    cursor: pointer;
+    transition: all 0.4s ease;
+}
+div.company-hunter-container div.score-board i:hover{scale: 1.25;}
+
+div.middle-box{}
+
+div.middle-box div.company-search-box{
+    background-color: #f4f1e3;
+    padding: 2.5rem 3rem;
+    border-radius: 10px;
+    margin-top: 3rem;
+    margin-bottom: 3.5rem;
+    box-shadow: 0px 5px 15px 0.5px #00000047;
+}
+div.middle-box div.company-search-box h3{
+    font-size: 23px;
+    font-weight: 400;
+    letter-spacing: -0.25px;
+    margin-bottom: 1.25rem;
+}
+
+div.middle-box div.company-search-box div.input-fields{
+    width: 80%;
+    height: 2.5rem;
+    margin: auto;
+    margin-bottom: 1.5rem;
+}
+
+div.middle-box div.company-search-box div.input-fields div.search-field input{
+    outline: none;
+    padding: 0 10px;
+    border-radius: 5px;
+    border: 1px solid #c2c2c2;
+}
+div.middle-box div.company-search-box div.input-fields div.search-field ul{
+    background-color: white;
+    width: 100%;
+    padding: 0;
+    border: 1px solid #c2c2c2;
+    box-shadow: 0px 5px 5px 0px #00000021;
+    margin-top: 2px;
+    outline: none;
+    z-index: 99;
+}
+div.middle-box div.company-search-box div.input-fields div.search-field ul li{
+    list-style-type: none;
+    padding: 5px 15px;
+    border-bottom: 1px dotted #c2c2c2;
+    font-size: 17px;
+    cursor: pointer;
+    letter-spacing: 0.25px;
+}
+div.middle-box div.company-search-box div.input-fields div.search-field ul li:hover{background-color: whitesmoke;}
+div.middle-box div.company-search-box div.input-fields div.search-field ul li:last-child{border-bottom: 0;}
+
+div.middle-box div.company-search-box div.bttn button{
+    width: 30%;
+    border-radius: 5px;
+    padding: 7px 0;
+}
+
+.blurred{filter: blur(10px);}
+div.middle-box div.company-search-details{
+    min-height: 35vh;
+    max-height: 50vh;
+    overflow: auto;
+    background-color: #f4f1e3;
+    border-radius: 10px;
+    padding: 1.75rem 2.5rem;
+    box-shadow: 0px 5px 15px 0.5px #00000047;
+    position: relative;
+}
+div.middle-box div.company-search-details i.fa-heart,
+div.middle-box div.company-search-details i.lock-icon{
+    position: absolute;
+    cursor: pointer;
+    right: 5%;
+    z-index: 9;
+}
+div.middle-box div.company-search-details i.fa-heart{
+    transition: all 0.3s ease;
+    right: 2%;
+    top: 3%;
+}
+div.middle-box div.company-search-details i.fa-heart:hover{scale: 1.1}
+
+div.middle-box div.company-search-details div.load-box{height: 29vh;}
+div.middle-box div.company-search-details div.load-box div.loader img{height: 30px;}
+div.middle-box div.company-search-details div.load-box div.loader span{font-size: 12px;margin-top: 10px;}
+div.middle-box div.company-search-details div.load-box div.loader div.bottom-btn button{
+    text-transform: capitalize;
+    margin-top: 1.5rem;
+    padding: 5px 25px;
+    border-radius: 5px;
+    font-size: 15px;
+}
+div.middle-box div.company-search-details div.load-box div.loader div.bottom-btn span.req-msg{
+    font-size: 15px;
+    color: green;
+    letter-spacing: 0.35px;
+}
+
+div.middle-box div.company-search-details h2{
+    font-weight: 400;
+    font-size: 35px;
+    letter-spacing: 0.5px;
+    margin-bottom: 2rem;
+}
+
+div.middle-box div.company-search-details div.basic-data div.data i{
+    font-size: 18px;
+    width: 5%;
+}
+div.middle-box div.company-search-details div.basic-data div.data p{
+    font-size: 17px;
+    font-weight: 500;
+}
+
+
+div.company-hunter-container div.favorites-list-container {
+    width: 93%;
+    height: 88vh;
+}
+div.company-hunter-container div.favorites-list-container div.table-heading{
+    position: relative;
+    margin-bottom: 1rem;
+}
+div.company-hunter-container div.favorites-list-container div.table-heading span{
+    font-size: 30px;
+    font-weight: 700;
+    color: #545556;
+}
+div.company-hunter-container div.favorites-list-container div.table-heading i{
+    position: absolute;
+    top: 35%;
+    cursor: pointer;
+    font-size: 20px;
+}
+div.company-hunter-container div.favorites-list-container div.table-heading i.fa-download{right: 0%;color: #419b87;}
+div.company-hunter-container div.favorites-list-container div.table-heading i.fa-arrow-left{left: 1%;}
+div.company-hunter-container div.favorites-list-container div.table-box{
+    overflow: auto;
+    max-height: 90%;
+}
+div.company-hunter-container div.favorites-list-container div.table-box table{
+    border-collapse: collapse;
+}
+div.company-hunter-container div.favorites-list-container div.table-box table th,
+div.company-hunter-container div.favorites-list-container div.table-box table td{
+    border: 1px solid #c2c2c2;
+    padding: 2px 10px;
+    white-space: nowrap;
+}
+div.company-hunter-container div.favorites-list-container div.table-box table tr:hover{background-color: #ffeb3b66;}
+div.company-hunter-container div.favorites-list-container div.table-box table thead{
+    background-color: #4cbfa6;
+    color: white;
+    text-align: center;
+}
+div.company-hunter-container div.favorites-list-container div.empty-msg{height: 85%;}
+div.company-hunter-container div.favorites-list-container div.empty-msg span{
+    font-weight: 600;
+    font-family: 'Roboto';
+    letter-spacing: 0.35px;
+}
+.invisible{visibility: hidden;} */
+
+
+div.container {
+    height: 92vh;
+    padding: 20px;
+    max-width: 100%;
+    width: 100% !important;
+}
+
+div.container div.search-bar {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 1.75rem;
+    align-items: center;
+    padding: 5px 20px;
+    border-radius: 7.5px;
+    box-shadow: 0 0 10px #00000040;
+}
+
+div.container div.favorite-list{
+    font-size: 1.4375rem;
+    color: #4cbfa6;
+    width: 4%;
+    cursor: pointer;
+    margin-bottom: 1.75rem;
+    padding: 11px 20px;
+    border-radius: 7px;
+    margin-left: 10px;
+    box-shadow: 0 0 10px #00000040;
+}
+
+div.container div.search-bar input {
+    padding: 7px 10px;
+    outline: none;
+    border: none;
+    font-size: 15px;
+}
+
+div.container div.search-bar button {
+    padding: 3px 60px;
+    background-color: #4cbfa6;
+    font-size: 14px;
+    font-family: 'Roboto';
+    letter-spacing: 0.5px;
+    font-weight: 500;
+    color: white;
+    border: none;
+    cursor: pointer;
+    border-radius: 2rem;
+}
+div.container div.search-bar ul{
+    background-color: white;
+    width: 100%;
+    padding: 0;
+    border: 1px solid #c2c2c2;
+    box-shadow: 0px 5px 5px 0px #00000021;
+    margin-top: 5px;
+    outline: none;
+    z-index: 99;
+    top: 100%;
+    left: 0%;
+}
+div.container div.search-bar ul li{
+    list-style-type: none;
+    padding: 3px 15px;
+    border-bottom: 1px dotted #c2c2c2;
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    letter-spacing: 0.5px;
+}
+div.container div.search-bar ul li:hover{background-color: whitesmoke;}
+div.container div.search-bar ul li:last-child{border-bottom: 0;}
+
+
+
+
+div.container div.sidebar {
+    padding: 15px;
+    flex-basis: 20%;
+    border-radius: 8px;
+    background-color: white;
+    box-shadow: 0 0 10px #00000040;
+}
+
+div.container div.sidebar div.feedback {
+    margin-bottom: 2.5rem;
+    padding: 10px 20px;
+    border-radius: 5px;
+}
+
+div.container div.sidebar div.feedback h4 {
+    margin-bottom: 10px;
+    font-weight: 500;
+    letter-spacing: 0.45px;
+    font-size: 14px;
+    color: #4cbfa6;
+}
+
+div.container div.sidebar div.feedback p {
+    font-size: 13px;
+    font-family: 'Roboto';
+    letter-spacing: 0.35px;
+}
+
+div.container div.sidebar div.feedback input.feedback-input {
+    padding: 5px 8px;
+    font-size: 14px;
+    margin-top: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
+div.container div.sidebar div.feedback button.feedback-submit {
+    margin-top: 10px;
+    padding: 3px 25px;
+    font-family: 'Roboto';
+    font-size: 14px;
+    background-color: #4cbfa6;
+    color: white;
+    border: none;
+    cursor: pointer;
+    border-radius: 30px;
+}
+div.container div.sidebar div.commodities{height: 70%;}
+div.container div.sidebar div.commodities ul {
+    list-style: none;
+    padding-left: 0;
+    padding-right: 5px;
+    margin: 0;
+    margin-bottom: 0.25rem;
+    overflow: auto;
+}
+
+div.container div.sidebar div.commodities li {
+    display: flex;
+    font-weight: 500;
+    font-size: 13px;
+    color: #545454;
+    align-items: center;
+    margin-bottom: 10px;
+    font-family: 'Roboto';
+    letter-spacing: 0.2px;
+    justify-content: space-between;
+}
+div.container div.sidebar div.commodities li span{
+    color: #1eaa8b;
+    background-color: #4cbfa624;
+    padding: 0.5px 2.5px;
+    border-radius: 3px;
+}
+
+div.container div.sidebar div.commodities div.text-icon {margin-bottom: 1rem;}
+
+div.container div.sidebar div.commodities div.text-icon h4 {font-size: 20px;margin: 0;}
+
+div.container div.sidebar div.commodities div.text-icon i {font-size: 14px;}
+
+div.container div.sidebar div.commodities div.text-icon i span.digit {
+    background-color: #efefef;
+    padding: 1px 5px;
+    border-radius: 5px;
+    font-size: 14px;
+}
+
+/* 
+span.colored {color: royalblue;font-weight: 700;} */
+div.container div.sidebar div.commodities a.show-more {
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    color: #4169e6;
+    letter-spacing: -0.25px;
+}
+
+div.container div.sidebar div.commodities a.show-more:hover {text-decoration: underline;}
+
+div.container div.main-content {flex-basis: 75%;}
+
+div.container div.main-content div.trending-companies {margin-bottom: 30px;}
+
+div.container div.main-content div.trending-companies h4.trading {
+    margin-bottom: 10px;
+    margin-right: 5px;
+    text-align-last: end;
+    font-weight: 500;
+    letter-spacing: 0.25px;
+    font-size: 14px;
+    font-family: 'Roboto';
+    color: #77ad9e;
+}
+
+div.container div.main-content div.trending-companies h4 {margin-bottom: 20px;font-size: 1.2rem;}
+
+div.container div.main-content div.trending-companies div.companies-list {
+    display: flex;
+    justify-content: space-between;
+}
+
+div.container div.main-content div.trending-companies div.companies-list div.company-card {
+    text-align: center;
+    padding-top: 2rem;
+    border-radius: 10px;
+    box-shadow: 0 0 10px #00000040;
+    background-color: white;
+    flex-basis: 32%;
+}
+
+
+div.container div.main-content div.trending-companies div.companies-list div.company-card img {
+    width: 85px;
+    height: 85px;
+    margin-bottom: 6px;
+    border: 1px solid black;
+    border-radius: 50%;
+    padding: 6px;
+    object-fit: contain;
+}
+
+div.container div.main-content div.trending-companies div.companies-list div.company-card h4 {
+    margin-bottom: 5px;
+    font-family: 'Roboto';
+    font-weight: 500;
+    font-size: 17px;
+    margin-top: 10px;
+    letter-spacing: 0.25px;
+}
+
+
+div.container div.main-content div.trending-companies div.companies-list div.company-card p.About {
+    margin-bottom: 1rem;
+    font-size: 14px;
+    color: #9e9e9e;
+}
+
+div.container div.main-content div.trending-companies div.companies-list div.company-card div.button {
+    border-top: 1px solid #dddddd;
+    display: flex;
+    justify-content: space-between;
+    padding: 5px 18px;
+}
+
+div.container div.main-content div.trending-companies div.companies-list div.company-card div.button button.show-jobs {
+    border: none;
+    background: none;
+    color: royalblue;
+    font-weight: 600;
+    font-size: 13.5px;
+}
+
+div.container div.main-content div.trending-companies div.companies-list div.company-card div.button button.follwing {
+    padding: 5px 10px;
+    background-color: #4cbfa63d;
+    color: royalblue;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    width: 25%;
+    display: flex;
+    align-items: center;
+    align-items: center;
+    justify-content: space-between;
+    font-weight: 700;
+}
+
+div.container div.main-content div.trending-companies div.companies-list div.company-card div.button button.follow-button {
+    color: white !important;
+    background-color: #4cbfa6 !important;
+    width: 30% !important;
+}
+
+div.container div.main-content div.trending-companies div.companies-list div.company-card div.button button.follwing i,
+div.container div.main-content div.trending-companies div.companies-list div.company-card div.button button.follow-button i {font-size: 14px;}
+
+div.container div.main-content div.trending-companies div.companies-list div.company-card div.button button.follwing p,
+div.container div.main-content div.trending-companies div.companies-list div.company-card div.button button.follow-button p {
+    font-size: 14px;
+    font-weight: 500;
+    letter-spacing: 0.3px;
+    margin-bottom: 0;
+}
+
+
+div.container div.main-content h4.Contact {
+    font-weight: 600;
+    font-size: 18px;
+    margin: 0;
+}
+
+
+
+/* Contact List Section */
+div.container div.contact-list {
+    height: 58%;
+    overflow: auto;
+    margin-top: 1rem;
+    padding: 0px 0px;
+    border-radius: 8px;
+    background-color: #f5f5f5;
+    box-shadow: 0 0 10px #00000040;
+}
+
+div.container div.contact-list h4 {margin-bottom: 20px;}
+
+/* Contact List Tabs */
+div.container div.contact-list div.contact-tabs {
+    display: flex;
+    margin-bottom: 15px;
+    gap: 2rem;
+    margin-top: 17px;
+    margin-left: 19px;
+}
+
+div.container div.contact-list div.contact-tabs span.tab {
+    font-weight: bold;
+    color: black;
+    cursor: pointer;
+    padding: 1px 11px;
+    border-radius: 0px;
+}
+
+div.container div.contact-list div.contact-tabs span.tab span.active {border-bottom: 3px solid black;}
+
+/* Contact Table */
+div.container div.contact-list table.contact-table {border-collapse: collapse;}
+
+div.container div.contact-list table.contact-table thead {
+    background-color: #f5f5f5;
+    box-shadow: 0px 0px 4px 5px #00000024;
+}
+
+div.container div.contact-list table.contact-table th,
+div.container div.contact-list table.contact-table td {
+    padding: 15px;
+    text-align: left;
+    border-bottom: 1px solid #b8b8b8;
+}
+
+div.container div.contact-list table.contact-table th {font-weight: 500;}
+
+div.container div.contact-list table.contact-table td {
+    position: relative;
+    font-size: 15px;
+    font-weight: 500;
+    letter-spacing: 0.35px;
+}
+
+div.container div.contact-list table.contact-table td.first-td i {
+    margin-left: 10px;
+    color: royalblue;
+}
+
+div.container div.contact-list table.contact-table td.first-td div span {
+    font-size: 15px;
+    font-weight: 500;
+    letter-spacing: 0.35px;
+}
+
+div.container div.contact-list table.contact-table tr:hover {background-color: #f1f1f1;}
+
+div.container div.contact-list table.contact-table tbody tr td label {filter: blur(3px);}
+
+div.container div.contact-list table.contact-table tbody tr div.bttom-box {
+    font-size: 12.5px;
+    letter-spacing: 0.25px;
+}
+
+div.container div.contact-list table.contact-table tbody tr td.eya-mail {position: relative;}
+
+div.container div.contact-list table.contact-table tbody tr td.eya-mail i.eye-blur {
+    position: absolute;
+    top: 40%;
+    left: 50%;
+    color: #2a7c6a;
+    cursor: pointer;
+}
+
+div.container div.contact-list table.contact-table tbody tr td.eya i {color: #4cbfa6;}
+/* //////////////////////////////////////////////////////////////// */
+
+
+
+div.container div.main-content.result {flex-basis: 75%;}
+
+div.container div.main-content.result div.trending-companies h4.trading {
+    margin-bottom: 0px;
+    text-align-last: end;
+    font-weight: 600;
+    font-size: 16px;
+    letter-spacing: 0.35px;
+    color: #4cbfa6;
+}
+div.container div.main-content.result div.trending-companies i{font-size: 20px;cursor: pointer;}
+
+div.container div.main-content.result div.trending-companies div.manu-bar {
+    gap: 1rem;
+    text-align: inherit;
+    margin-bottom: 0.75rem;
+}
+
+div.container div.main-content.result div.trending-companies div.form-box {
+    background: #f5f5f5;
+    padding: 2.5rem 3rem;
+    height: 95.5%;
+    border-radius: 10px;
+    box-shadow: 0 0 10px #00000040;
+}
+
+div.container div.main-content.result div.trending-companies div.form-box div.company-info ul li i {
+    font-size: 14px;
+    width: 3.25%;
+    text-align: start;
+}
+
+div.container div.main-content.result div.trending-companies div.form-box div.company-info {
+    border-top: 2px solid black;
+    padding-top: 1rem;
+    height: 50vh;
+    position: relative;
+}
+div.container div.main-content.result div.trending-companies div.form-box div.company-info strong{
+    font-size: 17px;
+    font-weight: 600;
+}
+
+div.container div.main-content.result div.trending-companies div.form-box div.top-box div.company-form {min-height: 12vh;}
+
+div.container div.main-content.result div.trending-companies div.form-box div.top-box div.company-form p.sub-text {
+    font-size: 14px;
+    font-weight: 400;
+    letter-spacing: 0.35px;
+    font-family: 'Roboto';
+}
+
+div.container div.main-content.result div.trending-companies div.form-box div.company-info ul {
+    list-style-type: none;
+    margin-top: 1.5rem;
+    padding-left: 0;
+    margin-bottom: 5vh;
+}
+
+div.container div.main-content.result div.trending-companies div.form-box div.company-info ul li {
+    margin: 10px 0px;
+    font-size: 15px;
+    font-weight: 500;
+    font-family: 'Roboto';
+    letter-spacing: 0.45px;
+    font-weight: 400;
+    display: flex;
+    align-items: center;
+    justify-content: start;
+}
+
+div.container div.main-content.result div.trending-companies div.form-box div.top-box div.company-form h5.company-name {
+    font-weight: 500;
+    font-size: 20px;
+}
+div.container div.main-content.result div.trending-companies div.form-box div.top-box div.company-form i{font-size: 20px;color: #4cbfa6;}
+
+div.container div.main-content.result div.trending-companies div.form-box div.company-info a.profile-link {
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 13.5px;
+    font-family: 'Roboto';
+    letter-spacing: 0.35px;
+    position: absolute;
+    bottom: 10%;
+    left: 0%;
+}
+
+div.container div.favorites-list-container {
+    height: 80vh;
+}
+div.container div.favorites-list-container div.table-heading{
+    position: relative;
+    margin-bottom: 1rem;
+}
+div.container div.favorites-list-container div.table-heading span{
+    font-size: 30px;
+    font-weight: 700;
+    color: #545556;
+}
+div.container div.favorites-list-container div.table-heading i{
+    position: absolute;
+    top: 35%;
+    cursor: pointer;
+    font-size: 20px;
+}
+div.container div.favorites-list-container div.table-heading i.fa-download{right: 0%;color: #419b87;}
+div.container div.favorites-list-container div.table-heading i.fa-arrow-left{left: 1%;}
+div.container div.favorites-list-container div.table-box{
+    overflow: auto;
+    max-height: 90%;
+}
+div.container div.favorites-list-container div.table-box table{
+    border-collapse: collapse;
+}
+div.container div.favorites-list-container div.table-box table th,
+div.container div.favorites-list-container div.table-box table td{
+    border: 1px solid #c2c2c2;
+    padding: 2px 10px;
+    white-space: nowrap;
+}
+div.container div.favorites-list-container div.table-box table tr:hover{background-color: #ffeb3b66;}
+div.container div.favorites-list-container div.table-box table thead{
+    background-color: #4cbfa6;
+    color: white;
+    text-align: center;
+}
+div.container div.favorites-list-container div.empty-msg{height: 85%;}
+div.container div.favorites-list-container div.empty-msg span{
+    font-weight: 600;
+    font-family: 'Roboto';
+    letter-spacing: 0.35px;
+}
+
+
+
+
+
+
+

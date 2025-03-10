@@ -1,0 +1,233 @@
+/* div.data-list{
+    height: 60vh;
+    overflow: hidden;
+}
+
+div.data-list div.countries{
+    width: 100%;
+    height: 100%;
+}
+
+div.data-list div.countries h3{
+    font-weight: 400;
+    text-align: center;
+    padding: 20px 0 15px 0;
+    font-family: 'Roboto',sans-serif;
+}
+
+div.data-list div.countries div.search-box{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+div.data-list div.countries div.search-box input{
+    border: 1px solid #c2c2c2;
+    outline: none;
+    padding-left: 10px;
+    border-radius: 0;
+    padding: 5px 0;
+    padding-left: 10px;
+    width: 80%;
+    margin-bottom: 1.5rem;
+}
+div.data-list div.countries div.search-box input:focus{border-color: #4cbfa6;}
+
+
+div.data-list div.countries div.data-container{
+    width: 100%;
+    height: 65%;
+    overflow: auto;
+}
+
+div.data-list div.countries div.data-container ul{
+    list-style-type: none;
+    padding: 0;
+}
+div.data-list div.countries div.data-container ul li{
+    padding: 5px 2px;
+    margin-left: 50px;
+}
+div.data-list div.countries div.data-container ul li input{
+    margin-right: 10px;
+    scale: 1.18;
+    accent-color:#4cbfa6
+}
+div.data-list div.countries div.data-container ul li span{
+    font-size: 18px;
+    letter-spacing: 0.3px;
+    color: #545454;
+    font-family: 'Roboto', sans-serif;
+}
+div.data-list div.countries div.submit-btn{text-align: center;padding-top: 5px;}
+div.data-list div.countries div.submit-btn button{
+    padding: 5px 0;
+    width: 35%;    
+} */
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+div.locator-box{
+    height: 100%;
+}
+
+div.locator-box div.head-bar{
+    background-color: black;
+    display: flex;
+    justify-content: space-between;
+    padding: 5px 1rem;
+    padding-left: 2rem;
+    align-items: center;
+}
+div.locator-box div.head-bar h5{color: white;}
+div.locator-box div.head-bar img{height: 25px;cursor: pointer;}
+
+div.locator-box div.table-container{height: calc(90% + 20px);width: 100%;overflow-y: hidden;}
+
+div.locator-box div.table-container div.copy-tab-head{background-color: #4cbfa6;}
+div.locator-box div.table-container div.copy-tab-head span{
+    display: inline-block;
+    padding: 5px;
+}
+div.locator-box div.table-container div.copy-tab-head span:last-child{width: 100%;text-align: right;padding-right: 5px;}
+
+div.locator-box div.table-container div.copy-tab-head span:last-child input[type="text"]{
+    width: 100%;
+    border: 1px solid #4cbfa6;
+    outline: none;
+    padding: 5px 10px;
+    font-size: 15px;
+    font-family: 'Roboto';
+    letter-spacing: 0.5px;
+    font-weight: 400;
+}
+
+div.locator-box div.table-container div.copy-tab-foot{
+    width: 100%;
+    position: sticky;
+    bottom: 0;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background-color: white;
+}
+div.selected{margin-left: 4.5%;font-size: 17px;}
+div.selected span{
+    font-weight: 600;
+    letter-spacing: 0.5px;
+}
+
+div.locator-box div.table-container div.copy-tab-foot button{
+    padding: 5px 40px;
+    border-radius: 3px;
+    margin-right: 5px;
+}
+
+div.locator-box div.table-container table{
+    width: 100%;
+    height: auto;
+}
+div.locator-box div.table-container table thead{
+    position: sticky;
+    top: 0;
+    z-index: 99;
+    background-color: #4cbfa6;
+}
+div.locator-box div.table-container table thead th{
+    color: white;
+    font-weight: 500;
+    letter-spacing: 0.6px;
+}
+div.locator-box div.table-container table thead th:last-child{ text-align: right;padding-right: 5px;}
+div.locator-box div.table-container table tbody tr:nth-child(even){background-color: #e5e5e5;}
+div.locator-box div.table-container table tbody tr{border-bottom: 1px solid #e5e5e5;}
+div.locator-box div.table-container table tbody td{padding: 10px 0;}
+div.locator-box div.table-container table tbody td:first-child{text-align: center;width: 10%;}
+div.locator-box div.table-container table tbody td input[type="checkbox"]{
+    accent-color: #4cbfa6;
+    scale: 1.1;
+}
+div.locator-box div.table-container table tbody td span.label{color: black;font-weight: 400;}
+div.locator-box div.table-container table tbody td span.count{color: #397cd3;font-weight: bold;}
+div.locator-box div.table-container table tbody td span.value{color: #109910;font-weight: bold;}
+div.locator-box div.table-container table tbody td:nth-child(2){
+    padding-left: 1rem;
+}
+div.locator-box div.table-container table tfoot{
+    position: sticky;
+    bottom: 0;
+    background-color: white;
+}
+div.locator-box div.table-container table tfoot tr td{
+    text-align: right;
+    padding: 5px 0;
+    padding-right: 10px;
+}
+div.locator-box div.table-container table tfoot tr td button{
+    padding: 5px 40px;
+    border-radius: 3px;
+}
+
+div.locator-box div.table-container h5{
+    height: 93%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+div.locator-box div.table-container cdk-virtual-scroll-viewport{height: 86%;}
+
+
+@media screen and (max-width: 1600px) {
+    div.locator-box div.table-container div.copy-tab-head span:last-child input[type="text"]{font-size: 14px;}
+    div.locator-box div.table-container div.copy-tab-foot button{
+        padding: 5px 25px;
+        font-size: 14px;   
+    }
+    div.locator-box div.table-container table tbody td:nth-child(2){
+        font-size: 14px;
+        letter-spacing: 0.7px;
+        padding: 5px 0;
+    }
+    div.locator-box div.table-container table tbody td input[type="checkbox"]{scale: 0.9;}
+    div.locator-box div.table-container cdk-virtual-scroll-viewport{height: 81.5%;}
+}
+
+@media screen and (max-width: 1400px) {
+    div.locator-box div.table-container{height: calc(95% + 20px);}
+}
+
+@media screen and (max-width: 1366px) {
+    div.locator-box div.table-container{height: calc(85% + 20px);}
+}
+
+@media screen and (max-width: 1280px) {
+    @media screen and (max-height: 1024px){
+        div.locator-box div.table-container{height: calc(93% + 20px);}
+    }
+
+    @media screen and (max-height: 800px){
+        div.locator-box div.table-container{height: calc(85% + 20px);}
+    }
+
+    @media screen and (max-height: 768px){}
+
+    @media screen and (max-height: 720px){
+        div.locator-box div.table-container cdk-virtual-scroll-viewport{height: 77%;}
+        div.locator-box div.table-container table tbody td:nth-child(2){
+            font-size: 13px;
+            letter-spacing: 0.3px;
+        }
+    }
+}

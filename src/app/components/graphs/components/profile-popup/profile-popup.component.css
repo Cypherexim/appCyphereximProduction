@@ -1,0 +1,39 @@
+div.profile-popup{height: 100%; width: 100%;}
+
+div.profile-popup div.modal-head{
+  color: white;
+  background-color: #000000;
+  padding: 0px 20px;
+  height: 6.5%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+div.profile-popup div.modal-head h5{margin: 0;}
+div.profile-popup div.modal-head img{cursor: pointer;}
+
+div.profile-popup div.modal-body{overflow: auto;}
+
+div.body-container{}
+
+div.body-container table{
+  height: 100%;
+  width: 100%;
+  border: 1px solid black;
+}
+div.body-container table thead{background-color: #4cbfa6;color: white;}
+div.body-container table thead th{
+  font-size: 18px;
+  letter-spacing: 0.8px;
+}
+div.body-container table tr{border-bottom: 1px solid black;}
+div.body-container table tr td:not(:last-child){border-right: 1px solid black;}
+div.body-container table tr td,
+div.body-container table th{
+  padding: 7px 0;
+  text-align: center;
+  font-family: "Roboto";
+}
+
+
+

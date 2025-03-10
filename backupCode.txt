@@ -1,0 +1,2374 @@
+import { Component, Input, OnInit, AfterViewInit, OnDestroy, OnChanges, Output, EventEmitter, ChangeDetectionStrategy } from '@angular/core';
+import { UserService } from 'src/app/services/user.service';
+import { EventemittersService } from 'src/app/services/eventemitters.service';
+import { Subscription, timer, forkJoin, Subject, takeUntil, Observable, of, concatMap, from, timeout, catchError } from 'rxjs';
+import { SearchService } from 'src/app/services/search.service';
+import { CounterTabsModel, SideFilterModel, FilterNames, SideFilterAccessModel } from 'src/app/models/others';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { TableDataModalComponent } from './components/table-data-modal/table-data-modal.component';
+import { ApiServiceService } from 'src/app/services/api-service.service';
+import { SaveFileComponent } from '../side-filter/modals/save-file/save-file.component';
+import { DownloadModelComponent } from './components/download-model/download-model.component';
+import { SideFilterPipe } from 'src/app/common/Pipes/side-filter.pipe';
+import { LocatorModalComponent } from './components/locator-modal/locator-modal.component';
+import { AlertifyService } from 'src/app/services/alertify.service';
+import { EllipsisPipe } from 'src/app/common/Pipes/ellipsis.pipe';
+import { AuthService } from 'src/app/services/auth.service';
+import { CountryHeads } from 'src/app/models/country';
+import { environment } from 'src/environments/environment';
+import { AllRightsService } from 'src/app/services/all-rights.service';
+import { SplitHsCodePipe } from 'src/app/common/Pipes/split-hs-code.pipe';
+import { NotifyAlertMsgComponent } from '../workstation/modals/notify-alert-msg/notify-alert-msg.component';
+
+@Component({
+  selector: 'app-homepage',
+  templateUrl: './homepage.component.html',
+  styleUrls: ['./homepage.component.css'],
+  changeDetection: ChangeDetectionStrategy.Default
+})
+
+export class HomepageComponent implements OnInit, OnChanges, AfterViewInit, OnDestroy {
+  @Input() refresh: boolean = false;
+  @Output() onShareFilterData: EventEmitter<any> = new EventEmitter();
+  eventSubscription: Subscription;
+  eventSubscription2: Subscription;
+  eventSubscription3: Subscription;
+  eventSubscription4: Subscription;
+  eventSubscription5: Subscription;
+  eventSubscription6: Subscription;
+  eventSubscription7: Subscription;
+  eventSubscription8: Subscription;
+  apiSubscription: Subscription;
+  apiSubscription2: Subscription;
+  apiSubscription3: Subscription;
+  apiSubscription4: Subscription;
+
+  destory$: Subject<any> = new Subject<any>();
+
+  apiSubscription5: Subscription;
+  apiSubscription6: Subscription;
+
+  timerSubscription: Subscription;
+  isDownloadingFile: boolean = false;
+  isAnalysisTabActive: boolean = false;
+  tableHeads: string[] = [];
+  filterNames: FilterNames = new FilterNames();
+  filterAccess: SideFilterAccessModel = new SideFilterAccessModel();
+
+  warningMsg = {
+    duration: "You have exceeded the searching duration limit, please search within 3 years of duration.",
+    results: "Searched result size limit exceeded, please maintain size of result less than 5 lakh",
+    country: "You have not selected country, please select country first.",
+    direction: "Please set the direction of your choosen country first!",
+    nothing: "Please provide atleast one value!"
+  };
+
+  counterTabs: any[] = [
+    { tab: "records" },
+    { tab: "code", key: "HsCode" },
+    { tab: "exporters", key: "Exp_Name" },
+    { tab: "importers", key: "Imp_Name" },
+    { tab: "country", key: "Country" },
+  ];
+  tabSearchVal: string = "";
+
+  dropdownVal1: any[] = [
+    { value: 'import', placeholder: 'Import' },
+    { value: 'export', placeholder: 'Export' }
+  ];
+  dropdownVal2: any[] = [
+    { value: '0', placeholder: 'Latest Month' },
+    { value: '1', placeholder: 'Last Month' },
+    { value: '3', placeholder: 'Last 3 Month' },
+    { value: '6', placeholder: 'Last 6 Month' },
+    { value: '12', placeholder: 'Last Year' },
+    { value: '00', placeholder: 'Custom' }
+  ];
+  monthsArr: string[] = ["jan", "feb", "mar", "apr", "may", "jun", "jul", "aug", "sep", "oct", "nov", "dec"];
+  firstSelectVal = "Select Direction";
+  firstSelectClass = "inactive custom-dropdown";
+  // secSelectVal = this.userService.isCurrentPlanDemo() ? "Custom" : this.dropdownVal2[0]["placeholder"];
+  secSelectVal = this.dropdownVal2[0]["placeholder"];
+  secSelectClass = "custom-dropdown";
+
+  hsCodeDigit: string = "2";
+  allHsCodeArr: any[] = [];
+  hsCode: string = "";
+  currentCountry: string = '';
+  currentCountryData: any = {};
+  product: string[] = [];
+  word: string = "";
+
+  importerList: string[] = [];
+  exporterList: string[] = [];
+
+  fromDate: any;
+  toDate: any;
+  max: any = undefined; min: any = undefined; //calender attributes
+
+  //for the saved scenario purpose
+  allDownloadNames: string[] = [];
+  savedStatus = { isAlreadySaved: false, savedFileName: '', savedFileId: '', saveFolder: '' };
+
+  isWordDropdown: boolean = false;
+  wordsArr: any[] = [];
+  // dateRange: any = this.userService.isCurrentPlanDemo() ? "00" : "1";
+  dateRange: any = "0";
+  today = new Date();
+  isCustomDate: boolean = false;
+  isTabsVisible: boolean = false;
+  lowerPanelObj: any = {
+    hasSearchBtnClicked: false,
+    arrowBtnClassName: "down-arrow"
+    // arrowBtnClassName: this.userService.isCurrentPlanDemo() ? "down-arrow" : "up-arrow"
+  };
+
+  dropdownList: Array<any> = [];
+  selectedItems: Array<any> = [];
+
+  dropdownSettings = {
+    key: 'Hscode', //no need
+    value: 'Hscode', //no need
+    searchPlaceholder: 'Search HScode',
+    enableSelectAll: false
+  }
+
+  refreshPageName: string = "";
+
+  direction: string = "";
+  showLowerPanel: boolean = false;
+  lowerPanelStyle = { height: this.showLowerPanel ? '30%' : '12%', overflow: this.showLowerPanel ? 'hidden' : 'visible' };
+
+  bottomTableView: boolean = false;
+  isSearchingHsCode: boolean = false;
+  isSearchBtnClicked: boolean = false; //if the search btn is clicked then returned data is empty so the msg will come
+  isFilteringData: boolean = false;
+  isSearchingData: boolean = false;
+  isSearchingTimeOut: boolean = false;
+  isTableLoader: boolean = false;
+  selectedFilterArr: string[] = [];
+  sortedHsCodeArr: any = {};
+
+  apiBodyObj = { base: {}, filter: {} };
+  counterValData = {};
+  counterObj = { total: 0, hsCode: 0, importers: 0, exporters: 0, country: 0 };
+
+  //paginations variables
+  pagePerView: number = 25; //offset
+  currentPageNum: number = 0; //current page number
+  cpyCurrentPageNum = 1;
+  totalPages: number = 1 //total number of pages
+  searchResult: any[] = [];
+  copiedTableData: any[] = [];
+  // backupTableData:BackupFilterModel = new BackupFilterModel(); //backup in case of filteration
+  perPageData: any[] = [];
+  //------------------------//
+
+  // isSideBarOpen:boolean = false;
+  isTotalDataReceived: boolean = false;
+  isMainChecked: boolean = false;
+  allSelectCheckedArr: string[] = [];
+  workstationCache = {}; //for the selected data
+
+  // recordsData:string[] = [];
+  locatorData: any;
+  locatorDisable = { exporter: '', importer: '' };
+
+  dataCounterTabs: CounterTabsModel = new CounterTabsModel();
+  filterTableTabs: CounterTabsModel = new CounterTabsModel();
+  sideFilterOptions: SideFilterModel = new SideFilterModel();
+  sideFilterOptions2: SideFilterModel = new SideFilterModel();
+  currentSearchingMode: string = "main";
+  selectedFilterCache = {};
+
+  isCurrentUserDemo: boolean = false;
+
+  btnAccessibility = { search: false, download: false, days: false };
+
+  filterPipe: SideFilterPipe = new SideFilterPipe();
+  ellipsePipe: EllipsisPipe = new EllipsisPipe();
+  splitHsPipe: SplitHsCodePipe = new SplitHsCodePipe();
+
+  constructor(
+    private alertService: AlertifyService,
+    private modalService: NgbModal,
+    public userService: UserService,
+    private authService: AuthService,
+    private userRightService: AllRightsService,
+    private apiService: ApiServiceService,
+    private searchService: SearchService,
+    private eventService: EventemittersService
+  ) { }
+
+  ngOnChanges() {
+    if (this.refresh) this.refreshCurrentPage();
+  }
+
+  ngOnInit() {
+    this.showAlertMsg();
+    this.eventService.userStatusEvent.emit('update');
+    this.changeDateRange(this.dateRange);
+    this.getHsCodeData();
+    this.getDownloadNames();
+
+    //to set the boolean variable if the current user plan is Demo or Trial
+    this.eventService.userDetailsStore.subscribe((res: any) => {
+      if (Object.keys(res).length > 0) {
+        const currentUserPlan: string = (res["PlanName"]).toLowerCase();
+        this.isCurrentUserDemo = (currentUserPlan.includes("demo") || currentUserPlan.includes("trial"));
+      }
+    });
+
+    // to get to know which page triggered the home to be refreshed
+    this.eventSubscription6 = this.eventService.refreshPageNameEvent.subscribe(res => {
+      if (res != "") this.refreshPageName = res;
+    });
+
+    this.eventSubscription = this.eventService.currentCountry.subscribe(res => {
+      //just unsubscribe before we subscribe another api hit
+      if (this.apiSubscription2) this.apiSubscription2.unsubscribe();
+
+      // to set the input fields according to choosen country and its direction
+      if (res.hasOwnProperty("country") && this.authService.getUserCountry() != res?.Country && res.direction) {
+        this.currentCountry = res.country || "India";
+        this.direction = res.direction;
+        this.currentCountryData = res;
+
+        const arrIndx = this.direction == 'export' ? 1 : 0;
+        this.firstSelectVal = this.dropdownVal1[arrIndx]['placeholder'];
+        const tag = document.getElementById('firstSelect') as HTMLDivElement;
+        tag.classList.remove('disable');
+
+        this.getCountryLocator();
+        this.getSideFilterAccess(res);
+        this.getCountryLatestDate();
+      }
+    });
+
+    this.eventSubscription2 = this.eventService.saveModalEvent.subscribe(res => {
+      if (res.flag) {
+        this.savedStatus.isAlreadySaved = true; //getting save flag true from sidefilter saving action
+        this.setBookmarkData(res);
+      }
+    });
+
+    this.eventSubscription3 = this.eventService.savedWorkspaceEvent.subscribe(res => {
+      if (Object.keys(res).length > 0) {
+        this.currentSearchingMode = "filter";
+        setTimeout(() => this.getLastSavedData(res), 500);
+      }
+    });
+
+    this.eventService.stopSearchingEvent.subscribe(res => {
+      if (res) {
+        if (this.apiSubscription) this.apiSubscription.unsubscribe();
+        if (this.apiSubscription3) this.apiSubscription3.unsubscribe();
+        if (this.apiSubscription4) this.apiSubscription4.unsubscribe();
+        this.eventService.toggleSearchLoader.next(false);
+      }
+    });
+
+    //still looking for the opportunity to have this used
+    this.eventSubscription4 = this.eventService.sidebarToggleEvent.subscribe(res => {
+      //if(res.target == 'navbar') this.isSideBarOpen = res.data;
+    });
+
+    this.eventSubscription5 = this.eventService.applyFilterEvent.subscribe(res => {
+      this.currentSearchingMode = "filter";
+      if (res.filters.length > 0) {
+        this.selectedFilterCache[res?.key] = res?.filters;
+      } else {
+        if (this.selectedFilterCache.hasOwnProperty(res?.key)) {
+          delete this.selectedFilterCache[res?.key];
+        }
+      }
+      this.filterOutTableData("filter");
+    });
+
+    this.eventSubscription7 = this.eventService.userDetailsStore.subscribe(res => {
+      // res["Downloads"] = "0";
+      // res["Searches"] = "0";
+
+      if (Object.keys(res).length > 0) {
+        this.btnAccessibility.download = Number(res["Downloads"]) > 0;
+        this.btnAccessibility.search = Number(res["Searches"]) > 0;
+        this.btnAccessibility.days = Number(res["remainingdays"]) > 0;
+      } else {
+        this.btnAccessibility.download = true;
+        this.btnAccessibility.search = true;
+        this.btnAccessibility.days = true;
+      }
+    });
+
+    //on changing of tab from table to analysis or vice-versa
+    this.eventSubscription8 = this.eventService.dataTabChngEvent.subscribe(res => {
+      this.isAnalysisTabActive = res;
+    });
+  }
+
+  ngAfterViewInit(): void {
+    this.setDurationCalenderLimit();
+
+
+    // if(this.userService.isCurrentPlanDemo()) {
+    //   const userData = this.authService.getUserDetails();
+    //   const dataAccess:string = userData["DataAccess"].split(",");
+    //   const fromSplitted = (dataAccess[0]).split("~");
+    //   const toSplitted = (dataAccess[1]).split("~");
+    //   const fromMonth = this.alertService.getMonthInFormat(this.monthsArr.indexOf(fromSplitted[0])+1);
+    //   const toMonth = this.alertService.getMonthInFormat(this.monthsArr.indexOf(toSplitted[0])+1);
+    //   this.fromDate = `${fromSplitted[1]}-${fromMonth}-01`;
+    //   this.toDate = `${toSplitted[1]}-${toMonth}-31`;
+    // }
+  }
+
+  // save current route first
+  refreshCurrentPage() {
+    if (this.refreshPageName == "advance") {
+      this.direction = "";
+      this.firstSelectVal = "Select Direction";
+      this.currentCountry = "India";
+      this.eventService.currentCountry.next({ country: "India" });
+      this.firstSelectClass = "custom-dropdown";
+
+      //if the downloadin is in progress then make it visible on the navbar
+      // if(this.isDownloadingFile) {
+      //   this.eventService.downloadListUpdate.next({target: "nav-bar", isDownloading: true});
+      //   this.isDownloadingFile = false;
+      // }
+    } else this.firstSelectClass = "inactive custom-dropdown";
+
+    // this.secSelectVal = this.userService.isCurrentPlanDemo() ? "Custom" : "Latest Month";
+    this.secSelectVal = "Latest Month";
+    this.secSelectClass = "custom-dropdown";
+
+    this.product = [];
+    // this.dateRange = this.userService.isCurrentPlanDemo() ? "00" : "1";
+    this.dateRange = "0";
+    this.workstationCache = {};
+    this.allSelectCheckedArr = [];
+    this.exporterList = [];
+    this.importerList = [];
+    this.currentSearchingMode = "main";
+
+    this.hsCodeDigit = "2";
+    this.getHsCodeData();
+
+    this.apiBodyObj = { base: {}, filter: {} };
+    this.hsCode = "";
+    this.searchResult = [];
+    this.bottomTableView = false;
+    this.isSearchBtnClicked = false;
+    this.togglePanelView(false);
+    this.savedStatus = { isAlreadySaved: false, savedFileName: '', savedFileId: '', saveFolder: '' };
+    this.changeDateRange(this.dateRange);
+    this.eventService.filterSidebarEvent.emit(false);
+    this.eventService.setAnalysisDataEvent.next({});
+    this.eventService.locatorDataMove.next({});
+    this.eventService.updateMultiselectDropDownEvent.next({ updateType: "clear", targetFrom: "home-1" });
+  }
+
+  setDurationCalenderLimit() {
+    const getMonthDigit = (i, j) => (this.monthsArr.indexOf(dataAccessDates[i].split("~")[j]) + 1) < 10
+      ? "0" + (this.monthsArr.indexOf(dataAccessDates[i].split("~")[j]) + 1)
+      : (this.monthsArr.indexOf(dataAccessDates[i].split("~")[j]) + 1);
+
+    // const fromDateTag = document.getElementById("fromDate") as HTMLInputElement;
+    // const toDateTag = document.getElementById("toDate") as HTMLInputElement;
+    const dataAccessDates: string[] = (this.authService.getUserDetails()["DataAccess"]).split(",");
+
+    let initialDate = `${dataAccessDates[0].split("~")[1]}-${getMonthDigit(0, 0)}-01`;
+    let currentDate = dataAccessDates.length > 1
+      ? `${dataAccessDates[1].split("~")[1]}-${getMonthDigit(1, 0)}-${new Date(Number((dataAccessDates[1]).split("~")[1]), Number(getMonthDigit(1, 0)), 0).getDate()}`
+      : new Date().toISOString().split("T")[0];
+
+    initialDate = new Date(initialDate).toISOString().split('T')[0];
+    currentDate = new Date().toISOString().split('T')[0];
+
+    this.max = currentDate;
+    this.min = initialDate;
+    // fromDateTag.max = currentDate;
+    // toDateTag.max = currentDate;
+    // fromDateTag.min = initialDate;
+    // toDateTag.min = initialDate;
+  }
+
+  setRecordVal(key) {
+    try {
+      const copySideFilterOptions = { ...(this.currentSearchingMode == "main" ? this.sideFilterOptions : this.sideFilterOptions2) };
+      if (key == "Country") {
+        if (copySideFilterOptions["CountryofOrigin"].length <= 1) {
+          return copySideFilterOptions["CountryofDestination"] || [];
+        } else {
+          return copySideFilterOptions["CountryofOrigin"] || [];
+        }
+      } else {
+        return copySideFilterOptions[key] || [];
+      }
+    } catch (error) { return []; }
+  }
+
+  getHsCodeData() {
+    const cacheKey = `${environment.apiurl}api/gethscode?digit=${this.hsCodeDigit}`;
+
+    this.isSearchingHsCode = true;
+    this.dropdownList = [];
+
+    if (environment.apiDataCache.hasOwnProperty(cacheKey)) { //fetching data from cache
+      this.dropdownList = environment.apiDataCache[cacheKey];
+      setTimeout(() => this.isSearchingHsCode = false, 300);
+    } else {
+      const twoDigitKey = `${environment.apiurl}api/gethscode?digit=2`;
+      const fourDigitKey = `${environment.apiurl}api/gethscode?digit=4`;
+      const eightDigitKey = `${environment.apiurl}api/gethscode?digit=8`;
+
+      this.userService.getHsCode("8").subscribe(
+        {
+          next: async (res: any) => {
+            if (!res?.error && res?.results.length > 0) {
+              // environment.apiDataCache[cacheKey] = res?.results; 
+              // =================================stored into cache================================
+              environment.apiDataCache[twoDigitKey] = await this.splitHsPipe.transform(res?.results, 2);
+              environment.apiDataCache[fourDigitKey] = await this.splitHsPipe.transform(res?.results, 4);
+              environment.apiDataCache[eightDigitKey] = await this.splitHsPipe.transform(res?.results, 8);
+              // ===================================================================================
+
+              this.dropdownList = await this.splitHsPipe.transform(res?.results, Number(this.hsCodeDigit));
+              setTimeout(() => this.isSearchingHsCode = false, 1000);
+            }
+          },
+          error: (err) => { this.isSearchingHsCode = true },
+        }
+
+        //   res => {//this.hsCodeDigit
+        //   if(!res?.error && res?.results.length>0) {
+        //     environment.apiDataCache[cacheKey] = res?.results; //stored into cache
+
+        //     this.dropdownList = res?.results;
+        //     setTimeout(() => this.isSearchingHsCode = false, 1000);
+        //   }
+        // }, err => this.isSearchingHsCode = true
+      );
+    }
+  }
+
+  getSideFilterAccess(res) {
+    if (res?.code == undefined || res?.direction == undefined) return;
+
+    //to get all side filter access as per current country
+    this.apiSubscription2 = this.searchService.getSideFilterAccess(res?.code, res?.direction).subscribe((res: any) => {
+      if (!res?.error && res?.results.length > 0) {
+        const tempObj = { ...res?.results[0] };
+        delete tempObj['Id'];
+        tempObj['Country'] = true;
+        this.filterAccess = tempObj;
+      }
+    }, error => {
+      this.filterAccess = new SideFilterAccessModel();
+    });
+  }
+
+  ngOnDestroy(): void {
+    this.eventService.filterSidebarEvent.emit(false);
+    this.eventSubscription.unsubscribe();
+    this.eventSubscription2.unsubscribe();
+    this.eventSubscription3.unsubscribe();
+    this.eventSubscription4.unsubscribe();
+    this.eventSubscription5.unsubscribe();
+    this.eventSubscription6.unsubscribe();
+    this.eventSubscription7.unsubscribe();
+    this.eventSubscription8.unsubscribe();
+    if (this.timerSubscription) this.timerSubscription.unsubscribe();
+  }
+
+
+  togglePanelView(flag, isCalledByDate = false) {
+    if (isCalledByDate) this.getCountryLocator();
+
+    if (flag) {
+      // if (this.userService.isCurrentPlanDemo() || (this.dateRange != "" && this.direction != "")) {
+      this.lowerPanelObj.hasSearchBtnClicked = true;
+      this.lowerPanelObj.arrowBtnClassName = 'up-arrow';
+      this.showLowerPanel = true;
+      // setTimeout(() => this.setEventHandler('add'), 1000);
+      // }
+    } else {
+      this.lowerPanelObj.arrowBtnClassName = 'down-arrow';
+      this.showLowerPanel = false;
+      // this.setEventHandler('remove');
+      this.selectedItems = [];
+    }
+
+    /////////to update lowerpanel visibility especially for the overflow/////////
+    this.lowerPanelStyle.height = this.showLowerPanel ? '30%' : '12%';
+    this.lowerPanelStyle.overflow = this.showLowerPanel ? 'hidden' : 'visible';
+    setTimeout(() => {
+      this.lowerPanelStyle.height = this.showLowerPanel ? '30%' : '12%';
+      this.lowerPanelStyle.overflow = 'visible';
+    }, 500);
+    /////////////////////////////////////////////////////////////////////////////
+    // this.getCountryLocator();
+  }
+
+  getRoleWiseId(): string {
+    return this.authService.isUserSubuser() ? this.authService.getUserParentId() : this.authService.getUserId();
+  }
+
+  inItSearchClickProcess(callBy) {
+    return new Promise((resolve, reject) => {
+      if (callBy != "workspace") this.savedStatus = { isAlreadySaved: false, savedFileName: '', savedFileId: '', saveFolder: '' };
+      this.apiBodyObj = { base: {}, filter: {} };
+      this.isTotalDataReceived = false;
+      this.setCounterValues(true);
+      this.bottomTableView = true;
+      this.isMainChecked = false;
+      this.workstationCache = {};
+      this.isSearchBtnClicked = false;
+      this.currentSearchingMode = callBy != "workspace" ? "main" : "filter";
+      if (callBy != "workspace") this.selectedFilterCache = {};
+      this.pagePerView = 25;
+      this.counterObj = { total: 0, hsCode: 0, importers: 0, exporters: 0, country: 0 };
+      // this.backupTableData = new BackupFilterModel();
+
+      this.apiBodyObj.base = {
+        country: this.currentCountry,
+        direction: this.direction,
+        body: {
+          page: 1,
+          toDate: this.toDate,
+          fromDate: this.fromDate,
+          itemperpage: this.pagePerView,
+          IsWorkspaceSearch: callBy == 'workspace',
+          UserId: this.getRoleWiseId()
+        }
+      };
+
+      if (this.hsCode != "") this.apiBodyObj.base["body"]["HsCode"] = [this.hsCode];
+      if (this.product.length > 0) this.apiBodyObj.base["body"]["ProductDesc"] = this.product;
+      if (this.exporterList.length > 0) this.apiBodyObj.base["body"]["Exp_Name"] = this.exporterList;
+      if (this.importerList.length > 0) this.apiBodyObj.base["body"]["Imp_Name"] = this.importerList;
+
+      resolve(true);
+    });
+  }
+
+  OnClickSearch(callBy = "self") {
+    if (!this.userRightService.search()) {
+      this.alertService.showPackageAlert("Oops!, It seems that you have no right to search the data. Please contact your service provider.");
+      return;
+    }
+
+    if (!this.btnAccessibility.search) {
+      this.alertService.showPackageAlert("Oops!, You appear to have used your all searching points therefore you are not allowed to search data anymore");
+      return;
+    }
+
+    if (this.currentCountry == "") {
+      this.showAlertForSearch(this.warningMsg.country);
+      return;
+    }
+
+    if (this.direction == "") {
+      this.showAlertForSearch(this.warningMsg.direction);
+      return;
+    }
+
+    if (this.hsCode == "" && this.exporterList.length == 0 && this.importerList.length == 0 && this.product.length == 0) {
+      this.showAlertForSearch(this.warningMsg.nothing);
+      return;
+    }
+
+    if (this.toDate != "" && this.fromDate != "") {
+      const toYear = new Date(this.toDate).getFullYear();
+      const fromYear = new Date(this.fromDate).getFullYear();
+
+      if (toYear - fromYear > 3) {
+        this.showAlertForSearch(this.warningMsg.duration);
+        return;
+      }
+    }
+
+    if (this.apiSubscription4) this.apiSubscription4.unsubscribe();
+
+    this.inItSearchClickProcess(callBy).then(() => {
+      this.getSearchData(this.apiBodyObj.base, callBy)
+        .then((resolve: any) => {
+          if (resolve.status == "done") {
+            this.workstationCache = {};
+            this.allSelectCheckedArr = [];
+          }
+        }).catch(error => console.log(error));
+    });
+  }
+
+
+  getSearchData(apiData, callBy = "self") {
+    return new Promise(async (resolve, reject) => {
+
+      if (["self", "workspace"].includes(callBy)) this.eventService.filterSidebarEvent.emit(false);//it should be hidden while searching data
+      //just unsubscribe before we subscribe it again coz it may give pending xhr request result.
+      if (this.apiSubscription3) this.apiSubscription3.unsubscribe();
+
+      this.isTabsVisible = false;
+      this.isSearchingTimeOut = false;
+      this.eventService.toggleSearchLoader.next(true);
+
+      //just in case the data will not be received then it should be
+      if (this.timerSubscription) this.timerSubscription.unsubscribe();
+      this.timerSubscription = timer(300000).subscribe(res => {
+        console.log("%cI am Timeout", "color:red;font-size:20px");
+        if (this.searchResult.length == 0) {
+          this.searchResult = [];
+          this.isSearchingData = false;
+          this.isSearchingTimeOut = true;
+          this.eventService.toggleSearchLoader.next(false);
+          if (this.apiSubscription3) this.apiSubscription3.unsubscribe();
+          if (this.apiSubscription4) this.apiSubscription4.unsubscribe();
+        }
+      });
+
+      this.searchResult = []; this.perPageData = [];
+      //"freshFilter", "workspace"
+      this.isSearchingData = true;//["self", "filter"].includes(callBy);
+
+      try {
+        this.getAnalysisData(apiData);
+        this.apiSubscription3 = this.searchService.getSearchedDataWithFilter(apiData)
+          // .pipe(timeout(1000 * 20))
+          .subscribe(
+            (res: any) => {
+              this.timerSubscription.unsubscribe();
+              const results: any[] = res?.results?.data;
+              const tempCounters = res?.results?.counters;
+
+              if (this.isSearchingData) this.isSearchingData = false;
+
+              if (!res?.error && res?.code == 200) {
+                if (this.currentCountry != "India") {
+                  if (results.length > 0 && ["filter", "self", "workspace"].includes(callBy)) this.tableHeads = this.getUserGenHeads(Object.keys(results[0]));
+                } else {
+                  // India has different heads
+                  this.tableHeads = Object.keys(new CountryHeads().fetchCountryHeads(this.currentCountry)[this.direction]);
+                }
+
+                if (results.length > 0 && Number(results[0]["total_records"]) > 500000 && callBy == "self") {
+                  this.eventService.filterSidebarEvent.emit(false);
+                  this.timerSubscription.unsubscribe();
+                  this.eventService.toggleSearchLoader.next(false);
+                  this.showAlertForSearch(this.warningMsg.results);
+                  reject(new Error("More than 5 lack records are fetched!"));
+                  return;
+                }
+
+                this.searchResult = results;
+                this.perPageData = results;
+                this.eventService.toggleSearchLoader.next(false);
+                // this.isTotalDataReceived = true;
+
+                //If result is blank then back to empty page showing "Data Not Found"
+                if (this.searchResult.length == 0 && ["self", "workspace"].includes(callBy)) {
+                  this.timerSubscription.unsubscribe();
+                  this.eventService.filterSidebarEvent.emit(false);
+                  this.eventService.toggleSearchLoader.next(false);
+                  reject(new Error("No Data Found!"));
+                  return;
+                }
+
+
+                //"freshFilter", "workspace"
+                if (["perPagination", "self", "workspace", "filter"].includes(callBy)) {
+                  this.setCurrentTablePreview();
+                  this.isSearchBtnClicked = true;
+                } else {
+                  if (results.length > 0) {
+                    this.onBindBookmark().then((res: any[]) => {
+                      this.scrollToTop();
+                      this.perPageData = res;
+                      const totalData = results.length > 0 ? Number(results[0]["total_records"]) <= 1000 ? Number(results[0]["total_records"]) : 1000 : 1;
+                      this.totalPages = Math.ceil(totalData / this.pagePerView);
+                      this.isTableLoader = false;
+                    });
+                  }
+                }
+
+                if (!apiData["body"]["IsWorkspaceSearch"]) this.eventService.userStatusEvent.emit('update');
+
+                // if(callBy=="freshFilter" && Object.keys(this.selectedFilterCache).length>0) {
+                //   this.eventService.filterCacheMoveEvent.emit(this.selectedFilterCache);
+                // }
+
+                //setting counters values
+                if (this.perPageData.length > 0) {
+                  this.counterObj.total = this.perPageData[0]["total_records"] || 0;
+                  this.counterObj.hsCode = tempCounters["totalhscode"] ? tempCounters["totalhscode"] : 0;
+                  this.counterObj.exporters = tempCounters["exp_namecount"] ? tempCounters["exp_namecount"] : 0;
+                  this.counterObj.importers = tempCounters["imp_namecount"] ? tempCounters["imp_namecount"] : 0;
+                }
+
+                //================== side filter fetching values with their counters ====================//
+                if (["self", "workspace"].includes(callBy) && results.length > 0) {
+                  // this.eventService.filterSidebarEvent.emit(true); //to display ON of sidefilter options
+                  //api for getting data for side filters
+                  if (this.refreshPageName == "advance" || this.currentCountry == "India") {
+                    this.currentCountryData = { country: "India", code: "IND", direction: this.direction };
+                  }
+
+                  // const baseKeysLen = Object.keys(this.apiBodyObj["base"]["body"]).length;
+                  // const filterKeysLen = Object.keys(this.apiBodyObj["filter"]["body"]).length;
+
+                  // if(callBy=="workspace" && filterKeysLen!=0 && filterKeysLen>baseKeysLen) {
+                  //   this.getSideFilterData(callBy, "filter");
+                  // } else 
+                  this.getSideFilterData(callBy, "base");
+                } else {
+                  this.getSideFilterData(callBy, "filter");
+                }
+
+                if (this.perPageData.length == 0) this.setCounterValues(true); //if data is received [] then zero all counters
+                this.eventService.filterSidebarEvent.emit(true); //to display ON of sidefilter options            
+              } else {
+                this.eventService.toggleSearchLoader.next(false);
+                this.eventService.filterSidebarEvent.emit(false);
+                this.showAlertForSearch(res?.message);
+                resolve({ status: 'done' });
+              }
+            },
+            async (err) => {
+              // return await this.getSearchData(apiData, callBy);
+              this.perPageData = [];
+              this.searchResult = [];
+              this.isSearchingData = false;
+              this.isTotalDataReceived = true;
+              this.isSearchBtnClicked = true;
+              this.eventService.toggleSearchLoader.next(false);
+              this.eventService.filterSidebarEvent.emit(false);
+              this.timerSubscription.unsubscribe();
+              reject({ status: 'done', msg: err });
+            });
+      } catch (error) {
+        console.log(error);
+        this.eventService.filterSidebarEvent.emit(false);
+        reject({ status: 'done', msg: error });
+      }
+    });
+  }
+
+  //this function is responsible to fetch sidefilter data
+  getSideFilterData(callBy, apiBodyType) {
+    this.destory$.next(true);
+    if (this.apiSubscription4) this.apiSubscription4.unsubscribe();
+
+    if (apiBodyType == "filter") {
+      apiBodyType = Object.keys(this.apiBodyObj[apiBodyType]).length > 0 ? "filter" : "base";
+    }
+
+    this.getSideFilterSegmentsData(callBy).then((res: any) => {
+      if (!res.error) {
+        const singleFilterLength = res.results[Object.keys(res.results)[0]];
+        if (singleFilterLength.length > 0) {
+          if (["self", "workspace"].includes(callBy)) {
+            this.counterValData = res.results;
+
+            if (callBy == "workspace") {
+              setTimeout(() => {
+                if (Object.keys(this.selectedFilterCache).length > 0) this.eventService.filterCacheMoveEvent.emit(this.selectedFilterCache);
+                // this.getSideFilterData("filter", "filter"); //again calling to update counter tabs                                 
+                const singleFilterLength = res.results[Object.keys(res.results)[0]];
+                if (singleFilterLength.length > 0) {
+                  const givenFilterHeads = Object.keys(res.results);
+                  for (let i = 0; i < givenFilterHeads.length; i++) {
+                    this.sideFilterOptions2[givenFilterHeads[i]] = res?.results[givenFilterHeads[i]];
+                  }
+                }
+              }, 2000);
+            }
+          } else {
+            this.counterValData = res.results; //now this variable is only responsible to update sidefilter or vice versa
+
+            const singleFilterLength = res.results[Object.keys(res.results)[0]];
+            if (singleFilterLength.length > 0) {
+              const givenFilterHeads = Object.keys(res.results);
+              for (let i = 0; i < givenFilterHeads.length; i++) {
+                this.sideFilterOptions2[givenFilterHeads[i]] = res?.results[givenFilterHeads[i]];
+              }
+            }
+          }
+
+          this.setCounterValues();
+        }
+      }
+    });
+  }
+
+  getSideFilterSegmentsData(callBy) {
+    return new Promise((resolve, reject) => {
+      const tempType = ["self", "workspace"].includes(callBy) ? "base" : "filter";
+      const tempUrlArr = this.searchService.getSideFilterSegments(this.apiBodyObj[tempType]["body"], this.currentCountryData);
+      let sideFilterData = {};
+
+      this.apiSubscription4 = forkJoin(tempUrlArr)
+        .pipe(timeout(1000 * 90))
+        .subscribe(res => {
+          res.forEach((item: any, index) => {
+            sideFilterData = { ...sideFilterData, ...item?.results };
+            if (index == res.length - 1) resolve({
+              message: "Ok",
+              error: false,
+              code: 200,
+              results: sideFilterData
+            });
+          });
+        }, err => {
+          resolve(this.getSideFilterSegmentsData(callBy));
+          // console.log(err);
+          // if(err?.status != 500) {
+          // }
+        });
+    });
+  }
+
+
+  getUserGenHeads(headsArr: string[]): string[] {
+    const oldHeadsArr = headsArr;
+    oldHeadsArr.splice(oldHeadsArr.indexOf("RecordID"), 1);
+    oldHeadsArr.splice(oldHeadsArr.indexOf("total_records"), 1);
+    const newHeadsArr = [];
+    const requiredPreHeads = [
+      "Date",
+      this.filterNames.HsCode.key,
+      this.filterNames.ProductDesc.key,
+      this.filterNames.Exp_Name.key,
+      this.filterNames.Imp_Name.key,
+      this.filterNames.CountryofDestination.key,
+      this.filterNames.Quantity.key,
+      this.filterNames.uqc.key,
+      this.filterNames.Currency.key
+    ];
+
+    for (let i = 0; i < requiredPreHeads.length; i++) {
+      if (oldHeadsArr.includes(requiredPreHeads[i])) {
+        newHeadsArr.push(requiredPreHeads[i]);
+        oldHeadsArr.splice(headsArr.indexOf(requiredPreHeads[i]), 1);
+      }
+
+      if (i == requiredPreHeads.length - 1) newHeadsArr.push(...oldHeadsArr);
+    }
+
+    return newHeadsArr;
+  }
+
+  // alert message for low points and making mistakes
+  showAlertForSearch(message) {
+    this.searchResult = [];
+    this.bottomTableView = false;
+    this.eventService.filterSidebarEvent.emit(false);
+    this.alertService.showWarningAlert(message);
+  }
+
+
+  //given Data counter function
+  setCounterValues(reset: boolean = false) {
+    this.dataCounterTabs.records = reset ? 0 : this.counterObj.total;
+    this.dataCounterTabs.code = reset ? 0 : this.counterObj.hsCode;
+    this.dataCounterTabs.exporters = reset ? 0 : this.counterObj.exporters;
+    this.dataCounterTabs.importers = reset ? 0 : this.counterObj.importers;
+
+    try {
+      if (this.direction == "export") {
+        const isCountry = this.counterValData[this.filterNames.CountryofDestination.key];
+        this.dataCounterTabs.country = reset ? 0 : isCountry ? this.counterValData[this.filterNames.CountryofDestination.key].length : 0;
+      } else {
+        const isCountry = this.counterValData[this.filterNames.CountryofOrigin.key];
+        this.dataCounterTabs.country = reset ? 0 : isCountry ? this.counterValData[this.filterNames.CountryofOrigin.key].length : 0;
+      }
+    } catch { }
+
+    this.isTotalDataReceived = true; //it is true becoz we no longer need of tabs loader
+    if (reset) {
+      this.sideFilterOptions = new SideFilterModel();
+      this.sideFilterOptions2 = new SideFilterModel(); //we need to clean it too or else it would show prev data
+      this.onShareFilterData.emit(this.sideFilterOptions);//to clean side filter values
+      return;
+    }//if the function is called for reset pupose then no need to call further processes
+
+    this.setAvailableFilterValArr();
+    this.eventService.passFilterDataEvent.next({
+      data: this.counterValData[this.filterNames.HsCode.key],
+      filterCache: this.selectedFilterCache
+    }); //to pass data to HsCode tree
+
+    setTimeout(() => {
+      console.log("this is it==>>", this.sideFilterOptions);
+      this.onShareFilterData.emit(this.sideFilterOptions);
+    }, 2500);
+  }
+
+  //set others side filter values array coz we don't need to count their record
+  setAvailableFilterValArr() {
+    const tempFilterAccess = { ...this.filterAccess }
+    delete tempFilterAccess["Country"];
+    delete tempFilterAccess["Direction"];
+    const filterAccessKeys = Object.keys(tempFilterAccess);
+
+    const counterValDataLen = Object.keys(this.counterValData).length;
+    for (let key of filterAccessKeys) {
+      if (this.filterAccess[key]) {
+        if (key == "Quantity") this.sideFilterOptions[key] = counterValDataLen ? [Math.max(...this.counterValData[key])] : [];
+        else this.sideFilterOptions[key] = counterValDataLen ? this.counterValData[key] : [];
+      }
+    }
+  }
+
+  //on click of reset button
+  onClickReset() {
+    this.direction = '';
+    this.product = [];
+    this.word = "";
+    this.currentCountry = '';
+    this.currentCountryData = {};
+    this.selectedItems = [];
+    this.searchResult = [];
+    this.copiedTableData = [];
+    this.workstationCache = {};
+    this.selectedFilterArr = [];
+    this.selectedFilterCache = {};
+    this.bottomTableView = false;
+    this.currentSearchingMode = "main";
+    this.apiBodyObj = { base: {}, filter: {} };
+    this.firstSelectVal = "Select Direction";
+    this.exporterList = []; this.importerList = [];
+    this.eventService.filterSidebarEvent.emit(false);
+    this.eventService.currentCountry.next({});
+    this.eventService.setAnalysisDataEvent.next({});
+    this.eventService.locatorDataMove.next({});
+    this.eventService.updateMultiselectDropDownEvent.next({ updateType: "clear", targetFrom: "home-1" });
+
+    this.hsCodeDigit = "2";
+    this.getHsCodeData();
+  }
+
+  getCountryLatestDate() {
+    const dataObj = { country: this.currentCountryData.code, direction: this.direction };
+    this.apiService.getCountryLatestDate(dataObj).subscribe((res: any) => {
+      if (!res.error && res.results.length > 0) {
+        const rawDate = res?.results[0]["LatestDate"];
+        if(!this.isCurrentUserDemo){ //in case of Main Plan user, they get latest update limit
+          this.max = new Date(rawDate).toISOString().split('T')[0];
+          this.changeDateRange(this.dateRange);
+        } else {  //in case of demo or trail Plan users, they will get their data-access limit
+          const dataAccessDate: string = this.userService.getUserDataAccess();
+          const toDateRaw = (dataAccessDate.split(",")[1]).split("~");
+          const monthInt = this.monthsArr.indexOf(toDateRaw[0]) + 1;
+          const totalDays = new Date(Number(toDateRaw[1]), monthInt, 0).getDate();
+          const toDate = new Date(`${toDateRaw[1]}-${monthInt < 10 ? "0" + monthInt : monthInt}-${totalDays}`);
+          const latestDate = new Date(rawDate);
+          const [latest, dataAccess] = [latestDate.valueOf(), toDate.valueOf()];
+  
+          (latest < dataAccess)
+            ? this.max = new Date(rawDate).toISOString().split('T')[0]
+            : this.max = new Date(toDate).toISOString().split('T')[0];
+          this.changeDateRange(this.dateRange);
+        }
+      }
+    });
+  }
+
+  onselectItem(value, name, type, textBoxTag) {
+    if (type == 'first') {
+      this.firstSelectVal = name;
+      this.direction = value;
+
+      //sometimes it doesn't have value but "", therefore it is allowed get inside so then it 
+      //gets what it is suppose to have
+      if (["advance", ""].includes(this.refreshPageName)) {
+        if (this.refreshPageName == "") this.refreshPageName = "advance"; //here it get the real value
+        this.eventService.currentCountry.next({ country: "", code: "IND", direction: this.direction });
+        this.currentCountryData = { country: "India", code: "IND", direction: this.direction };
+        this.getSideFilterAccess(this.currentCountryData);
+      }
+      this.getCountryLatestDate();
+      if (this.secSelectVal != 'Select Period') this.togglePanelView(true);
+    } else if (type == 'second') {
+      // if(this.userService.isCurrentPlanDemo()) return; //if it is demo plan, duration selection is not allowed
+      this.secSelectVal = name;
+      this.dateRange = value;
+      this.changeDateRange(this.dateRange);
+
+      if (value != '6') this.togglePanelView(true);
+    }
+    textBoxTag.classList.remove('disable');
+    //to hide drop panel
+
+    if (value != "00") {
+      this.getCountryLocator(); //on set of duration or direction  
+      this.eventService.locatorDataMove.next([]);
+    } else this.eventService.locatorDataMove.next({});
+  }
+
+  //toset dropdown visibility class
+  setDropClass(elem, type) {
+    if (type == "add") elem.classList.add("drop-active");
+    else elem.classList.remove("drop-active");
+  }
+
+  getCountryLocator() {
+    if (this.direction == "") return;
+
+    if (this.apiSubscription) this.apiSubscription.unsubscribe();
+
+    this.locatorData = {};
+    this.locatorDisable = { exporter: '', importer: '' };
+    const date = { from: this.fromDate, to: this.toDate };
+
+    // const timeoutVar = setTimeout(() => {
+    //   if(this.apiSubscription) this.apiSubscription.unsubscribe();
+    //   this.eventService.locatorDataMove.next({error: true, from: "timeout"});
+    // }, 90000);getIndiaLocatorData
+
+    // const dataObj = {country:this.currentCountry, type:this.direction, date};
+    const dataObj = { country: this.currentCountry, date };
+
+    // this.apiSubscription = this.apiService.getLocatorData(dataObj).subscribe((res: any) => {
+    //   if (!res?.error && res?.code == 200) {
+    //     this.locatorData = res?.results;
+    //     this.locatorDisable.exporter = !(this.locatorData.hasOwnProperty("Exp_Name")) ? 'inactive' : '';
+    //     this.locatorDisable.importer = !(this.locatorData.hasOwnProperty("Imp_Name")) ? 'inactive' : '';
+
+    //     if((res?.results["Exp_Name"]).length > 0 || (res?.results["Imp_Name"]).length > 0) {
+    //       this.eventService.locatorDataMove.next(this.locatorData);
+    //     } else this.eventService.locatorDataMove.next({error: true, from: "error"});
+    //   }
+    // }, err => {
+    //   this.eventService.locatorDataMove.next({error: true, from: "error"});
+    // });
+    if (this.currentCountry == "India") {
+      const IndiaLocatorAPIs = this.apiService.getIndiaLocatorData(this.direction);
+
+      if (this.apiSubscription5) this.apiSubscription5.unsubscribe();
+      this.apiSubscription5 = forkJoin(IndiaLocatorAPIs).subscribe(res => {
+        this.locatorData = { Exp_Name: [], Imp_Name: [] };
+
+        if (res[0]?.results.length > 0 || res[1]?.results.length > 0) {
+          this.locatorData["Exp_Name"] = res[0].results;
+          this.locatorData["Imp_Name"] = res[1].results;
+
+          this.eventService.locatorDataMove.next(this.locatorData);
+        } else this.eventService.locatorDataMove.next({ error: true, from: "error" });
+      }, (err) => {
+        console.log(err);
+        this.apiSubscription5.unsubscribe();
+        this.eventService.locatorDataMove.next({ error: true, from: "error" });
+      });
+    } else {
+      this.getGlobeLocators(dataObj, "import");
+      this.getGlobeLocators(dataObj, "export");
+    }
+  }
+
+  getGlobeLocators(body: any, direction) {
+    body["direction"] = direction;
+
+    function getModifiedObj(arrayData: any[], colDir) {
+      const modifiedArr = [];
+      return new Promise((resolve, reject) => {
+        for (let i = 0; i < arrayData.length; i++) {
+          try {
+            const actualDirCol = Object.keys(arrayData[i])[1];
+            const newObj = { id: arrayData[i]["id"] };
+            newObj[colDir] = arrayData[i][actualDirCol];
+            modifiedArr.push(newObj);
+
+            if (i == arrayData.length - 1) resolve(modifiedArr);
+          } catch (error) { reject([]); }
+        }
+      });
+    }
+
+    this.apiService.getGlobeImpExpLocator(body).subscribe(async (res: any) => {
+      if (!res?.error) {
+        this.direction == direction
+          ? this.locatorData["Imp_Name"] = await getModifiedObj(res?.results, "Imp_Name")
+          : this.locatorData["Exp_Name"] = await getModifiedObj(res?.results, "Exp_Name");
+        // this.locatorDisable.importer = !(this.locatorData.hasOwnProperty(directionalCol)) ? 'inactive' : '';
+
+        if (res?.results.length > 0) {
+          this.eventService.locatorDataMove.next(this.locatorData);
+        } else this.eventService.locatorDataMove.next({ error: true, from: "error" });
+      } else this.eventService.locatorDataMove.next({ error: true, from: "error" });
+    }, err => this.eventService.locatorDataMove.next({ error: true, from: "error" }));
+  }
+
+  changeDateRange(dateRange) {
+    if (this.dateRange != "00") {
+      const latestDate = this.max ? this.max : new Date();
+      const dates = this.alertService.getCalenderDates(Number(dateRange), latestDate);
+      this.fromDate = dates.from;
+      this.toDate = dates.to;
+      this.isCustomDate = false;
+    } else {
+      this.isCustomDate = true;
+    }
+  }
+
+  onSelectHsCode(data) {
+    if (data.length > 0) this.hsCode = data[0];
+    else this.hsCode = "";
+  }
+
+  // onSetClass(type) {
+  //   if (type == 'first') {
+  //     if (this.firstSelectClass.includes('active')) this.firstSelectClass = "custom-dropdown";
+  //     else this.firstSelectClass = "custom-dropdown active";
+  //   } else if (type == 'second') {
+  //     if (this.secSelectClass.includes('active')) this.secSelectClass = "custom-dropdown";
+  //     else this.secSelectClass = "custom-dropdown active"
+  //   }
+  // }
+
+  sidebarToggle(eventBool) {
+    const sidetag = document.getElementById('sidebar') as HTMLDivElement;
+    sidetag.classList.toggle('sidebar-body-shrink');
+  }
+
+
+  //get locator modal for exporter and importer
+  getLocatorModal(event, type) {
+    if (this.currentCountry == "") {
+      this.showAlertForSearch(this.warningMsg.country);
+      return;
+    }
+    if (this.direction == "") {
+      this.showAlertForSearch(this.warningMsg.direction);
+      return;
+    }
+
+    // if ((event.target.nodeName).toLowerCase() == 'a') return;
+    const modalRef = this.modalService.open(LocatorModalComponent, { windowClass: 'locatorModalClass' });
+    (<LocatorModalComponent>modalRef.componentInstance).locatorType = type;
+    (<LocatorModalComponent>modalRef.componentInstance).locatorObj = {
+      country: this.currentCountry,
+      type: this.direction,
+      fromDate: this.fromDate,
+      toDate: this.toDate
+    };
+    // (<LocatorModalComponent>modalRef.componentInstance).listArr = type=="importer" ? this.locatorData["Imp_Name"] : this.locatorData["Exp_Name"];
+    // (<LocatorModalComponent>modalRef.componentInstance).getCountryLocator(this.currentCountry, this.direction);
+
+    const callBackRef = (<LocatorModalComponent>modalRef.componentInstance).callBack.subscribe(res => {
+      if (type == 'exporter') this.exporterList = res;
+      else this.importerList = res;
+
+      callBackRef.unsubscribe();
+    });
+  }
+
+  rmLocData(item, type) {
+    if (type == 'exporter') {
+      // this.exporter = '';
+      this.exporterList.splice(this.exporterList.indexOf(item), 1);
+    } else {
+      // this.importer = '';
+      this.importerList.splice(this.importerList.indexOf(item), 1);
+    }
+  }
+
+
+  //modify the table value as per the requirement
+  modifyTableData(key: string, value: any): string {
+    if (key == this.filterNames.ProductDesc.key && value.length > 40) {
+      return this.ellipsePipe.transform(value, 40);
+    } else return `${value}`;
+  }
+
+  getTableHeads(key): string {
+    if (this.currentCountry != "India") return key;
+    else {
+      const direction = this.apiBodyObj.base["body"]["Direction"];
+      const indiaHeadObjs = new CountryHeads().fetchCountryHeads(this.currentCountry)[direction];
+      return indiaHeadObjs[key];
+    }
+  }
+
+
+  //to scroll table left or right
+  scrollTable(direction) {
+    const tableBox = document.getElementById("tableContainer") as HTMLDivElement;
+    const currentValue = tableBox.scrollLeft;
+
+    if (direction == 'left') tableBox.scrollLeft = currentValue - 100;
+    else tableBox.scrollLeft = currentValue + 100;
+  }
+
+  onDirectPagination(e, leftArrow, rightArrow, alertMsg) {
+    if (e.key == "Enter" || e.code == "Enter") {
+      if (Number(this.cpyCurrentPageNum) < 1) {
+        this.cpyCurrentPageNum = this.currentPageNum + 1;
+        return;
+      }
+
+      if (Number(this.cpyCurrentPageNum) > this.totalPages) {
+        alertMsg.classList.add('active');
+        setTimeout(() => alertMsg.classList.remove('active'), 3000);
+        return;
+      }
+
+      if (Number(this.cpyCurrentPageNum) - 1 < this.currentPageNum) {
+        this.currentPageNum = Number(this.cpyCurrentPageNum);
+        leftArrow.click();
+        return;
+      } else if (Number(this.cpyCurrentPageNum) - 1 > this.currentPageNum) {
+        const tempVal = Number(this.cpyCurrentPageNum);
+        this.currentPageNum = Number(this.cpyCurrentPageNum) - 2;
+        this.cpyCurrentPageNum = tempVal;
+        rightArrow.click();
+        return;
+      }
+    }
+  }
+
+  //pagination functions
+  async onMovePagination(e, direction) {
+    if (this.searchResult.length == 0) return;
+
+    const directionTag = direction == 'right'
+      ? e.target.previousSibling.previousSibling : e.target.nextSibling.nextSibling;
+
+
+    if (direction == 'right') {
+      if (this.totalPages != 1) this.currentPageNum++;
+      else if (this.totalPages == 1) { //if the result is not more than per page data then it will be disable and not further process
+        e.target.classList.add('disable-direction');
+        return;
+      }
+    } else this.currentPageNum--;
+
+    this.isTableLoader = true; //if the result is more than per page then is it should show loader until it fetches further data
+
+    if ((this.currentPageNum + 1) == this.totalPages || (this.currentPageNum + 1) == 1) { e.target.classList.add('disable-direction'); }
+
+    if (directionTag.classList.contains('disable-direction') && this.totalPages != 1) {
+      directionTag.classList.remove('disable-direction');
+    }
+
+    // const perPageDataTemp = this.copiedTableData.splice((this.currentPageNum*this.pagePerView), this.pagePerView);
+    // if(this.apiBodyObj.filter)
+
+    const currentObj = Object.keys(this.apiBodyObj.filter).length > 0 ? 'filter' : 'base';
+    this.apiBodyObj[currentObj]["body"]["page"] = this.currentPageNum + 1;
+    this.apiBodyObj[currentObj]["body"]["IsWorkspaceSearch"] = true;
+
+    this.eventService.filterSidebarEvent.emit(false); //to display OFF to sidefilter options
+    await this.getSearchData(this.apiBodyObj[currentObj], "pagination");
+  }
+
+  //to decide the from the scretch about pageNum, total pages and records per page
+  setCurrentTablePreview(filterArr: any[] = []) {
+    const leftArrow = document.querySelector('.left-arr') as HTMLImageElement;
+    const rightArrow = document.querySelector('.right-arr') as HTMLImageElement;
+    leftArrow.classList.add('disable-direction');
+    rightArrow.classList.remove('disable-direction');
+    const totalData = this.searchResult.length > 0
+      ? Number(this.searchResult[0]["total_records"]) <= 1000
+        ? Number(this.searchResult[0]["total_records"]) : 1000 : 1;
+    this.totalPages = Math.ceil(totalData / this.pagePerView);
+
+    this.currentPageNum = 0;
+    // if(filterArr.length==0) this.copiedTableData = [...this.searchResult];
+    // const perPageDataTemp = this.copiedTableData.splice(0, this.pagePerView);
+
+    this.onBindBookmark().then((res: any[]) => {
+      this.perPageData = res;
+      this.isTableLoader = false;
+      this.scrollToTop();
+    }).catch(err => console.log(err));
+  }
+
+  onSearchPerPage() {
+    this.currentPageNum = 0;
+    const currentObj = Object.keys(this.apiBodyObj.filter).length > 0 ? 'filter' : 'base';
+
+    this.apiBodyObj[currentObj]["body"]["IsWorkspaceSearch"] = true;
+    this.apiBodyObj[currentObj]["body"]["page"] = this.currentPageNum + 1;
+    this.apiBodyObj[currentObj]["body"]["itemperpage"] = this.pagePerView;
+
+    setTimeout(async () => {
+      this.isTableLoader = true;
+      this.eventService.filterSidebarEvent.emit(false); //to display OFF to sidefilter options
+      console.log(this.apiBodyObj);
+
+      await this.getSearchData(this.apiBodyObj[currentObj], "perPagination");
+    }, 1000);
+  }
+
+  scrollToTop() {
+    const tableBox = document.getElementById("tableContainer") as HTMLDivElement;
+    tableBox.scrollTop = 0;
+    tableBox.scrollLeft = 0;
+  }
+
+
+  //on click td to show detailed model of specific data
+  showDetailModal(data) {
+    const countryHeadModal = new CountryHeads().fetchCountryHeads(this.currentCountry)[this.direction];
+    const isModalAvail: boolean = Object.keys(countryHeadModal).length > 0;
+    let tempArr = [];
+
+    for (let key in { ...(isModalAvail ? countryHeadModal : data) }) {
+      const temObj: any = {};
+      temObj['key'] = isModalAvail ? countryHeadModal[key] : key;
+      temObj['value'] = data[key];
+      tempArr.push(temObj);
+    }
+
+    const modalRef = this.modalService.open(TableDataModalComponent, { windowClass: 'tableDataPopUpModalClass' });
+    (<TableDataModalComponent>modalRef.componentInstance).tableData = tempArr;
+  }
+
+  //on click table data info icon
+  changeInfo(e, type) {
+    const imgPath = 'assets/images/';
+
+    if (type == 'in') e.target.setAttribute('src', imgPath + 'info2.png');
+    else e.target.setAttribute('src', imgPath + 'info.png');
+  }
+
+  //onClick bookmark icon to bookmark and to show if it is bookmarked---RecordID
+  onSetBookmark = (e, data) => {
+    if (!this.userService.getDataExistence(data['RecordID'])) {
+      this.userService.setBookmarks(data)
+      e.target.src = "assets/images/star-gold.png";
+    } else {
+      this.userService.removeBookmarkData(data['RecordID']);
+      e.target.src = "assets/images/star-outline.png";
+    }
+  };
+
+  //binding all bookmarked item to table
+  onBindBookmark() {
+    return new Promise((resolve, reject) => {
+      const updatedArr = [...this.perPageData];
+      const bookmarkedArr = this.userService.getBookmarks();
+      if (bookmarkedArr.length == 0) resolve(updatedArr);
+
+      const mainKey = `${this.currentPageNum}-${this.pagePerView}`; //for selected data
+
+      for (let i = 0; i < updatedArr.length; i++) {
+        if (this.userService.getDataExistence(updatedArr[i]['RecordID'])) {
+          updatedArr[i]['isBookmarked'] = true;
+        } else updatedArr[i]['isBookmarked'] = false;
+
+        //for the selected data (checkboxes)
+        if (this.workstationCache.hasOwnProperty(mainKey)) {
+          if (this.workstationCache[mainKey].hasOwnProperty(updatedArr[i]['RecordID'])) {
+            updatedArr[i]['isChecked'] = true;
+          }
+        } else updatedArr[i]['isChecked'] = false;
+      }
+
+      //set the condition for the select all checkbox as per new page
+      if (this.allSelectCheckedArr.includes(mainKey)) this.isMainChecked = true;
+      else this.isMainChecked = false;
+
+      resolve(updatedArr);
+    });
+  }
+
+
+  //on the selection of table "select all checkbox button"
+  onCheckboxAll = (e) => {
+    this.isMainChecked = e.target.checked;
+    const mainKey = `${this.currentPageNum}-${this.pagePerView}`;
+
+    if (this.isMainChecked) {
+      this.allSelectCheckedArr.push(mainKey);
+      this.workstationCache[mainKey] = {};
+    } else {
+      const indexVal = this.allSelectCheckedArr.indexOf(mainKey);
+      this.allSelectCheckedArr.splice(indexVal, 1);
+      delete this.workstationCache[mainKey];
+    }
+
+    for (let i = 0; i < this.perPageData.length; i++) {
+      if (this.isMainChecked) {
+        this.workstationCache[mainKey][this.perPageData[i]['RecordID']] = this.perPageData[i];
+      }
+      this.perPageData[i]['isChecked'] = this.isMainChecked;
+    }
+  }
+
+
+  //on click checkbox on given table grid data(for shipment and downloads)
+  onClickCheckbox(e, data) {
+    const isChecked = e.target.checked;
+    const mainKey = `${this.currentPageNum}-${this.pagePerView}`;
+
+    if (isChecked) {
+      if (this.workstationCache.hasOwnProperty(mainKey)) {
+        if (!this.workstationCache[mainKey].hasOwnProperty(data['RecordID'])) {
+          this.workstationCache[mainKey][data['RecordID']] = data;
+        }
+      } else {
+        this.workstationCache[mainKey] = {};
+        this.workstationCache[mainKey][data['RecordID']] = data;
+      }
+    } else {
+      delete this.workstationCache[mainKey][data['RecordID']];
+
+      if (Object.keys(this.workstationCache[mainKey]).length == 0) {
+        delete this.workstationCache[mainKey];
+      }
+    }
+  }
+
+
+  openSaveModal(options: any = undefined) {
+    console.log(this.savedStatus);
+
+    if (options == undefined) {
+      const folderName = this.savedStatus.saveFolder;
+      const modalRef = this.modalService.open(SaveFileComponent, { windowClass: 'saveFileModalClass' });
+      (<SaveFileComponent>modalRef.componentInstance).targetBy = 'home';
+      (<SaveFileComponent>modalRef.componentInstance).isAlreadySaved = this.savedStatus.isAlreadySaved;
+      (<SaveFileComponent>modalRef.componentInstance).fileName = this.savedStatus.savedFileName;
+      (<SaveFileComponent>modalRef.componentInstance).foldername = folderName == "" ? "default" : folderName;
+
+      const eventRef = (<SaveFileComponent>modalRef.componentInstance).saveCallBack.subscribe(res => {
+        this.savedStatus.isAlreadySaved = true;
+        // this.savedStatus.saveFolder = res?.foldername;
+        this.setBookmarkData(res);
+        eventRef.unsubscribe();
+      });
+    } else this.setBookmarkData(options);
+  }
+
+  setBookmarkData(res, eventType = "workspace") {
+    const cacheKey = `${environment.apiurl}api/getWorkSpace?UserId=${this.authService.getUserId()}`;
+    const eventData = res;
+    const queryData = {
+      name: eventData?.fileName,
+      start: this.fromDate,
+      end: this.toDate,
+      desc: this.product[0],
+      type: this.direction,
+      buyer: this.importerList.toString(),
+      vender: this.exporterList.toString(),
+      tariffCode: this.hsCode,
+      country: this.currentCountry,
+      records: this.dataCounterTabs?.records,
+      dateRange: this.dateRange,
+      transaction: new Date().toISOString()
+    };
+
+    this.apiService.addNewWorkspace(queryData, this.selectedFilterCache, res?.foldername).subscribe((res: any) => {
+      if (res?.message == "Ok") {
+        delete environment.apiDataCache[cacheKey];
+
+        //to unselect all checkboxes
+        this.isMainChecked = false;
+        const checkedInput: any = document.querySelectorAll('input[type="checkbox"].mainSearchCheck:checked');
+
+        for (let elem of checkedInput) elem.checked = false;
+
+        for (let i = 0; i < this.perPageData.length; i++) {
+          if (this.perPageData['isChecked']) {
+            this.perPageData['isChecked'] = false;
+          }
+        }
+
+        if (eventType != "download") this.workstationCache = {};
+        this.allSelectCheckedArr = [];
+      }
+    });
+  }
+
+  //it will revert to that scenario where we saved the data
+  getLastSavedData(res) {
+    const errorParams = [undefined, null, ""];
+    if (res?.data?.tariffCode && res?.data?.tariffCode != "") {
+      this.hsCode = res?.data?.tariffCode;
+      this.hsCodeDigit = this.hsCode.length > 8 ? '8' : this.hsCode.length + '';
+      this.getHsCodeData();
+    }
+    const otherSelectTag = document.getElementById('otherSelect') as HTMLDivElement;
+    this.fromDate = res?.data?.start;
+    this.toDate = res?.data?.end;
+    this.direction = res?.data?.type;
+    this.currentCountry = res?.data?.country;
+
+    //to provide country details to company profile
+    if (this.refreshPageName == "advance") {
+      this.eventService.currentCountry.next({
+        country: "India",
+        companyDirection: this.direction
+      });
+    }
+
+    //In case of India country is being used via workspace
+    if (this.currentCountry == "India") {
+      const directionTag = document.getElementById("firstSelect") as HTMLDivElement;
+      directionTag.classList.remove("disable");
+      this.firstSelectClass = "custom-dropdown";
+      this.firstSelectVal = this.dropdownVal1.filter(item => item.value == this.direction)[0]["placeholder"];
+      this.currentCountryData = { country: "India", code: "IND", direction: this.direction };
+      this.getSideFilterAccess(this.currentCountryData);
+    }
+
+    // this.importer = res?.data?.buyer;
+    // this.exporter = res?.data?.vender;
+
+    this.getCountryLocator();
+
+    if (res?.data?.buyer) this.importerList = (res?.data?.buyer).split(",");
+    if (res?.data?.vender) this.exporterList = (res?.data?.vender).split(",");
+
+    this.product = errorParams.includes(res?.data?.desc) ? [] : [res?.data?.desc];
+    this.dateRange = res?.data?.dateRange;
+
+    this.savedStatus.isAlreadySaved = true;
+    this.savedStatus.savedFileName = res?.data?.name;
+    this.savedStatus.savedFileId = res?.fileRelated?.workspace_id; //fileRelated added on later
+    this.savedStatus.saveFolder = res?.fileRelated?.foldername; //fileRelated added on later
+
+    if (this.hsCode != "") {
+      this.eventService.updateMultiselectDropDownEvent.next({
+        targetFrom: "home-1",
+        items: [res?.data?.tariffCode]
+      });
+    }
+
+    for (let item of this.dropdownVal2) {
+      if (item?.value == this.dateRange) {
+        this.secSelectVal = item?.placeholder;
+        if (item?.value != '6') this.togglePanelView(true);
+        otherSelectTag.classList.remove('disable');
+      }
+    }
+
+    this.refreshPageName = "";
+    this.togglePanelView(true);
+    this.selectedFilterCache = res?.filter;
+
+    //==============setLastFilterSaved=================//
+    const allKeys = Object.keys(this.selectedFilterCache);
+    for (let i = 0; i < allKeys.length; i++) {
+      if (this.selectedFilterCache[allKeys[i]].length == 0) {
+        delete this.selectedFilterCache[allKeys[i]]; //deleting if value is [];
+      }
+    }
+    //=================================================//
+    this.inItSearchClickProcess("workspace").then(() => {
+      this.filterOutTableData("workspace");
+      this.eventService.savedWorkspaceEvent.next({});
+    });
+  }
+
+  //to download selected or all given table records
+  downloadRecords() {
+    const numberOfSelectedRecords = this.getSelectedItemCount();
+    const modalRef = this.modalService.open(DownloadModelComponent, { backdrop: "static", keyboard: false, windowClass: 'downloadModalClass' });
+    (<DownloadModelComponent>modalRef.componentInstance).modalType = 'download';
+    (<DownloadModelComponent>modalRef.componentInstance).allDownloadNames = this.allDownloadNames;
+    (<DownloadModelComponent>modalRef.componentInstance).numberOfRecords = numberOfSelectedRecords;
+    (<DownloadModelComponent>modalRef.componentInstance).countryData = this.currentCountryData;
+    (<DownloadModelComponent>modalRef.componentInstance).callBack.subscribe(res2 => {
+      if (res2.status == 'DONE') {
+        const dataObj = {
+          direction: this.direction,
+          recordIds: this.getSeletedItemIds(),
+          filename: res2.name,
+          ...(Object.keys(this.apiBodyObj.filter).length > 0 ? this.apiBodyObj.filter["body"] : this.apiBodyObj.base["body"])
+        }; //data related to download table
+
+        //----------start loading animation--------------//
+        // this.isDownloadingFile = true;
+        //---------------------------------------------------//
+
+        // this.apiService.setDownloadRecord(dataObj);
+
+        if (!dataObj.hasOwnProperty("CountryName")) dataObj["CountryName"] = this.currentCountry;
+        if (!dataObj.hasOwnProperty("CountryCode")) dataObj["CountryCode"] = this.currentCountryData.code;
+        dataObj["UserId"] = this.authService.getUserId();
+        //this.apiSubscription6 = UserId
+        // this.eventService.downloadListUpdate.next({action: "add", status: "pending", filename: this.ellipsePipe.transform(dataObj?.filename, 22)});
+        // setTimeout(() => {
+        //   this.eventService.downloadListUpdate.next({action: "update", status: "done", filename: this.ellipsePipe.transform(dataObj?.filename, 22)});
+        // }, 5000);
+
+        //to append new downloading file onto download box
+        this.eventService.downloadListUpdate.next({ action: "add", status: "pending", filename: this.ellipsePipe.transform(dataObj?.filename, 22) });
+        console.log(dataObj)
+
+        this.apiService.saveDownloadData(dataObj)
+          .pipe(timeout(1000 * 60 * 15))
+          .subscribe((res: any) => {
+            if (res != null && !res?.error) {
+              //---------------------------to stop loader--------------------------------//
+              setTimeout(() => {
+                //download success popup
+                const modalRef2 = this.modalService.open(DownloadModelComponent, { backdrop: "static", keyboard: false, windowClass: 'downloadModalClass' });
+                (<DownloadModelComponent>modalRef2.componentInstance).modalType = 'download-msg';
+                this.eventService.userStatusEvent.emit('update');
+                this.eventService.downloadListUpdate.next({ action: "add", status: "done", filename: this.ellipsePipe.transform(dataObj?.filename, 22) });
+                // this.isDownloadingFile = false;
+                //----------------------------------------------------------------------//
+              }, 2000);
+            }
+          }, err => {
+            console.log(err);
+            // this.isDownloadingFile = false;
+            this.eventService.downloadListUpdate.next({ action: "update", status: "failed", filename: this.ellipsePipe.transform(dataObj?.filename, 22) });
+          });
+
+      }
+    });
+  }
+  onGenerateDownloadLink() {
+    // if(this.isDownloadingFile) return;
+
+    if (!this.btnAccessibility.download) {
+      this.alertService.showPackageAlert("Oops!, You appear to have used your all downloading points therefore you are not allowed to download data anymore.");
+      return;
+    }
+
+    //if recoreds are not downloaded then save the searched records first before download
+    if (!this.savedStatus.isAlreadySaved) {
+      const modalRef = this.modalService.open(SaveFileComponent, { backdrop: "static", keyboard: false, windowClass: 'saveFileModalClass' });
+      (<SaveFileComponent>modalRef.componentInstance).targetBy = 'download';
+      (<SaveFileComponent>modalRef.componentInstance).isAlreadySaved = this.savedStatus.isAlreadySaved;
+      (<SaveFileComponent>modalRef.componentInstance).saveCallBack.subscribe(res => {
+        this.savedStatus.isAlreadySaved = res?.flag;
+        this.savedStatus.saveFolder = res?.foldername;
+        this.savedStatus.savedFileName = res?.fileName;
+        this.setBookmarkData(res, "download");
+        this.downloadRecords();
+      });
+    } else this.downloadRecords();
+  }
+
+  getSelectedItemCount(): number {
+    if (Object.keys(this.workstationCache).length == 0) {
+      // return this.dataCounterTabs.records;
+      return Number(this.counterObj.total);
+    }
+
+    let total = 0;
+
+    for (let key in this.workstationCache) {
+      total += Object.keys(this.workstationCache[key]).length;
+    }
+    return total;
+  }
+
+  //it provides all selected items' Ids from table to download
+  getSeletedItemIds(): any[] {
+    const idsArr = [];
+
+    if (Object.keys(this.workstationCache).length > 0) {
+      const mainKeys = Object.keys(this.workstationCache);
+
+      for (let i = 0; i < mainKeys.length; i++) {
+        const recordIds = Object.keys(this.workstationCache[mainKeys[i]]);
+        idsArr.push(...recordIds);
+
+        if (i == mainKeys.length - 1) {
+          return idsArr;
+        }
+      }
+    } else {
+      return [];
+      // for (let i = 0; i < this.searchResult.length; i++) {
+      //   idsArr.push(this.searchResult[i]["RecordID"]);
+
+      //   if (i == this.searchResult.length - 1) {
+      //     return idsArr;
+      //   }
+      // }
+    }
+  }
+
+
+
+  //====================== FILTER TABLE DATA ===========================//
+  //this function will to remove duplicate keys of filters with values and also help to add new filters
+  createBodyToFilter(obj): any {
+    const copyObj = { ...obj };
+    const objKeys = Object.keys(this.selectedFilterCache);
+
+    if (this.hsCode != "" && !objKeys.includes("HsCode")) copyObj["HsCode"] = [this.hsCode];
+    if (this.product.length > 0 && !objKeys.includes("ProductDesc")) copyObj["ProductDesc"] = this.product;
+    if (this.exporterList.length > 0 && !objKeys.includes("Exp_Name")) copyObj["Exp_Name"] = this.exporterList;
+    if (this.importerList.length > 0 && !objKeys.includes("Imp_Name")) copyObj["Imp_Name"] = this.importerList;
+
+    for (let i = 0; i < objKeys.length; i++) {
+      if (copyObj[objKeys[i]] != undefined && objKeys[i] != "Quantity") {
+        const tempArr = Array.from(new Set([...copyObj[objKeys[i]], ...this.selectedFilterCache[objKeys[i]]]));
+        copyObj[objKeys[i]] = tempArr;
+      } else if (objKeys[i] == "Quantity") copyObj[objKeys[i]] = this.selectedFilterCache[objKeys[i]][0];
+      else copyObj[objKeys[i]] = this.selectedFilterCache[objKeys[i]];
+    }
+    return copyObj;
+  }
+
+  filterOutTableData(callby) {
+    this.currentSearchingMode = "filter";
+    this.currentPageNum = 0;
+    this.isFilteringData = true;
+    this.apiBodyObj.filter = {
+      country: this.currentCountry,
+      direction: this.direction,
+      body: this.createBodyToFilter({
+        toDate: this.toDate,
+        fromDate: this.fromDate,
+        IsWorkspaceSearch: true,
+        page: this.currentPageNum + 1,
+        itemperpage: this.pagePerView,
+        UserId: this.getRoleWiseId()
+      })
+    };
+
+    // this.isTotalDataReceived = false;
+    this.getSearchData(this.apiBodyObj.filter, callby).then((resolve: any) => {
+      if (resolve.status == "done") this.setCurrentTablePreview();
+    }).catch(error => console.log(error));
+  }
+
+
+  getProductWords(e) {
+    if (e.key == "Enter" || e.code == "Enter") {
+      this.product = [this.word.toUpperCase()];
+      this.word = "";
+    }
+
+    if (this.word.length >= 3) {
+      this.isWordDropdown = true;
+      this.apiService.getProductDescWords(this.word.toUpperCase()).subscribe((res: any) => {
+        if (!res.error && res.results.length > 0) {
+          this.wordsArr = res?.results.splice(0, 10);
+        }
+      });
+    }
+  }
+
+
+  hideProductTimeout: any;
+  onChooseOption(item) {
+    if (this.hideProductTimeout) clearTimeout(this.hideProductTimeout);
+    this.product = [(item["Product"]).toUpperCase()];
+    this.isWordDropdown = false;
+    this.word = "";
+  }
+  hideProductBar = () => this.hideProductTimeout = setTimeout(() => this.isWordDropdown = false, 500);
+
+
+  //getting all download names
+  getDownloadNames() {
+    this.apiService.getDownloadedRecord().subscribe((res: any) => {
+      if (!res.error && res.results.length > 0) {
+        (res.results).forEach((item, index) => {
+          this.allDownloadNames.push(item["workspacename"]);
+        });
+      }
+    });
+  }
+
+  getAnalysisData(dataObj) {
+    const bodyObj = { ...(dataObj["body"]) };
+    ["page", "itemperpage", "IsWorkspaceSearch", "UserId"].forEach(key => { if (bodyObj[key]) delete bodyObj[key] });
+    const apiDataObj = {
+      countryname: this.currentCountryData["country"] || "India",
+      CountryCode: this.currentCountryData["code"] || "IND",
+      direction: dataObj["direction"],
+      ...bodyObj
+    };
+
+    this.eventService.setAnalysisDataEvent.next(apiDataObj);
+  }
+
+
+  setTableHeightDynamically(): string {
+    if (this.isAnalysisTabActive) {
+      if (!this.showLowerPanel && !this.isTabsVisible) return '78%';
+      else if (!this.showLowerPanel && this.isTabsVisible) return '69%';
+      else if (this.showLowerPanel && this.isTabsVisible) return '51%';
+      else return '59%';
+    } else {
+      if (!this.showLowerPanel && !this.isTabsVisible) return '85%';
+      else if (!this.showLowerPanel && this.isTabsVisible) return '76%';
+      else if (this.showLowerPanel && this.isTabsVisible) return '58%';
+      else return '67%';
+    }
+  }
+
+
+  async showCounterModal(tabType: string, key: string) {
+    if (tabType == "records") return;
+
+    const analysisTab = document.getElementById("analysisTab") as HTMLDivElement;
+    const modalRef = this.modalService.open(SaveFileComponent, { backdrop: "static", keyboard: false, windowClass: 'saveFileModalClass counterFileModalClass' });
+    (<SaveFileComponent>modalRef.componentInstance).currentModal = "counter-modal";
+    (<SaveFileComponent>modalRef.componentInstance).listTitle = tabType == "code" ? "hs codes" : tabType;
+    (<SaveFileComponent>modalRef.componentInstance).counterBindingData(await this.setRecordVal(key));
+    const callBackRef = (<SaveFileComponent>modalRef.componentInstance).saveCallBack.subscribe((res: any) => {
+      const eventObj = {
+        companyName: res.company,
+        country: this.currentCountry,
+        direction: this.direction,
+        target: "navbar",
+        tabDirectionType: tabType == "importers" ? "buyer" : "supplier"
+      };
+
+      analysisTab.click();
+      setTimeout(() => {
+        this.eventService.companyProfileEvent.next(eventObj);
+        callBackRef.unsubscribe();
+      }, 1000);
+    });
+  }
+
+  setGoogleLink(company: string): string {
+    const query = (company.trim()).replace(new RegExp(" ", "g"), "+");
+    return `https://www.google.com/search?q=${query}&ie=UTF-8`;
+  }
+
+
+
+  showAlertMsg() {
+    setTimeout(() => {
+      const modalRef = this.modalService.open(NotifyAlertMsgComponent, { backdrop: "static", keyboard: false, windowClass: 'saveFileModalClass alertModalClass' });
+      // (<NotifyAlertMsgComponent>modalRef.componentInstance).currentModal = "alert-modal";
+      const callBackRef = (<NotifyAlertMsgComponent>modalRef.componentInstance).saveCallBack.subscribe({
+        next: (res: any) => {
+          callBackRef.unsubscribe();
+        },
+        error: (err: any) => { }
+      });
+    }, 2000);
+  }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div class='content'>
+    <div class='feature' [ngStyle]="lowerPanelStyle">
+      <div class='feat'>
+        <div class="firstDrop">
+          <span class="label" style="margin-top:5px;">Direction:</span>
+          <div tabindex="1" [class]="firstSelectClass" (focusout)="setDropClass(firstSelect, 'cut')">
+            <div class="dropdown-box disable" #firstSelect id="firstSelect" (click)="setDropClass(firstSelect, 'add')">{{firstSelectVal}}</div>
+            <div class="dropdown-icon" (click)="setDropClass(firstSelect, 'add')"><img src="assets/images/downarrow.png" alt="" /></div>
+            <div class="dropdown-data">
+              <p *ngFor="let item of dropdownVal1" (click)="onselectItem(item.value, item.placeholder, 'first', firstSelect);setDropClass(firstSelect, 'cut')" id="{{item.value}}">{{item.placeholder}}</p>
+            </div>
+          </div>
+        </div>
+        
+        <div class="secondDrop d-flex align-items-center">
+          <span class="label">Duration:</span>
+          <div tabindex="1" [class]="secSelectClass" (focusout)="setDropClass(otherSelect, 'cut')">
+            <div class="dropdown-box" #otherSelect id="otherSelect" (click)="setDropClass(otherSelect, 'add')">{{secSelectVal}}</div>
+            <div class="dropdown-icon" (click)="setDropClass(otherSelect, 'add')"><img src="assets/images/downarrow.png" alt="" /></div>
+            <div class="dropdown-data">
+              <p *ngFor="let item of dropdownVal2" (click)="onselectItem(item.value, item.placeholder, 'second', otherSelect);setDropClass(otherSelect, 'cut')" id="{{item.value}}">{{item.placeholder}}</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- {{userService.isCurrentPlanDemo()?'inactive':''}} -->
+        <div class="custom-datepicker">
+          <span class="label">From:</span>
+          <div class="date-input" [ngStyle]="{'opacity':  !isCustomDate ? '0.5' : '1'}">
+            <input type="date" [min]="min" [max]="max" id="fromDate" [disabled]="!isCustomDate" [(ngModel)]="fromDate" (change)="togglePanelView(true, true)" onfocus="this.showPicker()" name="fromDate">
+            <span><img src="assets/images/dateIcon.png" alt=""></span>
+          </div>
+        </div>
+
+        <!-- {{userService.isCurrentPlanDemo()?'inactive':''}} -->
+        <div class="custom-datepicker">
+          <span class="label">To:</span>
+          <div class="date-input" [ngStyle]="{'opacity':  !isCustomDate ? '0.5' : '1'}">
+            <input type="date" [min]="min" [max]="max" id="toDate" [disabled]="!isCustomDate" [(ngModel)]="toDate" (change)="togglePanelView(true, true)" onfocus="this.showPicker()" name="toDate" />
+            <span><img src="assets/images/dateIcon.png" alt=""></span>
+          </div>
+        </div>
+      </div>
+      
+      <div [hidden]="!showLowerPanel">
+        <div class='feat'>
+          
+          <div class='direct hscode'>
+            <select class="hscode-type" [(ngModel)]="hsCodeDigit" (change)="getHsCodeData()">
+              <option value="2">2 Hs</option>
+              <option value="4">4 Hs</option>
+              <option value="8">8 Hs</option>
+            </select>
+            <div class="opt1 multiselect-box">
+              <app-multiselect-dropdown
+                id="homepage-dropdown"
+                (onSelectVal)="onSelectHsCode($event)"
+                [dropDownData]="dropdownList"
+                [remainingVal]="1"
+                selectionID="home-1"
+                [isLoadingMore]="isSearchingHsCode"
+                [dropDownOption]="dropdownSettings">
+              </app-multiselect-dropdown>
+            </div>
+          </div>
+
+          <div class="direct position-relative" tabindex="1" (focusout)="hideProductBar()">
+            <span>Product</span>
+            <div class="selected-val" *ngIf="product.length>0">
+              <span class="item-val" *ngFor="let item of product">{{item.length>27 ? item.substring(0,27)+'...' : item}}<a (click)="product=[]">&#10006;</a></span>
+            </div>
+            <input *ngIf="product.length==0" class="opt1 fit-height" [(ngModel)]="word" (keyup)="getProductWords($event)" type="text" />
+          
+            <div class="dropdown-panel" *ngIf="isWordDropdown">
+              <label (click)="onChooseOption(item)" *ngFor="let item of wordsArr">{{item?.Product}}</label>
+            </div>
+          </div>
+          <button type="button" class='mainsearch blue-bgColor' (click)="OnClickSearch()">Search</button>
+        </div>
+        
+        <div class='feat'>
+          <div class="direct {{locatorDisable?.exporter}}">
+            <span>Exporter</span>
+            <!-- <input class='opt1 fit-height' [(ngModel)]="exporter" placeholder="Exporter" type="text" /> -->
+            <div class="selected-val" (click)="getLocatorModal($event, 'exporter')">
+              <span class="item-val" *ngFor="let item of exporterList">{{item.length>27 ? item.substring(0,27)+'...' : item}}<a (click)="rmLocData(item, 'exporter')">&#10006;</a></span>
+            </div>
+          </div>
+          <div class="direct {{locatorDisable?.importer}}">
+            <span>Importer</span>
+            <!-- <input class='opt1 fit-height' [(ngModel)]="importer" placeholder="Importer" type="text" /> -->
+            <div class="selected-val" (click)="getLocatorModal($event, 'importer')">
+              <span class="item-val" *ngFor="let item of importerList">{{item.length>27 ? item.substring(0,27)+'...' : item}}<a (click)="rmLocData(item, 'importer')">&#10006;</a></span>
+            </div>
+          </div>
+          <button type="button" class='mainsearch blue-bgColor' (click)="onClickReset()">Reset</button>
+        </div>
+      </div>
+
+      <!-- *ngIf="lowerPanelObj?.hasSearchBtnClicked || userService.isCurrentPlanDemo()" -->
+      <img (click)="togglePanelView(lowerPanelObj?.arrowBtnClassName=='down-arrow')" 
+        [class]="lowerPanelObj?.arrowBtnClassName"
+        src="assets/images/upArrow.png" 
+        alt="">
+      <!-- <span class="round-arrow" (click)="toggleSidebar()"><img id="arrowImg" src="assets/images/leftArrow.png" alt=""></span> -->
+      <!-- <div class="hide-show-tabs-right" *ngIf="bottomTableView"><img src="assets/images/more.png" alt="" /></div> -->
+      <div class="hide-show-tabs-left" *ngIf="searchResult.length>0" (click)="isTabsVisible=!isTabsVisible"><img src="assets/images/more.png" alt="" /></div>
+    </div>
+
+    <div class="datavaluesmain" [hidden]="!(bottomTableView && isTabsVisible)">
+      <div class="left-elements">
+
+        <div tabindex="1" class="records gray-bgColor {{i==0?'not-allowed':''}}" *ngFor="let tab of counterTabs;let i=index;" id="target-{{i}}" (click)="showCounterModal(tab?.tab, tab?.key)" appOnhoverClick>
+          <img *ngIf="!isTotalDataReceived" class="data-waiting" src="assets/images/waiting.png" alt="">
+
+          <p *ngIf="isTotalDataReceived">{{tab?.tab | titlecase}}</p>
+          <p *ngIf="isTotalDataReceived">{{dataCounterTabs[tab?.tab]}}</p>
+        </div>
+      </div>
+      
+      <div class="right-elements">
+        <img class="bookmark-icon" (click)="openSaveModal()" title="Save" src="assets/images/bookmark.png" alt="">
+        <img class="download-icon {{isDownloadingFile ? 'loader' : ''}}" (click)="onGenerateDownloadLink()" title="Download" src="assets/images/{{isDownloadingFile ? 'waiting2' : 'downloading'}}.png" id="downloadIcon" alt="">
+        <div class="pagination">
+          <img #lftArr class="left-arr disable-direction" (click)="onMovePagination($event,'left')" src="assets/images/upGreenArrow.png" alt="">
+          <span class="pagination-tab"><input type="text" maxlength="2" [value]="currentPageNum+1" [(ngModel)]="cpyCurrentPageNum" (keyup)="onDirectPagination($event, lftArr, RhtArr, maxPages)"></span>
+          <img #RhtArr class="right-arr" (click)="onMovePagination($event,'right')" src="assets/images/upGreenArrow.png" alt="">
+        </div>
+        <div class="pages-num" #maxPages>*Max {{totalPages}} page<span *ngIf="totalPages>1">s</span></div>
+        <span class="drop-label">Per Page</span>
+        <div class='pageselect'>
+          <!-- using "workspace" parameter so that Points cannot be reduced -->
+          <select [(ngModel)]="pagePerView" (change)="onSearchPerPage()">
+            <option value="25" selected>25 </option>
+            <option value="50">50</option>
+            <option value="100">100</option>
+            <option value="200">200</option>
+          </select>
+          <img class="down-arr" src="assets/images/upGreenArrow.png" alt="">
+        </div>
+      </div>
+    </div>
+
+    <!-- table handles to scroll left and right -->
+    <span 
+      class="arrow-btn handle {{item}}" 
+      [ngStyle]="{'top': lowerPanelObj?.arrowBtnClassName=='up-arrow'?'65%':'55%', 'display': searchResult.length>0 && !isSearchingData && !isTableLoader ? 'block' : 'none'}" 
+      (click)="scrollTable(item)" 
+      *ngFor="let item of ['left', 'right']">
+      <img class="side-arrow" src="assets/images/rightArrow.png" alt="">
+    </span>
+    <!-- -------------------------------------- -->
+    
+    <!-- <div class="specific-analysis-bar" *ngIf="bottomTableView">
+      <app-navbar [isSpecific]="true" [isSideBarOpen]="isSideBarOpen"></app-navbar>
+    </div> -->
+
+    <div class="data-table" id="tableContainer" [ngStyle]="{'height': setTableHeightDynamically()}" *ngIf="bottomTableView">
+      <table *ngIf="!isSearchingData && !isTableLoader && searchResult.length>0">
+        <thead>
+          <th>
+            <input type="checkbox" (click)="onCheckboxAll($event)" style="margin-right:10px;" [checked]="isMainChecked" />
+            <span>(All)</span>
+          </th>
+          <th *ngFor="let head of tableHeads;let i=index;" id="head-{{i}}">{{getTableHeads(head)}}</th>
+        </thead>
+        <tbody>
+          <tr *ngFor="let data of perPageData;">
+            <td>
+              <div class="extra-options">
+                <input class="mainSearchCheck me-1" type="checkbox" (click)="onClickCheckbox($event,data)" [checked]="data?.isChecked" name="" id="">
+                <img src="assets/images/info.png" class=" me-1"
+                  (click)="showDetailModal(data)" 
+                  (mouseover)="changeInfo($event,'in')" 
+                  (mouseout)="changeInfo($event,'out')" alt="">
+                <img src="assets/images/star-{{data?.isBookmarked?'gold':'outline'}}.png" (click)="onSetBookmark($event, data)" />
+              </div>
+            </td>
+            <td *ngFor="let key of tableHeads;">
+                <!-- google link to export and import companies -->
+                <span *ngIf="key==filterNames.Imp_Name.key || key==filterNames.Exp_Name.key">
+                  <!-- <img src="assets/images/google.png" alt=""> -->
+                  <a [href]="setGoogleLink(modifyTableData(key, data[key]))" target="_blank">{{modifyTableData(key, data[key])}}</a> 
+                </span>
+
+                <!-- rest of the columns apart from export and import companies -->
+                <span
+                  *ngIf="key!=filterNames.Imp_Name.key && key!=filterNames.Exp_Name.key" 
+                  [title]="key==filterNames.ProductDesc.key ? data[key] : ''">
+                  {{key=='Date' ? (alertService.dateInFormat(data[key])) : modifyTableData(key, data[key])}}
+                </span>
+            </td>
+          </tr>
+        </tbody>
+      </table>  
+      <h4 class="nodatamsg" *ngIf="searchResult.length==0 && !isSearchingData && !isTableLoader">{{isSearchingTimeOut ? 'Connection Timeout' : 'No Data Found'}}</h4>
+      <!-- <div class="loader" *ngIf="isSearchingData"><img src="assets/images/loader.png" alt=""></div> -->
+      <!-- <div class="per-page-record-loader" [ngStyle]="{'bottom': lowerPanelObj?.arrowBtnClassName=='up-arrow'?'25%':'35%'}" *ngIf="isTableLoader"><img src="assets/images/tableLoader.gif" alt=""/></div> -->
+    </div>
+    <input type="hidden" id="savedFileName" [value]="savedStatus?.savedFileName" />
+  </div>
+
+
+// for(let i = range; i > 0; i -= 1) {
+//   const d = new Date(today.getFullYear(), today.getMonth() - i, 1);
+//   const month = d.getMonth()+1;
+//   const year = d.getFullYear();
+
+//   if(i==range) dates.from = `${year}-${this.getMonthInFormat(month)}-01`;//yyyy-MM-dd 
+//   if(i==1) {
+//     // const lastDate = new Date(d.getFullYear(), month, 0);
+//     dates.to = currentDate;
+//   }
+// }
+
+
+
+////////////////////////////all analysis old fetching code/////////////////////////////
+// this.eventSubscription = this.eventService.setAnalysisDataEvent.subscribe((res:any) => {      
+    //   if(Object.keys(res).length == 0) {
+    //     this.isLoading = false;
+    //     return;
+    //   }
+
+    //   if(this.timerSubscription) this.timerSubscription.unsubscribe();
+
+    //   this.timerSubscription = timer(90000).subscribe(res => {
+    //     this.isLoading = false;
+    //     if(this.apiSubscription) this.apiSubscription.unsubscribe();
+    //   });
+      
+    //   this.currentCountry = res["countryname"];
+    //   this.resetAllValues();
+    //   const queryObj = {...res};
+    //   const fieldName = this.analysisKey[this.currentAnalysis.replace(new RegExp(" ", "g"), "")];
+    //   queryObj["fieldName"] = typeof fieldName == 'object' ? (queryObj["direction"]=="import" ? fieldName[1] : fieldName[0]) : fieldName;
+
+    //   this.apiSubscription = this.apiService.getAnalysisData(queryObj).subscribe({
+    //     next: (res2:any) => {
+
+    //       if(res2?.results[0].hasOwnProperty("asset_value_usd")) {
+    //         for(let i=0; i<res2?.results.length; i++) {
+    //           res2.results[i]["valueinusd"] = res2?.results[i]["asset_value_usd"];
+    //         }
+    //       }
+         
+    //       if(!res2?.error && res2?.results.length>0) {
+    //         for(let i=0; i<res2?.results.length; i++) {
+    //           const data = {...res2?.results[i]};
+    //           if(fieldName == "Date") data["Date"] = this.datePipe.transform(data["Date"], "yyyy-MM-dd");
+    //           data["priceShare"] = this.getAverage(res2?.results, data, this.isCountryIndia());
+    //           data["valueShare"] = this.getAverage(res2?.results, data, "valueinusd");
+    //           data["quantityShare"] = this.getAverage(res2?.results, data, "quantity");
+    //           this.summaryTableArr[i] = data;
+  
+    //           if(i == res2?.results.length-1) {
+    //             this.sortSummaryArr("valueinusd");
+    //             this.getNumberOfTops(this.summaryTableArr);
+    //             this.getPartitionTableData(this.summaryTableArr);
+    //             this.isLoading = false;
+    //           }
+    //         }
+    //       }      
+    //     }, 
+    //     error: (err:any) => {this.isLoading = false;}
+    //   });
+    // });
+
+
+
+
+
+
+
+
+
+getMonthwiseRadarData(interval:string) {
+    this.resetCurrentGraphs();
+    this.isAPIinProcess = true;
+    this.isMultiSelectOn = false;
+    const lastYear = new Date().getFullYear()-1;
+    const apiKey = this.type=="radar"
+    ? `${environment.apiurl}api/getmonthwisepercentagegrowth?duration=${interval}&direction=${this.directionType}`
+    : this.type=="line" 
+    ? `${environment.apiurl}api/getmonthwisepercentagegrowth?graph=line&duration=${interval}&direction=${this.directionType}`
+    : `${environment.apiurl}api/gettopthreeproductbycompany?graph=bar&duration=${interval}&direction=${this.directionType}`;
+
+    const apiObj = {
+      country: "India",
+      direction: this.directionType,
+      fromDate: (this.type!="bar"?lastYear-1:lastYear)+this.radarMonths(interval)[0],
+      toDate: (lastYear)+this.radarMonths(interval)[1]
+    };
+
+    if(environment.apiDataCache.hasOwnProperty(apiKey)) {
+      setTimeout(() => {
+        if(this.type=="radar") { this.radarDataValues = {...environment.apiDataCache[apiKey]}; } 
+        else if(this.type=="line") { 
+          this.lineDataValues = {...environment.apiDataCache[apiKey]}; 
+          this.currentLinePercentage = this.lineDataValues.percentages[0];
+          this.currentLineValue = Number(this.lineDataValues.values[0]).toFixed(2);
+        } else { this.barDataValues = {...environment.apiDataCache[apiKey]}; }
+        
+        const tempCpyObj:any = {...(this.type=="radar" ? this.radarDataValues: this.type=="line" ? this.lineDataValues: this.barDataValues)};
+        
+        if(this.type == "bar") {this.setBarChartDataFormat();}
+        else { this.updateChart(tempCpyObj.months, tempCpyObj[this.type=="radar" ? "percentages": "values"]); }
+        this.isAPIinProcess = false;        
+      }, 1000);
+    } else {
+      if(this.apiSubscription2) this.apiSubscription2.unsubscribe();
+      setTimeout(() => {
+        const apiName = this.type=="bar" ? "gettopthreeproductbycompany": "getmonthwisepercentagegrowth";
+        this.apiSubscription2 = this.apiService.getMonthwiseRadarData(apiObj, apiName).subscribe({
+          next: (res:any) => {
+            if(!res.error) {
+              this.radarDataValues = {months:[], percentages:[]};
+              this.lineDataValues = {months: [], percentages: [], values: []};
+              this.barDataValues = {companies: [], values: []};
+              if(this.type!="bar") res.results.shift();
+              const resultLen = res.results.length;
+              
+              for(let i=0; i<resultLen; i++) {
+                if(this.type != "bar") {
+                  const {Month, growth, current_sale} = res["results"][i];
+                  if(this.type=="radar") {
+                    this.radarDataValues.months.push(Month);
+                    this.radarDataValues.percentages.push(growth);
+                  } else if(this.type=="line") {                  
+                    this.lineDataValues.months.push(Month);
+                    this.lineDataValues.percentages.push(Number(growth));
+                    this.lineDataValues.values.push(Number(current_sale)/1000000000);
+                    if(i==resultLen-1) {
+                      this.currentLinePercentage = this.lineDataValues.percentages[0];
+                      this.currentLineValue = Number(this.lineDataValues.values[0]).toFixed(2);
+                    }
+                  }
+                } else {
+                  const { HsCode, valuehs } = res["results"][i];
+                  const companyName = res["results"][i][this.directionType=="export"? "Exp_Name": "Imp_Name"];
+                  const tempObj = {};
+                  tempObj[HsCode] = (Number(valuehs)/1000000000);
+                  
+                  if(this.barDataValues.companies.length>0 && this.barDataValues.companies.includes(companyName)) {                    
+                    const indexOfCompany = this.barDataValues.companies.indexOf(companyName);
+                    this.barDataValues.values[indexOfCompany].push(tempObj);
+                  } else {
+                    this.barDataValues.companies.push(companyName);
+                    this.barDataValues.values.push([tempObj]);
+                  }
+                }
+              }
+              
+              const tempCpyObj:any = {...(this.type=="radar" ? this.radarDataValues: this.type=="line" ? this.lineDataValues: this.barDataValues)};
+              environment.apiDataCache[apiKey] = tempCpyObj;
+
+              if(this.type=="bar") {this.setBarChartDataFormat();}
+              else { this.updateChart(tempCpyObj.months, tempCpyObj[this.type=="radar" ? "percentages": "values"]); }
+              this.isAPIinProcess = false;
+            }
+          }, error: (err:any) => console.log(err)
+        });
+      }, 2000);
+    }
+  }
+
+
+
+
+
+<<<<<<<<<<<<<<<<<<<<<<<<<Company Profile>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+<div class="search-bar" *ngIf="false">
+        <div class="input-field">
+                <!-- isCompanySelected -->
+            <img *ngIf="false" src="assets/images/down-left-arrow.png" (click)="isCompanySelected=false" alt="" />
+            <input type="text" [(ngModel)]="searchInp" placeholder="Search here..." />
+            <button class="btn btn-danger" (click)="getRequiredCounts()">Search</button>
+        </div>
+    </div>
+
+    <!-- isCompanySelected -->
+    <div class="company-list-container" *ngIf="false">
+        <div class="row gx-5">
+            <div class="col-4" (click)="showCompanyDetail(item)" *ngFor="let item of companies;let i=index;">
+                <div class="name">{{i+1}}. {{item}}</div>
+            </div>
+        </div>
+    </div>
+    <!-- *ngIf="isCompanySelected" -->
+    <div class="company-desc" *ngIf="false">
+        <div class="left-sec">
+            <h3>{{comapnyName}}</h3>
+            <div class="detail">
+                Airbus SE is primarily an exporter. Airbus is a European multinational aerospace corporation that
+                designs, manufactures, and sells civil and military aircraft, as well as helicopters, and provides
+                various related services. The company's main production facilities are located in Europe, and a large
+                percentage of its aircraft are exported to customers around the world. While Airbus may also import some
+                materials or components needed for its production processes, its main business activity is
+                export-oriented.
+            </div>
+
+            <div class="social-links">
+                <img title="Facebook" src="assets/images/facebook.png" alt="" />
+                <img title="Twitter" src="assets/images/twitter.png" alt="" />
+                <img title="Instagram" src="assets/images/instagram.png" alt="" />
+                <img title="LinkedIn" src="assets/images/linkedin.png" alt="" />
+                <img title="Youtube" src="assets/images/youtube.png" alt="" />
+                <img title="Whatsapp" src="assets/images/whatsapp.png" alt="" />
+                <img title="Telegram" src="assets/images/telegram.png" alt="" />
+            </div>
+        </div>
+
+        <div class="right-sec">
+            <div #tab1 class="exporter active" (click)="switchTab(tab1, tab2, 'buyer')">Buyers</div>
+            <div #tab2 class="importer" (click)="switchTab(tab2, tab1, 'supplier')">Suppliers</div>
+            <div class="inner-box">
+                <div class="detail-items">
+                    <div class="detail-item text-center" (click)="showDetailTable(item)" *ngFor="let item of subHeads">
+                        <h4>{{item | titlecase}}</h4>
+                        <h6>{{getProfileValue(item)}}</h6>
+                    </div>
+                </div>
+
+                <div class="contact-details {{isContactClicked?'up-height':''}}">
+                    <div class="arrow"><img src="assets/images/down-left-arrow.png" (click)="isContactClicked=false" alt="" /></div>
+
+                    
+                    <div class="contacts-container">
+                        <div class="contact-box" *ngFor="let user of [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1]">
+                            <h4>Jitender Kumar</h4>
+                            <h6>Front End Developer</h6>
+    
+                            <div class="contact-types">
+                                <div class="contact">
+                                    <img src="assets/images/phone-call.png" alt="" />
+                                    <span>(+123) 456 718, +123 446 718</span>
+                                </div>
+                                <div class="contact">
+                                    <img src="assets/images/contact-mail.png" alt="" />
+                                    <span>xyz2@xyzcompany.com</span>
+                                </div>
+                                <div class="contact">
+                                    <img src="assets/images/web.png" alt="" />
+                                    
+                                </div>
+                                <div class="contact">
+                                    <img src="assets/images/linkedin.png" alt="" />
+                                    <span>https://in.linkedin.com/in/aks....</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
+
+
+
+
+
+////////////////////////////////////////GLOBE COUNTRY//////////////////////////////////////////////
+
+
+<div class="country-modal">
+  <div class="modal-head">
+    <h5>Select Country </h5>
+    <img src="assets/images/cross.png" (click)="activeModal.dismiss('Cross click')" alt="">
+  </div>
+
+  <div class="modal-body">
+    <table *ngIf="hasDataReceived">
+      <thead>
+        <tr><td style="padding: 0 5px;padding-top: 6px;" colspan="6">
+          <input type="text" placeholder="search here..." (keyup)="onSearch($event)" />
+        </td></tr>
+        <th *ngFor="let head of countryHeads;let i=index;" [style]="{'width': i==0||i==5 ? '15%' : 'auto'}" class="{{i==0 ? 'text-center': ''}}">
+          <span class="head-name">
+            <span *ngIf="head != 'sample'">{{head | titlecase}}</span>
+          </span>
+        </th>
+      </thead>
+      <tbody *ngIf="copiedCountryList.length>0"><tr *ngFor="let item of copiedCountryList;" [hidden]="isIndiaCountry(item)">
+        <td class="country-name">
+          {{getProperName(item?.CountryName) | uppercase}}
+        </td>
+        <td>{{item?.StartDate | date:'MMM-yy'}} &nbsp;&nbsp;&nbsp;&nbsp; {{item?.LatestDate| date:'MMM-yy'}}</td>
+        <td>{{item?.Direction | titlecase}}</td>
+        <td>100%</td>
+        <td class="text-start">Date, Importer, Supplier, Hs Code, Product Description, Quantity, Unit, Value, Trade Partner Countries, Ports and many more</td>
+        <td>
+          <button *ngIf="isAvailbale(item?.CountryName)" (mouseover)="onHover($event, true)" (mouseout)="onHover($event, false)" class="cypher-btn gray-bgColor w-50" (click)="onSelectCountry(item, item?.Direction)">Select</button>
+          <span class="padlock"><img class="padlock-img" *ngIf="!isAvailbale(item?.CountryName)" src="assets/images/padlock.png" alt=""/></span>
+        </td>
+      </tr></tbody>
+    </table>
+    <div class="loader" style="height:80%" *ngIf="!hasDataReceived && copiedCountryList.length==0"><img src="assets/images/loader.png" alt=""></div> 
+  </div>
+</div>
+
+
+
+
+    height: 46px;
+    margin-top: -15px;
+    cursor: pointer;
+
+    height: 35px;
+    margin-top: -7px;
+    cursor: pointer;
+

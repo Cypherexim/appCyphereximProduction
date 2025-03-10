@@ -1,0 +1,374 @@
+@import url('../../../../../assets/tick-anime.css');
+
+div.download-container{
+    width: 100%;
+    height: 100%;
+}
+
+div.download-container div.action-bar{
+    background-color: black;
+    text-align: right;
+    padding: 5px 10px 5px 0;
+}
+div.download-container div.action-bar img{cursor: pointer;}
+div.download-container div.loader{height: 90%;}
+div.download-container div.loader img{height: 30px;}
+
+div.download-container section.first-phase{
+    display: flex;
+    flex-direction: column;
+    padding: 0 2rem;
+    justify-content: center;
+    height: 85%;
+}
+div.download-container section.first-phase h5{
+    font-size: 20px;
+    font-family: 'Roboto';
+    font-weight: 400;
+    margin-bottom: 2rem;
+    text-align: center;
+}
+div.download-container section.first-phase input{
+    outline: none;
+    border: 1px solid #c2c2c2;
+    padding: 5px 10px;
+    font-family: 'Roboto';
+    width: 80%;
+    margin-left: auto;
+    margin-right: auto;
+}
+div.download-container section.first-phase span.error{
+    font-size: 14px;
+    color: red;
+    letter-spacing: 0.5px;
+    margin-top: 5px;
+    margin-left: 3rem;
+}
+span.hint{
+    text-align: center;
+    margin-bottom: 2rem;
+    margin-top: 20px;
+}
+
+div.download-container section.first-phase div.next-button{text-align: center;}
+div.download-container section.first-phase div.next-button button{
+    border: 1px solid;
+    width: 22%;
+    padding: 7px 0;
+}
+
+/********* section second phase ************/
+div.download-container section.second-phase{
+    padding: 0px 3rem;
+    overflow: auto;
+    height: 85%;
+}
+
+section.second-phase p.error{
+    font-size: 15px;
+    margin: 0;
+    margin-top: 6px;
+    text-align: center;
+    color: red;
+    letter-spacing: 0.5px;
+    font-family: 'Roboto';
+    font-weight: 400;
+}
+
+section.second-phase span.hint{
+    display: block;
+    text-align: center;
+    /* margin-bottom: 3rem; */
+    margin-top: 20px;
+}
+mark{
+    padding: 2px 15px;
+    background-color: #f3f3b6;
+}
+
+section.second-phase p{
+    font-size: 20px;
+    font-family: 'Roboto';
+    font-weight: 400;
+    margin: 0;
+    margin-bottom: 1rem;
+    margin-top: 1.5rem;
+}
+
+section.second-phase div.calculation{
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    background: whitesmoke;
+    padding: 15px 0;
+    margin-bottom: 1rem;
+}
+section.second-phase div.available,
+section.second-phase div.cost-box,
+section.second-phase div.result{
+    display: flex;
+    align-items: center;
+    font-size: 18px;
+    margin-bottom: 10px;
+}
+
+section.second-phase div.available span,
+section.second-phase div.cost-box span,
+section.second-phase div.cost-box p,
+section.second-phase div.result span{
+    width: 50%;
+    text-align: right;
+}
+
+section.second-phase div.cost-box p{
+    font-size: 16px;
+    margin: 0;
+}
+
+section.second-phase div.available span:last-child,
+/* section.second-phase div.cost-box span:last-child, */
+section.second-phase div.result span:last-child{padding-right: 5rem;color: #65c169;}
+
+section.second-phase div.cost-box span.right-value{
+    padding-right: 5rem;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+}
+section.second-phase div.cost-box span.right-value div.bar{
+    width: 42%;
+    border-top: 1px solid black;
+}
+
+
+section.second-phase div.agree{margin-bottom: 20px;}
+section.second-phase div.agree input{
+    margin-right: 5px;
+    outline: none;
+    accent-color: #4cbfa6;
+}
+section.second-phase div.agree span{
+    font-size: 15px;
+    font-family: 'Roboto';
+    font-weight: 400;
+    color: #666666;
+}
+
+section.second-phase div.submit-button{text-align: center;}
+section.second-phase div.submit-button button:first-child{margin-right: 20px;}
+section.second-phase div.submit-button button{padding: 5px 0px;}
+
+
+/*************success message********************/
+div.download-container.success-msg{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+}
+div.download-container.success-msg span{
+    background-color: black;
+    position: absolute;
+    top: 3%;
+    right: 3%;
+    border-radius: 19px;
+    padding: 5px;
+    cursor: pointer;
+}
+div.download-container.success-msg img{
+    /* margin-top: 2.5rem;
+    margin-bottom: 2rem; */
+    height: 25px;
+}
+div.download-container.success-msg h3{
+    font-family: 'Roboto';
+    letter-spacing: 0.4px;
+    margin-bottom: 20px;
+}
+div.download-container.success-msg h5{
+    font-size: 18px;
+    font-weight: 400;
+    font-family: 'Roboto';
+    margin-bottom: 3rem;
+    text-align: center;
+    line-height: 30px;
+    padding: 0 5%;
+}
+div.download-container.success-msg button{
+    width: 50%;
+    outline: none !important;
+    border: 1px solid #25ae88;
+    background-color: #25ae88;
+}
+
+
+/************warning alerts on low points************/
+div.credit-container{
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    flex-direction: column;
+    margin-top: 2.5rem;
+}
+div.credit-container img{
+    height: 100px;
+    margin-bottom: 2rem;
+}
+div.credit-container h4{
+    width: 100%;
+    font-size: 20px;
+    text-align: center;
+    font-family: 'Roboto';
+    font-weight: 400;
+    letter-spacing: 0.5px;
+    line-height: 1.8rem;
+}
+
+
+/************timeoutAlertMsg************/
+div.timeout-container{height: 100%;}
+div.timeout-container div.timeout-box{height: 100%;}
+div.timeout-container div.timeout-box div.content{
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    font-size: 20px;
+    font-family: 'Roboto';
+    font-weight: 400;
+    letter-spacing: 0.5px;
+}
+div.timeout-container div.timeout-box div.content span:first-child{
+    margin-bottom: 10px;
+    font-size: 30px;
+    font-weight: 600;
+}
+div.timeout-container div.timeout-box div.content div.btn-container{text-align: center;}
+
+div.timeout-container div.timeout-box div.btn-container button{
+    padding: 5px 0;
+    width: 40%;
+}
+
+section.second-phase div.result span#remainingResult.active{
+    transition: tranform 0.3s ease-in-out;
+    transform-origin: center;
+    animation:lessNum 0.5s linear infinite;
+}
+
+@keyframes lessNum {
+    0% {transform: translateX(5px);}    
+    25% {transform: translateX(-5px);}    
+    50% {transform: translateX(5px);}    
+    75% {transform: translateX(-5px);}  
+    100% {transform: translateX(5px);}    
+}
+
+@media screen and (max-width: 1600px) {
+    div.credit-container h4{font-size: 18px;}
+
+    div.download-container section.first-phase h5{
+        font-size: 18px;
+        margin-bottom: 2rem;
+    }
+    div.download-container section.first-phase input{
+        padding: 3px 10px;
+        font-size: 16px;
+        width: 90%;
+    }
+    span.hint{
+        text-align: center;
+        margin-bottom: 2rem;
+        margin-top: 20px;
+    }
+    div.download-container section.first-phase div.next-button button{
+        width: 22%;
+        padding: 3px 0;
+        font-size: 16px;
+    }
+    div.download-container section.second-phase{padding: 0px 1rem;}
+    section.second-phase p{
+        font-size: 18px;
+        margin-bottom: 15px;
+        margin-top: 1rem;
+    }
+    section.second-phase div.calculation{
+        padding: 5px 0;
+        margin-bottom: 10px;
+    }
+    section.second-phase div.available, 
+    section.second-phase div.cost-box, 
+    section.second-phase div.result{
+        font-size: 16px;
+        margin-bottom: 10px;
+    }
+    section.second-phase div.cost-box p{font-size: 15px;}
+    section.second-phase div.agree span{font-size: 14px;}
+    section.second-phase div.submit-button button{
+        padding: 5px 0px;
+        width: 25%;
+        font-size: 16px;
+    }
+
+    div.timeout-container div.timeout-box div.content span:first-child{font-size: 25px;}
+    div.timeout-container div.timeout-box div.content span:last-child{font-size: 16px;}
+    div.timeout-container div.timeout-box div.btn-container button{
+        padding: 2px 0;
+        width: 30%;
+        font-size: 13px;
+    }
+
+    .checkmark {margin: 7% auto;}
+    div.download-container.success-msg h5{margin-bottom: 1.5rem;}
+}
+
+@media screen and (max-width: 1680px){
+    div.credit-container h4{font-size: 18px;}
+}
+
+@media screen and (max-width: 1440px){
+    div.credit-container h4,
+    div.download-container section.first-phase h5{font-size: 16px;}
+}
+
+@media screen and (max-width: 1366px){
+    div.credit-container img{height: 75px;}
+    div.credit-container h4, 
+    div.download-container section.first-phase h5{
+        font-size: 16px;
+        padding: 0 15px;
+        line-height: 20px;
+    }
+    div.download-container section.first-phase h5{font-weight: bold;}
+    span.hint{
+        margin-bottom: 1rem;
+        margin-top: 10px;
+        font-size: 12.5px; 
+    }
+    div.download-container section.first-phase{height: 88%;}
+    section.second-phase div.cost-box p{font-size: 14px;}
+    section.second-phase p{
+        font-size: 16px;
+        margin-bottom: 10px;
+        margin-top: 0.5rem;
+    }
+    section.second-phase div.available, 
+    section.second-phase div.cost-box, 
+    section.second-phase div.result{font-size: 15px;}
+    section.second-phase div.calculation{margin-bottom: 5px;}
+    section.second-phase div.submit-button button{
+        padding: 4px 0px;
+        width: 20%;
+        font-size: 15px;
+    }
+}
+
+@media screen and (max-width: 1360px) {
+    div.timeout-container div.timeout-box div.content span:first-child{font-size: 22px;}
+    div.timeout-container div.timeout-box div.content span:last-child{font-size: 13px;}
+    div.timeout-container div.timeout-box div.btn-container button{width: 25%;font-size: 12px;}
+}
+
+
+

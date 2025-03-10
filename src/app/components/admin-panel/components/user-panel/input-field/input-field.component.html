@@ -1,0 +1,473 @@
+<div class="fields-container">
+    <!-- add user panel form -->
+    <div class="adduser-fields" [hidden]="!(currentForm == 'user-form')">
+        <div class="form-data">
+            <label class="important-field">full name</label>
+            <span class="input-field">
+                <input type="text" (keyup)="validateSpecificField()" [(ngModel)]="userFormData.FullName" value="">
+                <span class="error" id="FullName">full name field is required</span>
+            </span>
+        </div>
+        <div class="form-data">
+            <label class="important-field">company name</label>
+            <span class="input-field">
+                <input type="text" (keyup)="validateSpecificField()" [(ngModel)]="userFormData.CompanyName" [disabled]="currentUserDetails?.RoleId == 3">
+                <span class="error" id="CompanyName">company name field is required</span>
+            </span>
+        </div>
+        <div class="form-data">
+            <label class="important-field">email</label>
+            <span class="input-field">
+                <input  (keyup)="validateSpecificField()" type="email" [(ngModel)]="userFormData.Email">
+                <span class="error" id="Email">{{emailError}}</span>
+            </span>
+        </div>
+        <div class="form-data">
+            <label class="important-field">contact</label>
+            <span class="input-field">
+                <input (keyup)="validateSpecificField()" type="text" [(ngModel)]="userFormData.MobileNumber">
+                <span class="error" id="MobileNumber">{{contactError}}</span>
+            </span>
+        </div>
+        <div class="form-data">
+            <label>designation</label>
+            <span class="input-field">
+                <input type="text" (keyup)="validateSpecificField()" [(ngModel)]="userFormData.Designation">
+                <span class="error" id="Designation">designation field is required</span>
+            </span>
+        </div>
+        <div class="form-data" *ngIf="currentUserDetails?.RoleId != 3">
+            <label>location</label>
+            <span class="input-field">
+                <input type="text" (keyup)="validateSpecificField()" [(ngModel)]="userFormData.Location" [disabled]="currentUserDetails?.RoleId == 3">
+                <span class="error" id="Location">location field is required</span>
+            </span>
+        </div>
+        <div class="form-data">
+            <label class="important-field">Country</label>
+            <span class="input-field position-relative">
+                <select [(ngModel)]="userFormData.country" (change)="validateSpecificField()" [disabled]="currentUserDetails?.RoleId == 3">
+                    <option value="">-- Select Country --</option>
+                    <option value="{{item?.name}}" *ngFor="let item of userCountries;">{{item?.name}}&nbsp;&nbsp;({{item?.dial_code}})</option>
+                </select>
+                <span class="error" id="country">Country field is required</span>
+            </span>
+        </div>
+        <div class="form-data" *ngIf="currentUserDetails?.RoleId != 3">
+            <label>GST</label>
+            <span class="input-field">
+                <input type="text" (keyup)="validateSpecificField()" [(ngModel)]="userFormData.GST">
+                <span class="error" id="GST">GST field is required</span>
+            </span>
+        </div>
+        <div class="form-data" *ngIf="currentUserDetails?.RoleId != 3">
+            <label>IEC</label>
+            <span class="input-field">
+                <input type="text" (keyup)="validateSpecificField()" [(ngModel)]="userFormData.IEC">
+                <span class="error" id="IEC">IEC field is required</span>
+            </span>
+        </div>
+        <!-- onSelectRole($event) -->
+        <div class="form-data">
+            <label class="important-field">role assign</label>
+            <span class="input-field">
+                <select (change)="getRoleAccess($event)" [(ngModel)]="userFormData.RoleId" [disabled]="currentUserDetails?.RoleId == 3">
+                    <option value="">-- Choose Role --</option>
+                    <option [value]="role.RoleId" *ngFor="let role of allRoles;">{{role.RoleName | titlecase}}</option>
+                </select>
+                <span class="error" id="RoleId">role assign should be selected</span>
+            </span>
+        </div>
+
+        <div class="role-checks" *ngIf="currentUserDetails?.RoleId != 3">
+            <div class="first-line">
+                <span>
+                    <label>Add User</label>
+                    <input id="AddUser" type="checkbox" [checked]="roleAccesses.AddUser" (change)="userFormData.AddUser = !userFormData.AddUser">
+                </span>
+                <span>
+                    <label>Edit User</label>
+                    <input id="EditUser" type="checkbox" [checked]="roleAccesses.EditUser" (change)="userFormData.EditUser = !userFormData.EditUser">
+                </span>
+                <span>
+                    <label>Delete User</label>
+                    <input id="DeleteUser" type="checkbox" [checked]="roleAccesses.DeleteUser" (change)="userFormData.DeleteUser = !userFormData.DeleteUser">
+                </span>
+                <span>
+                    <label>Add Plan</label>
+                    <input id="AddPlan" type="checkbox" [checked]="roleAccesses.AddPlan" (change)="userFormData.AddPlan = !userFormData.AddPlan">
+                </span>
+                <span>
+                    <label>Edit Plan</label>
+                    <input id="EditPlan" type="checkbox" [checked]="roleAccesses.EditPlan" (change)="userFormData.EditPlan = !userFormData.EditPlan">
+                </span>
+                <span>
+                    <label>Delete Plan</label>
+                    <input id="DeletePlan" type="checkbox" [checked]="roleAccesses.DeletePlan" (change)="userFormData.DeletePlan = !userFormData.DeletePlan">
+                </span>
+                <span>
+                    <label>Search</label>
+                    <input id="Search" type="checkbox" [checked]="roleAccesses.Search" (change)="userFormData.Search = !userFormData.Search">
+                </span>
+                <span>
+                    <label>Enable Id</label>
+                    <input id="EnableId" type="checkbox" [checked]="roleAccesses.EnableId" (change)="userFormData.EnableID = !userFormData.EnableID">
+                </span>
+                <span>
+                    <label>Disable Id</label>
+                    <input id="DisableId" type="checkbox" [checked]="roleAccesses.DisableId" (change)="userFormData.DisableId = !userFormData.DisableId">
+                </span>
+                <span>
+                    <label>Block User</label>
+                    <input id="BlockUser" type="checkbox" [checked]="roleAccesses.BlockUser" (change)="userFormData.BlockUser = !userFormData.BlockUser">
+                </span>
+                <span>
+                    <label>Unblock User</label>
+                    <input id="UnblockUser" type="checkbox" [checked]="roleAccesses.UnblockUser" (change)="userFormData.UnblockUser = !userFormData.UnblockUser">
+                </span>
+                <span>
+                    <label>Client List</label>
+                    <input id="ClientList" type="checkbox" [checked]="roleAccesses.ClientList" (change)="userFormData.ClientList = !userFormData.ClientList">
+                </span>
+                <span>
+                    <label>Plan List</label>
+                    <input id="PlanList" type="checkbox" [checked]="roleAccesses.PlanList" (change)="userFormData.PlanList = !userFormData.PlanList">
+                </span>
+
+                <span>
+                    <label>Downloads</label>
+                    <input id="Downloads" type="checkbox" [checked]="roleAccesses.DownloadsAccess" (change)="userFormData.DownloadsAccess = !userFormData.DownloadsAccess">
+                </span>
+                <span>
+                    <label>Share</label>
+                    <input id="Share" type="checkbox" [checked]="roleAccesses.Share" (change)="userFormData.Share = !userFormData.Share">
+                </span>
+            </div>
+        </div>
+    </div>
+
+    <!-- add plan panel form ( [ngStyle]="{'visibility': !isOnlyForPlan?'visible':'hidden'}") -->
+    <div class="plan-fields" [hidden]="!(currentForm == 'plan-form')">
+        <div class="selectplan">
+            <div class="box">
+                <h3>Select Plan</h3>
+                <select [(ngModel)]="planFormData.PlanId" (change)="setEditForm()" *ngIf="!isOnlyForPlan">
+                    <option value="">-- select plan --</option>
+                    <option value="{{plan?.PlanId}}" *ngFor="let plan of allPlans;">{{plan?.PlanName}}</option>
+                </select>
+                <select *ngIf="isOnlyForPlan" (change)="getFormTypeBool($event)">
+                    <option value="">-- select plan --</option>
+                    <option value="main">Main Plan</option>
+                    <option value="demo">Demo Plan</option>
+                </select>
+            </div>
+
+
+            <div class="box">
+                <h3>Select Direction</h3>
+                <select>
+                    <option value="both">Both</option>
+                    <option value="export">Export</option>
+                    <option value="import">Import</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="form-section">
+            <section class="left">
+                <div class="form-fields">
+                    <div class="form-data">
+                        <label class="important-field">plan name</label>
+                        <span class="input-field">
+                            <input type="text" (keyup)="validateSpecificField()" [(ngModel)]="planFormData.PlanName">
+                            <span class="error" id="PlanName">plan name field is required</span>
+                        </span>
+                    </div>
+                    <div class="form-data">
+                        <label class="important-field">validity</label>
+                        <span class="input-field">
+                            <select *ngIf="isOnlyForPlan" [(ngModel)]="planFormData.Validity" (change)="onSelectDate()">
+                                <option value="">-- Select Validity --</option>
+                                <option *ngIf="isDemoPlan" value="7 days">7 Days</option>
+                                <option value="1 month">1 Month</option>
+                                <option value="3 month">3 Month</option>
+                                <option value="6 month">6 Month</option>
+                                <option value="12 month">12 Month</option>
+                                <option value="18 month">18 Month</option>
+                            </select>
+
+                            <div *ngIf="!isOnlyForPlan" class="calender-date d-flex">
+                                <input type="date" [(ngModel)]="planFormData.StartDate" onfocus="this.showPicker()" style="margin-right:3px" />
+                                <input type="date" [(ngModel)]="planFormData.EndDate" onfocus="this.showPicker()" />
+                            </div>
+                            <!-- <input type="text" (keyup)="validateSpecificField()" [(ngModel)]="planFormData.validity"> -->
+                            <span class="error" id="Validity">validity field is required</span>
+                        </span>
+                    </div>
+                    <div class="form-data align-items-start">
+                        <!-- need to work here -->
+                        <label class="important-field">data access</label>
+                        <span class="input-field" id="dataAccessSelect">
+                            <div class="access-limit" *ngIf="!isDemoPlan">
+                                <select name="month" id="monthSel" [(ngModel)]="dataAccessTime.month" (change)="onSelectDataAccess()">
+                                    <option value="">--Select Month--</option>
+                                    <option value="{{item.code}}" *ngFor="let item of allMonths;">{{item.name | uppercase}}</option>
+                                </select>
+                                <select name="year" id="yearSel" [(ngModel)]="dataAccessTime.year" (change)="onSelectDataAccess()">
+                                    <option value="">--Select Year--</option>
+                                    <option value="{{item}}" *ngFor="let item of allYears;">{{item}}</option>
+                                </select>
+                            </div>
+                            <!-- && planFormData.Validity == '7 days' -->
+                            <div class="access-limit demo-case flex-column" *ngIf="isDemoPlan">
+                                <div class="from w-100">
+                                    <select name="month" id="monthSel" [(ngModel)]="demoDataAccess.from.month" (change)="onSelectDataAccess(true)">
+                                        <option value="">--Select Month--</option>
+                                        <option value="{{item.code}}" *ngFor="let item of allMonths;">{{item.name | uppercase}}</option>
+                                    </select>
+                                    <select name="year" id="yearSel" [(ngModel)]="demoDataAccess.from.year" (change)="onSelectDataAccess(true)">
+                                        <option value="">--Select Year--</option>
+                                        <option value="{{item}}" *ngFor="let item of allYears;">{{item}}</option>
+                                    </select>
+                                </div>
+                                <div class="to w-100">
+                                    <select name="month" id="monthSel" [(ngModel)]="demoDataAccess.to.month" (change)="onSelectDataAccess(true)">
+                                        <option value="">--Select Month--</option>
+                                        <option value="{{item.code}}" *ngFor="let item of allMonths;">{{item.name | uppercase}}</option>
+                                    </select>
+                                    <select name="year" id="yearSel" [(ngModel)]="demoDataAccess.to.year" (change)="onSelectDataAccess(true)">
+                                        <option value="">--Select Year--</option>
+                                        <option value="{{item}}" *ngFor="let item of allYears;">{{item}}</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <span class="error" id="DataAccess">data access field is required</span>
+                        </span>
+                    </div>
+                    <div class="form-data">
+                        <!-- need to work here -->
+                        <label class="important-field">country access</label>
+                        <span class="input-field">
+                            <app-multiselect-dropdown
+                                id="countryDropdown"
+                                [dropDownData]="allCountries"
+                                [remainingVal]="0"
+                                selectionID="admin-plan-1"
+                                (onSelectVal)="getMultiOptions($event, 'CountryAccess')"
+                                [dropDownOption]="dropdownSettings">
+                            </app-multiselect-dropdown>
+                            <span class="error" id="CountryAccess">country access field is required</span>
+                        </span>
+                    </div>
+                    <div class="form-data">
+                        <label class="important-field">excel point</label>
+                        <span class="input-field">
+                            <span class="more-field">
+                                <input type="checkbox" class="unlimited-access" (click)="onClickUnltd($event, 'Downloads')" />
+                                <input type="text" (keyup)="validateSpecificField()" [(ngModel)]="planFormData.Downloads" />
+                                <!-- <span *ngIf="isEditMode" class="img" id="excelPoint" (click)="addMoreFunc('excelPoint')"><img src="assets/images/add-more.png" alt=""></span>
+                                <div *ngIf="isEditMode" class="input">
+                                    <input type="text" [(ngModel)]="addMore.excelPoint" />
+                                    <button (click)="addPoint('excelPoint')">Add</button>
+                                </div> -->
+                            </span>
+                            <span class="error" id="Downloads">excel point field is required</span>
+                        </span>
+                    </div>
+                    <div class="form-data">
+                        <label class="important-field">search</label>
+                        <span class="input-field">
+                            <span class="more-field">
+                                <input type="checkbox" class="unlimited-access" (click)="onClickUnltd($event, 'Searches')" />
+                                <input type="text" (keyup)="validateSpecificField()" [(ngModel)]="planFormData.Searches" />
+                                <!-- <span *ngIf="isEditMode" class="img" id="search" (click)="addMoreFunc('search')"><img src="assets/images/add-more.png" alt=""></span>
+                                <div *ngIf="isEditMode" class="input">
+                                    <input type="text" [(ngModel)]="addMore.search" />
+                                    <button (click)="addPoint('search')">Add</button>
+                                </div> -->
+                            </span>
+                            <span class="error" id="Searches">search field is required</span>
+                        </span>
+                    </div>
+                    <div class="form-data">
+                        <!-- need to work here -->
+                        <label class="important-field">commodity access</label>
+                        <span class="input-field">
+                            <app-multiselect-dropdown
+                                id="commodityDropdown"
+                                [dropDownData]="allHsCodes"
+                                [remainingVal]="0"
+                                selectionID="admin-plan-2"
+                                (onSelectVal)="getMultiOptions($event, 'CommodityAccess')"
+                                [dropDownOption]="teriffDropdownSettings">
+                            </app-multiselect-dropdown>
+                            <!-- <input type="text" (keyup)="validateSpecificField()" [(ngModel)]="planFormData.commodityAccess"> -->
+                            <span class="error" id="CommodityAccess">commodity access field is required</span>
+                        </span>
+                    </div>
+                    <div class="form-data">
+                        <!-- need to work here -->
+                        <label class="important-field">tariff code access</label>
+                        <span class="input-field">
+                            <app-multiselect-dropdown
+                                id="tariffDropdown"
+                                [dropDownData]="allHsCodes"
+                                [remainingVal]="0"
+                                selectionID="admin-plan-3"
+                                (onSelectVal)="getMultiOptions($event, 'TarrifCodeAccess')"
+                                [dropDownOption]="teriffDropdownSettings">
+                            </app-multiselect-dropdown>
+                            <!-- <input type="text" (keyup)="validateSpecificField()" [(ngModel)]="planFormData.tariffCodeAccess"> -->
+                            <span class="error" id="TarrifCodeAccess">tariff code access field is required</span>
+                        </span>
+                    </div>
+                    <div class="form-data">
+                        <label class="important-field">workspace</label>
+                        <span class="input-field">
+                            <span class="more-field">
+                                <input type="checkbox" class="unlimited-access" (click)="onClickUnltd($event, 'Workspace')" />
+                                <input type="text" (keyup)="validateSpecificField()" [(ngModel)]="planFormData.Workspace" />
+                                <!-- <span *ngIf="isEditMode" class="img" id="workspace" (click)="addMoreFunc('workspace')"><img src="assets/images/add-more.png" alt=""></span>
+                                <div *ngIf="isEditMode" class="input">
+                                    <input type="text" [(ngModel)]="addMore.workspace" />
+                                    <button (click)="addPoint('workspace')">Add</button>
+                                </div> -->
+                            </span>
+                            <span class="error" id="Workspace">workspace field is required</span>
+                        </span>
+                    </div>
+                    <div class="form-data">
+                        <label class="important-field">WSS Limit</label>
+                        <span class="input-field">
+                            <span class="more-field">
+                                <input type="checkbox" class="unlimited-access" (click)="onClickUnltd($event, 'WSSLimit')" />
+                                <input type="text" (keyup)="validateSpecificField()" [(ngModel)]="planFormData.WSSLimit" />
+                                <!-- <span *ngIf="isEditMode" class="img" id="wssLimit" (click)="addMoreFunc('wssLimit')"><img src="assets/images/add-more.png" alt=""></span>
+                                <div *ngIf="isEditMode" class="input">
+                                    <input type="text" [(ngModel)]="addMore.wssLimit" />
+                                    <button (click)="addPoint('wssLimit')">Add</button>
+                                </div> -->
+                            </span>
+                            <span class="error" id="WSSLimit">WSS Limit field is required</span>
+                        </span>
+                    </div>
+                </div>
+            </section>
+    
+            <section class="right">
+                <div class="form-data">
+                    <div class="toggle-input">
+                        <label>download facility</label>
+                        <div class="toggle-btn {{toggles?.downloads && 'active'}}" appToggle (click)="onToggleBtnSwitch('downloads')">
+                            <div class="toggler"></div><div class="indicator"></div>
+                        </div>
+                    </div>
+                    <div class="text-input"></div>
+                </div>
+                <div class="form-data">
+                    <div class="toggle-input">
+                        <label>favourite shipment</label>
+                        <div class="toggle-btn {{toggles?.favourite && 'active'}}" appToggle (click)="onToggleBtnSwitch('favourite')">
+                            <div class="toggler"></div><div class="indicator"></div>
+                        </div>
+                    </div>
+                    <div class="text-input"><input type="text" [disabled]="!toggles?.favourite" [(ngModel)]="planFormData.Favoriteshipment.favoriteName" placeholder="Type Here..." [ngStyle]="{'opacity': toggles?.favourite?'1':'0.5'}"></div>
+                </div>
+                <div class="form-data">
+                    <div class="toggle-input">
+                        <label>what's trending</label>
+                        <div class="toggle-btn {{toggles?.trending && 'active'}}" appToggle (click)="onToggleBtnSwitch('trending')">
+                            <div class="toggler"></div><div class="indicator"></div>
+                        </div>
+                    </div>
+                    <div class="text-input"></div>
+                </div>
+                <div class="form-data">
+                    <div class="toggle-input">
+                        <label>company profile</label>
+                        <div class="toggle-btn {{toggles?.profile && 'active'}}" appToggle (click)="onToggleBtnSwitch('profile')">
+                            <div class="toggler"></div><div class="indicator"></div>
+                        </div>
+                    </div>
+                    <div class="text-input"><input type="text" [disabled]="!toggles?.profile" [(ngModel)]="planFormData.Companyprofile.profileName" placeholder="Type Here..." [ngStyle]="{'opacity': toggles?.profile?'1':'0.5'}"></div>
+                </div>
+                <div class="form-data">
+                    <div class="toggle-input">
+                        <label>contact details</label>
+                        <div class="toggle-btn {{toggles?.contact && 'active'}}" appToggle (click)="onToggleBtnSwitch('contact')">
+                            <div class="toggler"></div><div class="indicator"></div>
+                        </div>
+                    </div>
+                    <div class="text-input"></div>                    
+                </div>
+                <div class="form-data">
+                    <div class="toggle-input">
+                        <label>Add-On facility</label>
+                        <div class="toggle-btn {{toggles?.facility && 'active'}}" appToggle (click)="onToggleBtnSwitch('facility')">
+                            <div class="toggler"></div><div class="indicator"></div>
+                        </div>
+                    </div>
+                    <div class="text-input"></div>
+                </div>
+                <div class="form-data">
+                    <div class="toggle-input">
+                        <label>analysis</label>
+                        <div class="toggle-btn {{toggles?.analysis && 'active'}}" appToggle (click)="onToggleBtnSwitch('analysis')">
+                            <div class="toggler"></div><div class="indicator"></div>
+                        </div>
+                    </div>
+                    <div class="text-input multiselect-input">
+                        <app-multiselect-dropdown
+                            [ngStyle]="{'opacity': toggles?.analysis?'1':'0.5', 'pointer-events': toggles?.analysis?'all':'none'}"
+                            id="analysisDropdown"
+                            [dropDownData]="allAnalysisArr"
+                            [remainingVal]="0"
+                            selectionID="admin-plan-4"
+                            (onSelectVal)="getMultiOptions($event, 'Analysis')"
+                            [dropDownOption]="analysisDropdownSettings">
+                        </app-multiselect-dropdown>
+                        <!-- <input type="text" [disabled]="toggles?.analysis" [(ngModel)]="planFormData.analysis.analysisName" placeholder="Country, Port, Hs..." [ngStyle]="{'opacity': toggles?.analysis?'1':'0.5'}"> -->
+                        <!-- <select [disabled]="!toggles?.analysis" [(ngModel)]="planFormData.Analysis.analysisName" [ngStyle]="{'opacity': toggles?.analysis?'1':'0.5'}">
+                            <option value="">-- Select --</option>
+                            <option value="{{item}}" *ngFor="let item of allAnalysisArr;">{{item}} Analysis</option>
+                        </select> -->
+                    </div>
+                </div>
+                <div class="form-data antique">
+                    <div class="toggle-input"><label class="important-field">user</label></div>
+                    <div class="text-input">
+                        <span class="input-field" style="width:100%;">
+                            <span class="more-field">
+                                <input type="text" (keyup)="validateSpecificField()" [(ngModel)]="planFormData.User" />                                
+                            </span>
+                            <span class="error" id="User">user field is required</span>
+                        </span>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </div>
+
+    <!-- payment panel form -->
+    <div class="payment-fields" *ngIf="currentForm == 'payment-form'">
+        <h3>Payment</h3>
+        <div class="input-box">
+            <div class="select-box" (change)="onPaymentChange($event)">
+                <select name="payment">
+                    <option value="pending">Pending</option>
+                    <option value="received">Received</option>
+                </select>
+                <!-- <div class="dropdown-symbol"><img src="assets/images/triangle.png" alt=""></div> -->
+            </div>
+            
+            <div class="btn-box">
+                <button type="button" class="invoice" [ngStyle]="{'background-color': isPaymentReceived?'#d9d9d9':'#008dd2'}">Invoice</button>
+                <button type="button" class="cancel">{{isPaymentReceived?'Back':'Cancel'}}</button>
+            </div>
+        </div>
+        <div class="amount-box" *ngIf="!isPaymentReceived">
+            <label for="amt">Amount:</label>
+            <input type="text" name="amount" [(ngModel)]="paymentAmount">
+        </div>
+    </div>
+</div>

@@ -1,0 +1,179 @@
+div.country-modal{overflow: hidden;height: 100%;}
+div.modal-head{
+  color: white;
+  background-color: #000000;
+  padding: 0px 20px;
+  height: 5%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+div.country-modal div.tabs{
+  height: 2.5rem;
+  padding-top: 5px;
+  background-color: black;
+}
+div.country-modal div.tabs div.tab{
+  width: 10%;
+  margin-right: 5px;
+  cursor: pointer;
+  border: 1px solid #e5e5e5;
+  border-top-left-radius: 15px;
+  border-top-right-radius: 15px;
+  background-color: #e5e5e5;
+  font-size: 14px;
+  font-weight: 600;
+  letter-spacing: 0.65px;
+}
+div.country-modal div.tabs div.tab.active{
+  color: white;
+  background-color: #4cbfa6;
+  border: 1px solid #4cbfa6;
+}
+
+div.modal-head h5{
+  font-size: 1.75rem;
+  font-weight: 800;
+  font-family: 'Roboto';
+  letter-spacing: 0.8px;
+}
+div.modal-head img{cursor: pointer;}
+
+div.modal-body{overflow-y: auto;padding: 0;height:85%;}
+div.modal-body div.child {font-size: 22px;font-weight: 600;}
+div.modal-body table {
+  width: 100%;
+  font-family: arial, sans-serif;
+  border-collapse: collapse;
+}
+div.modal-body table thead{
+  background-color: #4cbfa6;
+  position: sticky;
+  top: -1px;
+  z-index: 999;
+}
+div.modal-body table thead th{
+  color: white;
+  padding: 5px 20px;
+  white-space: nowrap;
+  font-weight: bold;
+  font-family: 'Roboto', sans-serif;
+  letter-spacing: 0.5px;
+}
+div.modal-body table thead th:first-child{text-align: center;}
+div.modal-body table thead th img{height: 15px;margin-right: 10px;}
+div.modal-body table thead th input[type="text"]{
+  border: none;
+  border-radius: 0;
+  outline: none;
+  margin-left: 10px;
+  padding: 0;
+  padding: 5px 0 5px 10px;
+  font-size: 14.5px;
+  width: 14rem;
+}
+div.country-modal div.input-filter{background-color: #4cbfa6;padding: 2px 5px;}
+div.country-modal div.input-filter input{
+  width: 100%;
+  border: none;
+  border-radius: 3px;
+  outline: none;
+  padding: 0;
+  padding: 5px 0 5px 10px;
+  font-size: 14.5px;
+}
+
+div.modal-body table tbody tr:nth-child(even) {background-color: #e5e5e5;}
+div.modal-body table tbody tr{border-bottom: 1px solid #e5e5e5;}
+div.modal-body table tbody tr:hover{background-color: whitesmoke; cursor: pointer;}
+div.modal-body table tbody tr.unable:hover{opacity: 0.2;}
+
+div.modal-body table tbody td{
+  padding: 5px 0;
+  text-align: center;
+  font-size: 12.5px;
+  letter-spacing: 0.4px;
+  font-weight: 500;
+  height: auto;
+  color: black;
+  font-family: 'Roboto', sans-serif;
+}
+div.modal-body table tbody td:first-child{
+  font-weight: 600;
+  letter-spacing: 0.6px;
+  font-size: 14px;
+}
+div.modal-body table tbody td.country-name div.countryname img{
+  rotate: -90deg;
+  height: 35px;
+  left: 1%;
+  top: -35%;
+}
+/* div.modal-body table tbody td.country-name{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+} */
+div.modal-body table tbody td.country-name span{flex: 0.5;text-align: left;}
+div.modal-body table tbody td img.flag-icon{
+  height: 45px;
+  width: 45px;
+  border-radius: 50%;
+  object-fit: cover;
+  margin-right: 15px ;
+}
+div.modal-body table tbody td button{padding: 5px 0;width: 35%;}
+div.modal-body table tbody td i{font-size: 20px;color: black;}
+div.modal-body table tbody td span.padlock{position: relative;}
+div.modal-body table tbody td span.padlock:hover::after{
+  content: "Country is locked!";
+  position: absolute;
+  top: -0.5rem;
+  left: -3rem;
+  z-index: 999;
+  background: white;
+  border: 1px solid #e5e5e5;
+  font-size: 12.5px;
+  width: 8rem;
+  font-family: "Roboto";
+  letter-spacing: 0.5px;
+  text-align: center;
+  padding: 5px 0;
+  border-radius: 5px;
+  box-shadow: 0px 3px 10px 2px #0000007a;
+}
+
+div.modal-body table tbody td span.arrow-btn{
+  border: 1px solid #c2c2c2;
+  padding: 12px 7px;
+  border-radius: 50%;
+  background-color: white;
+  cursor: pointer;
+  box-shadow: rgb(0 0 0 / 50%) 0px 8px 11px;
+}
+div.modal-body table tbody td span.arrow-btn:hover{background-color:#f3f4f5;}
+div.modal-body table tbody td span.arrow-btn:active{background-color:white;}
+div.modal-body table tbody td span.arrow-btn img.side-arrow{height: 30px;margin-top: -2px;user-select: none;}
+
+div.modal-bottom{padding: 20px 0;}
+
+
+@media screen and (max-width: 1600px) {
+  div.modal-body table tbody td{
+    font-size: 13px;
+    padding: 5px 0;
+  }
+  div.modal-body table tbody td button{
+    border-radius: 5px;
+    font-size: 16px;
+    letter-spacing: 0.5px;
+    padding: 3px 0;
+    width: 30%;
+  }
+}
+
+@media screen and (max-width: 1366px) {
+  div.modal-body table thead th{padding: 2px 20px;}
+  div.modal-body table tbody td{padding: 3px 0; }
+}
+  
