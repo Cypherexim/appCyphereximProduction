@@ -16,7 +16,7 @@ export class SortHsCodePipe implements PipeTransform {
     for (let i = 0; i < hsCodeArrLen; i++) {
 
       const tariffCode = (() => {
-        if(`${hsCodeArr[i]["HsCode"]}`.length <= 7) { hsCodeArr[i]["HsCode"] = `0${hsCodeArr[i]["HsCode"]}`; } 
+        if(`${hsCodeArr[i]["HsCode"]}`.length == 7) { hsCodeArr[i]["HsCode"] = `0${hsCodeArr[i]["HsCode"]}`; } 
         return hsCodeArr[i];
       })();
 

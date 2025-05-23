@@ -69,7 +69,7 @@ export class NavMenuComponent implements OnInit, OnDestroy {
     if (this.authService.isLoggedIn()) {
       this.showAlertMsg();   
       this.startCallingNotifications(); 
-      this.getAllAvailableCountriesAPI();
+      // this.getAllAvailableCountriesAPI();
 
       this.isLoggedIn = this.authService.isLoggedIn();
       this.userInfo = JSON.parse(localStorage.getItem('currentUser') || '{}');
@@ -296,7 +296,7 @@ export class NavMenuComponent implements OnInit, OnDestroy {
     }
 
     const modalRef = this.modalService.open(CountryListComponent, { windowClass: 'countryModalClass', centered: true });
-    (<CountryListComponent>modalRef.componentInstance).getCountryListInit(this.allCountryList);
+    // (<CountryListComponent>modalRef.componentInstance).getCountryListInit(this.allCountryList);
   }
 
   onClickHeaderOption(type:string, fileName:string="") {

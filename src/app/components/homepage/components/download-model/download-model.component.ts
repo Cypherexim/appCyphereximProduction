@@ -1,16 +1,17 @@
-import { Component, EventEmitter, OnInit, Output } from '@angular/core';
+import { Component, EventEmitter, OnDestroy, OnInit, Output } from '@angular/core';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import { UserService } from 'src/app/services/user.service';
 import { AuthService } from 'src/app/services/auth.service';
 import { ApiServiceService } from 'src/app/services/api-service.service';
 import { EventemittersService } from 'src/app/services/eventemitters.service';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-download-model',
   templateUrl: './download-model.component.html',
   styleUrls: ['./download-model.component.css']
 })
-export class DownloadModelComponent implements OnInit {
+export class DownloadModelComponent implements OnInit, OnDestroy {
 
   @Output() callBack:EventEmitter<any> = new EventEmitter();
   modalType:string = 'download';
@@ -29,30 +30,41 @@ export class DownloadModelComponent implements OnInit {
 
   customMsg:string = "";
 
+  apiSubscription1:Subscription = new Subscription();
+  apiSubscription2:Subscription = new Subscription();
+
   constructor(
-    private activeModal: NgbActiveModal, 
+    private activeModal: NgbActiveModal,
     private userService: UserService,
     private apiService: ApiServiceService,
     private eventService: EventemittersService
   ) { }
 
   ngOnInit(): void {
-    console.log('helo download');
-    
     setTimeout(() => this.currentTab='phase1', 800);
 
-    this.userService.updateUserPoints().subscribe((res:any) => {
-      if(res != null && !res?.error) {
-        this.availablePoints = Number(res?.results[0]?.Downloads);
-
-        this.apiService.getCountryDownloadCost(this.countryData.code).subscribe((res:any) => {
-          if(res != null && !res?.error) {
-            this.costPoints = res?.results[0]?.CostPerRecord ? Number(res?.results[0]?.CostPerRecord) : 1;        
-            this.remainingPoints = this.availablePoints - (this.numberOfRecords * this.costPoints);
-          }
-        });
-      }
+    this.apiSubscription1 = this.userService.updateUserPoints().subscribe({
+      next: (res:any) => {
+        if(res != null && !res?.error) {
+          const {code, type} = this.countryData;
+          this.availablePoints = Number(res?.results[0]?.Downloads);
+  
+          this.apiSubscription2 = this.apiService.getCountryDownloadCost(code, type).subscribe({
+            next: (res2:any) => {
+              if(res2 != null && !res2?.error) {
+                this.costPoints = res2?.results[0]?.CostPerRecord ? Number(res2?.results[0]?.CostPerRecord) : 1;        
+                this.remainingPoints = this.availablePoints - (this.numberOfRecords * this.costPoints);
+              }
+            }, error: (err2:any) => console.log(err2)
+          });
+        }
+      }, error: (err:any) => console.log(err)
     });
+  }
+
+  ngOnDestroy(): void {
+    this.apiSubscription1?.unsubscribe();
+    this.apiSubscription2?.unsubscribe();
   }
 
   onClickNext() {
@@ -91,7 +103,7 @@ export class DownloadModelComponent implements OnInit {
     this.isError = false;
   }
 
-  onClickGen(elem) {
+  onClickGen(elem:HTMLInputElement) {
     if(this.remainingPoints < 0) {
       this.phase2Err = "You cannot generate link due to low downloading points"
       this.isError = true;
@@ -100,7 +112,7 @@ export class DownloadModelComponent implements OnInit {
 
     if(elem.checked) {
       this.isError = false;
-      this.callBack.emit({status:'DONE', name: this.downloadName});
+      this.callBack.emit({status:'DONE', name: this.downloadName, remainingPoints: this.remainingPoints});
       this.closeModal();
     } else {
       this.phase2Err = "Please click the checkbox to agree";
@@ -128,7 +140,7 @@ export class DownloadModelComponent implements OnInit {
   }
 
   //insufficient searching and downloading points
-  gotoDownload(type){
+  gotoDownload(type:string){
     this.eventService.headerClickEvent.emit(type);
     this.closeModal();
   }

@@ -11,13 +11,19 @@ div.list-container h1{
 }
 
 div.list-container div.input-bar{
-    text-align: right;
     margin-bottom: 10px;
 }
 div.list-container div.input-bar button{
     font-size: 18px;
     font-family: 'Roboto';
     padding: 5px 25px;
+}
+
+div.list-container div.input-bar select{
+    border: 1px solid #c2c2c2;
+    padding: 5px 0px;
+    width: 10%;
+    outline: none;
 }
 
 div.list-container div.other-table{
@@ -77,9 +83,10 @@ div.list-container div.other-table table tbody tr:hover td{background-color: #c2
     right: 0;
     z-index: 9;
 }
+.right-sticky1 i{font-size: 22px;}
 .right-sticky2{
     position: sticky;
-    right: 125px;
+    right: 100px;
     z-index: 9;
 }
 

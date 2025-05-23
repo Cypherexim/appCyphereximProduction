@@ -23,6 +23,7 @@ export class ConfirmationComponent implements OnInit {
 
   allUsers:any[] = [];
   copyAllUsers:any[] = [];
+  downloadingIDsList:string[] = [];
   downloadWorkspaceId:any[] = [];
   selectedUserId:any[] = [];
   hasSubmitted:boolean = false;

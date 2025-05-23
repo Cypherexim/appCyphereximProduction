@@ -4,12 +4,26 @@
             <span class="close-icon" (click)="closeModal('direct')"><img src="assets/images/cross.png" alt="" /></span>
             <h1>{{isUpdateMode ? 'Update' : 'Add'}} Country</h1>
     
-            <div class="input-field">
+            <div class="input-field mb-3">
                 <span class="label">Country Name</span>
-                <input type="text" [(ngModel)]="countryName" name="" id="" />
+                <!-- <input type="text" [(ngModel)]="countryName" name="" id="" /> -->
+                 <select [(ngModel)]="countryName">
+                    <option value="">--Select Country--</option>
+                    <option value="{{item?.country_value+'~'+item?.country_code}}" *ngFor="let item of allCountryCodeList">{{item?.country_name | uppercase}}</option>
+                 </select>
             </div>
-            <p [ngStyle]="{'visibility': !isError ? 'hidden' : 'visible'}">Country name field is required</p>
     
+            <div class="input-field">
+                <span class="label">Country Type</span>
+                <select [(ngModel)]="countryType" (change)="onCheckingExistingCountry()">
+                    <option value="">--Select Type--</option>
+                    <option value="CUSTOM">Custom</option>
+                    <option value="MIRROR">Mirror</option>
+                    <option value="STATISTICAL">Statistical</option>
+                </select>
+            </div>
+            <p [ngStyle]="{'visibility': !isError?.flag ? 'hidden' : 'visible'}">{{isError.type=="required" ? "Country name field is required!": countryName+" is already existed in "+countryType}}</p>
+
             <div class="toggle-fields d-flex">
                 <span class="label">Country Direction</span>
     
@@ -52,12 +66,12 @@
             <div class="country-detail">
                 <div class="detail mb-3 d-flex">
                     <h5 class="w-50">Country:</h5>
-                    <span>{{sideFilterData?.CountryName}}</span>
+                    <span>{{sideFilterData?.country_name}}</span>
                 </div>
 
                 <div class="detail d-flex">
                     <h5 class="w-50">Direction:</h5>
-                    <span>{{direction}}</span>
+                    <span>{{direction | titlecase}}</span>
                 </div>
             </div>
             <div class="sidefilter-access">
@@ -67,9 +81,9 @@
                         <th>Enable</th>
                     </thead>
                     <tbody>
-                        <tr *ngFor="let head of filterHeads">
-                            <td>{{head}}</td>
-                            <td class="{{sideFilterData?.filters[head]?'yes':'no'}}">{{sideFilterData?.filters[head] ? 'Yes' : 'No'}}</td>
+                        <tr *ngFor="let key of filterHeads">
+                            <td>{{key}}</td>
+                            <td class="{{sideFilterData[key] ?'yes':'no'}}">{{sideFilterData[key] ? 'Yes' : 'No'}}</td>
                         </tr>
                     </tbody>
                 </table>

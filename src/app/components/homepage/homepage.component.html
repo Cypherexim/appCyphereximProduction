@@ -20,8 +20,7 @@
         <div tabindex="1" [class]="secSelectClass" (focusout)="setDropClass(otherSelect, 'cut')">
           <div class="dropdown-box" #otherSelect id="otherSelect" (click)="setDropClass(otherSelect, 'add')">
             {{secSelectVal}}</div>
-          <div class="dropdown-icon" (click)="setDropClass(otherSelect, 'add')"><img src="assets/images/downarrow.png"
-              alt="" /></div>
+          <div class="dropdown-icon" (click)="setDropClass(otherSelect, 'add')"><img src="assets/images/downarrow.png" alt="" /></div>
           <div class="dropdown-data">
             <p *ngFor="let item of dropdownVal2"
               (click)="onselectItem(item.value, item.placeholder, 'second', otherSelect);setDropClass(otherSelect, 'cut')"

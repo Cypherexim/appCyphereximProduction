@@ -17,17 +17,17 @@ export class SearchService {
   ) { }
 
 
-  getSideFilterAccess(country:string, direction:string) {
-    return this.http.get(`${this.apiUrl}api/getSideFilterAccess?Country=${country}&Direction=${direction}`);
+  getSideFilterAccess(country:string, direction:string, countryType:string) {
+    return this.http.get(`${this.apiUrl}api/getSideFilterAccess?Country=${country}&Direction=${direction}&Type=${countryType}`);
   }
 
 
   //get searched data API
   getSearchedDataWithFilter(apiData:any) {
-    const {country, direction, body} = apiData;
+    const {country, direction, countryType, body} = apiData;
     const directionType = direction=="export" ? "Exports" : "Imports";
 
-    return this.http.post(`${this.apiUrl}api/get${country}${directionType}`, body);
+    return this.http.post(`${this.apiUrl}api/${countryType||"CUSTOM"}/get${country}${directionType}`, body);
   }
 
   //get all filter data as per country and direction

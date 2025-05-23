@@ -39,6 +39,7 @@ div.table-detail-container div.table div.table-box div.table-row span.table-data
     font-size: 17px;
     font-family: 'Roboto';
     letter-spacing: 0.5px;
+    word-wrap: break-word;
 }
 div.table-detail-container div.table-box div.table-row span.left{
     border-left: none;

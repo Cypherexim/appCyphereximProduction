@@ -298,10 +298,12 @@ export class AlertifyService {
       }
     });
   }
+
+  delayer(delayTimeInSec:number):Promise<any> {
+    return new Promise((resolve) => {
+      setTimeout(() => {resolve(true);}, delayTimeInSec);
+    });
+  }
 }
-
-
-
-
 
 

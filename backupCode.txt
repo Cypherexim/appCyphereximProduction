@@ -2372,3 +2372,98 @@ getMonthwiseRadarData(interval:string) {
     margin-top: -7px;
     cursor: pointer;
 
+
+
+
+
+// if(!responseArr[0]?.error) {
+//   const tempCounters = responseArr[0]?.results?.counters;
+//   const keys = ["total_records", "totalhscode", "exp_namecount", "imp_namecount", "totalcountry", "valueinusd"];
+//   const counterObjKeys = ["total", "hsCode", "exporters", "importers", "country", "values"];
+//   keys.forEach((key:string, index:number) => {
+//     this.counterObj[counterObjKeys[index]] = Number(tempCounters[key]);
+//   });
+
+//   setTimeout(() => this.setCounterValues(), 200);              
+
+//   if (this.counterObj.total > 500000 && callBy=="self") {
+//     this.eventService.filterSidebarEvent.emit(false);
+//     this.timerSubscription?.unsubscribe();
+//     this.eventService.toggleSearchLoader.next(false);
+//     this.showAlertForSearch(this.warningMsg.results);
+//     reject(new Error("More than 5 lack records are fetched!"));
+//     return;
+//   }
+// }
+
+// if(!responseArr[1]?.error) {
+//   this.timerSubscription?.unsubscribe();
+//   const results: any[] = responseArr[1]?.results?.data || responseArr[1]?.results || [];
+  
+//   if (this.isSearchingData) this.isSearchingData = false;
+
+//   if (this.currentCountry !== "India") {
+//     if (results.length > 0 && ["filter", "self", "workspace"].includes(callBy)) this.tableHeads = this.getUserGenHeads(Object.keys(results[0]));
+//   } else {
+//     // India has different heads  
+//     this.arrangeTableHeads(); //setting 
+//     setTimeout(() => this.backToPrevState(), 1000);          
+//   }
+
+//   this.searchResult = results;
+//   this.perPageData = JSON.parse(JSON.stringify(this.searchResult));
+//   this.eventService.toggleSearchLoader.next({flag: false, page: "home"});
+
+//    //If result is blank then back to empty page showing "Data Not Found"
+//   if (this.searchResult.length == 0 && ["self", "workspace"].includes(callBy)) {
+//     this.timerSubscription?.unsubscribe();
+//     this.eventService.filterSidebarEvent.emit(false);
+//     this.eventService.toggleSearchLoader.next({flag: false, page: "home"});
+//     reject(new Error("No Data Found!"));
+//     return;
+//   }
+
+//   this.colShifterInit(); //to start tableDnD on column shifter function
+
+//   if (["pagination-perpage", "self", "workspace", "filter"].includes(callBy)) {
+//     this.setCurrentTablePreview();
+//     this.isSearchBtnClicked = true;
+//   } else {
+//     if (results.length > 0) {
+//       this.onBindBookmark().then((res: any[]) => {
+//         this.scrollToTop();
+//         this.perPageData = res;
+//         const totalData = results.length > 0 ? Number(this.counterObj.total) <= ALLOWED_RECORDS ? Number(this.counterObj.total) : ALLOWED_RECORDS : 1;
+//         this.totalPages = Math.ceil(totalData / this.pagePerView);
+//         this.isTableLoader = false;
+//       });
+//     }
+//   }
+
+//   if (!apiData["body"]["IsWorkspaceSearch"]) this.eventService.userStatusEvent.emit('update');
+
+//   //================== side filter fetching values with their counters ====================//
+//   const paginationTypes = ["pagination-arrow","pagination-perpage"];
+//   this.eventService.filterSidebarEvent.emit(true); //to display ON of sidefilter options
+
+//   if (["self"].includes(callBy) && results.length > 0) {                  
+//     //api for getting data for side filters
+//     if (this.refreshPageName == "advance" || this.currentCountry == "India") {
+//       this.currentCountryData = { country: "India", code: "IND", direction: this.direction };
+//     }
+
+//     if(!paginationTypes.includes(callBy)) await this.getSideFilterData(callBy, "base");
+//   } else {
+//       if(!paginationTypes.includes(callBy)) await this.getSideFilterData(callBy, "filter");
+//   }
+
+//   if (this.perPageData.length == 0) this.setCounterValues(true); //if data is received [] then zero all counters
+//   else this.setCounterValues();              
+// } else {
+//   this.eventService.toggleSearchLoader.next({flag: false, page: "home"});
+//   this.eventService.filterSidebarEvent.emit(false);
+//   this.showAlertForSearch(responseArr[1]?.message);
+//   resolve({ status: 'done' });
+// }
+
+// this.getAllFullSideFilterData(callBy, apiData);

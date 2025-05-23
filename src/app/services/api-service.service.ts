@@ -90,8 +90,8 @@ export class ApiServiceService {
   }
 
   //to get the cost per record of current country
-  getCountryDownloadCost(countryCode:any){
-    return this.http.get(this.apiUrl + "api/getDownloadCost?CountryCode=" + countryCode);
+  getCountryDownloadCost(countryCode:string, countryType:string){
+    return this.http.get(`${this.apiUrl}api/getDownloadCost?countryCode=${countryCode}&countryType=${countryType}`);
   }
 
   //to save selected records into db
@@ -115,8 +115,8 @@ export class ApiServiceService {
   }
 
   //to get all added countries by admin
-  getAllAdminCountries() {
-    return this.http.get(this.apiUrl + "api/getAllContries");
+  getAllAdminCountries(type:string) {
+    return this.http.get(`${this.apiUrl}api/getAllContries?type=${type}`);
   }
 
   //analysis APIs
@@ -136,12 +136,13 @@ export class ApiServiceService {
     
   //get latest date of country's shipment
   getCountryLatestDate(countryData:any) {
-    return this.http.get(this.apiUrl + `api/getlatestdate?countryName=${countryData?.country}&direction=${countryData?.direction}`);
+    const {country, direction, countryType} = countryData;
+    return this.http.get(this.apiUrl + `api/getlatestdate?countryName=${country}&direction=${direction}&countryType=${countryType}`);
   }
 
   //get All SidefilterAccess
-  getAllSideFilterAccess() {
-    return this.http.get(this.apiUrl + "api/getAllSideFilterAccess");
+  getAllSideFilterAccess(type:string):Observable<ApiMsgRes> {
+    return this.http.get<ApiMsgRes>(`${this.apiUrl}api/getAllSideFilterAccess?type=${type}`);
   }
 
   //add new Country
@@ -303,6 +304,10 @@ export class ApiServiceService {
     return this.http.get<ApiMsgRes>(`${this.apiUrl}api/getTop10Companies`);
   }
 
+  getGlobalCountriesList(type:string):Observable<ApiMsgRes> {
+    return this.http.get<ApiMsgRes>(`${this.apiUrl}api/getGlobalCountriesList?type=${type}`);
+  }
+
   getAllGlobeCountries():Observable<ApiMsgRes> {
     return this.http.get<ApiMsgRes>(`${this.apiUrl}api/getAllGlobeCountries`);
   }
@@ -328,5 +333,9 @@ export class ApiServiceService {
     } catch (error) {
       console.log(error);
     }    
+  }
+
+  getAllCountrycodes():Observable<ApiMsgRes> {
+    return this.http.get<ApiMsgRes>(`${this.apiUrl}api/getAllCountryCodes`);
   }
 }

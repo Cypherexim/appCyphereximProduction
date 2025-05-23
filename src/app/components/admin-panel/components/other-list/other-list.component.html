@@ -1,42 +1,57 @@
 <div class="list-container">
     <div class="h-100 first" *ngIf="pageHeadName=='country'">
         <h1>{{pageHeadName | titlecase}} List</h1>
-        <div class="input-bar">
+        <div class="input-bar d-flex align-items-center justify-content-between">
+            <select [(ngModel)]="countryType" (change)="getAllSideFilterAccess()">
+                <option value="CUSTOM">Custom</option>
+                <option value="MIRROR">Mirror</option>
+                <option value="STATISTICAL">Statistical</option>
+            </select>
+
             <button class="btn btn-danger" (click)="getFormModal()">+ Add Country</button>
         </div>
         <div class="other-table">
             <table>
                 <thead>
-                    <th 
+                    <th class="left-sticky1 w-auto">Country</th>
+                    <th class="left-sticky2 w-auto">Direction</th>
+                    <th class="w-auto" *ngFor="let head of sideAccessKeys;let i=index;">{{head | titlecase}}</th>
+                    <th class="right-sticky2" style="width: 10%;">is_Active</th>
+                    <th class="right-sticky1" style="width: 10%;">Action</th>
+
+                    <!-- <th 
                         *ngFor="let head of tableHeads?.country;let i=index;"
                         [class]="setClassName(i, tableHeads?.country)" 
                         [ngStyle]="{'width': (head=='active'||head=='action')?'10%':'auto'}">
                         {{head | titlecase}}
-                    </th>
+                    </th> -->
                 </thead>
     
                 <tbody *ngIf="!isLoading">
-                    <tr *ngFor="let head of allCountryList;let i=index;">
-                        <td class="left-sticky1">{{head?.CountryName}}</td>
-                        <td class="left-sticky2" style="text-transform:uppercase;">{{head?.hasOwnProperty('Import') ? "Import" : "Export"}}</td>
+                    <tr *ngFor="let item of allSideFilterList;let i=index;">
+                        <td class="left-sticky1">{{item?.country_name}}</td>
+                        <td class="left-sticky2" style="text-transform:uppercase;">{{item?.Direction}}</td>
     
     
-                        <td *ngFor="let filterItem of filterHeads;let j=index;">
+                        <td *ngFor="let keyName of sideAccessKeys;let j=index;">
                             <div class="d-flex justify-content-center align-items-center w-100">
-                                <input [checked]="head?.filters[filterItem]" (click)="updateSideFilterAccess($event, filterItem, head)" type="checkbox" id="switch-{{i}}-{{j}}"/><label class="toggle-switch" for="switch-{{i}}-{{j}}">Toggle</label>
+                                <input [checked]="item[keyName]" (click)="updateSideFilterAccess($event, keyName, item)" type="checkbox" id="switch-{{i}}-{{j}}"/>
+                                <label class="toggle-switch" for="switch-{{i}}-{{j}}">Toggle</label>
                             </div>
                         </td>
     
     
                         <td class="right-sticky2">
                             <div class="d-flex justify-content-center align-items-center w-100">
-                                <input [checked]="head?.hasOwnProperty('Import') ? head?.Import : head?.Export" type="checkbox" id="switch-{{i}}"/>
+                                <input [checked]="item?.active" type="checkbox" id="switch-{{i}}"/>
                                 <label class="toggle-switch" for="switch-{{i}}">Toggle</label>
                             </div>
                         </td>
                         <td class="right-sticky1">
-                            <img title="Record Details" src="assets/images/info-data.png" (click)="showSideFilterDetail(head)" alt="" />
-                            <img title="Edit Record" src="assets/images/edit-data.png" (click)="getFormUpdateModal(head?.Countrycode)" alt="" />
+                            <!-- <img title="Record Details" src="assets/images/info-data.png" (click)="showSideFilterDetail(head)" alt="" /> -->
+                            <!-- <img title="Edit Record" src="assets/images/edit-data.png" (click)="getFormUpdateModal(head?.Countrycode)" alt="" /> -->
+                            <i placement="start" ngbTooltip="Record Details" class="fa-sharp fa-solid fa-circle-info me-2" (click)="showSideFilterDetail(item)" style="color:#4cbfa6;"></i>
+                            <i placement="start" ngbTooltip="Edit Record" class="fa-solid fa-pen-circle" (click)="getFormUpdateModal(item?.Country)" style="color:#0091ff;"></i>
                             <!-- <img title="Delete Record" src="assets/images/delete-data.png" alt="" /> -->
                         </td>
                     </tr>
@@ -51,10 +66,20 @@
 
         <div class="update-form">
             <div class="input-box">
+                <span>Type</span>
+                <select [(ngModel)]="countryDateObj.countryType" (change)="onClickCountryType('type')">
+                    <option value="">--Select Type--</option>
+                    <option value="CUSTOM">Custom</option>
+                    <option value="MIRROR">Mirror</option>
+                    <option value="STATISTICAL">Statistical</option>
+                </select>
+            </div>
+
+            <div class="input-box">
                 <span>Country</span>
-                <select [(ngModel)]="countryDateObj.countryName">
+                <select [(ngModel)]="selectedCountryValue" (change)="onClickCountryType('country')" [disabled]="!hasSelected.type">
                     <option value="">--Select Country--</option>
-                    <option value="{{item?.Countrycode}}" *ngFor="let item of dropdownCountries;">
+                    <option value="{{item?.Countrycode}}~{{item?.CountryName}}" *ngFor="let item of dropdownCountries;">
                         {{item?.CountryName}}
                     </option>
                 </select>
@@ -62,7 +87,7 @@
 
             <div class="input-box">
                 <span>Direction</span>
-                <select [(ngModel)]="countryDateObj.direction" (change)="getLastUpdatedDate()">
+                <select [(ngModel)]="countryDateObj.direction" [disabled]="!hasSelected.country" (change)="getLastUpdatedDate()">
                     <option value="">--Select Direction--</option>
                     <option value="export">Export</option>
                     <option value="import">Import</option>
@@ -71,7 +96,7 @@
 
             <div class="input-box">
                 <span>Set Date</span>
-                <input [(ngModel)]="countryDateObj.latestDate" type="date" onfocus="this.showPicker()"/>
+                <input [disabled]="!hasSelected.direction" [(ngModel)]="countryDateObj.latestDate" type="date" onfocus="this.showPicker()"/>
             </div>
 
             <div class="error-msg" [hidden]="errorMsg.length==0">{{errorMsg}}</div>

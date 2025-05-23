@@ -1,10 +1,14 @@
 <div class="workstation-box" [ngStyle]="{'height': isAnalysisTabActive?'91.5%':'100%'}">
+    <div class="notice w-100 py-1 ps-3" *ngIf="type=='download' && !hasShownNotice && downloadDataArr.length>0">Please click refresh button to get your file updated while your downloading file is in progress.</div>
+    
     <div class="top-bar d-flex align-items-center position-relative">
-        <button class="btn btn-danger float-left" *ngIf="openWorkSpaceTable" (click)="backToFolders()">Back</button>
+        <button class="backbtn btn btn-danger float-left" *ngIf="openWorkSpaceTable" (click)="backToFolders()">Back</button>
+        <button class="refreshbtn btn btn-danger float-left" *ngIf="type=='download'" (click)="onClickRefresh()" ngbTooltip="Refresh"><i class="fa-solid fa-rotate-right"></i></button>
         <h4 class="w-100">{{type | uppercase}}&nbsp;&nbsp;{{openWorkSpaceTable ? ('('+currentDirName+')' | titlecase) : ''}}</h4>
         <div class="view-type position-absolute d-flex align-items-center" *ngIf="type == 'workspace' && !openWorkSpaceTable">
-            <span title="{{item | titlecase}} View" class="list-type" (click)="setViewType(item)" *ngFor="let item of ['list','grid']">
-                <img src="assets/images/{{item}}-view.png" alt="" />
+            <span title="{{item | titlecase}} View" class="list-type" (click)="setViewType(item)" *ngFor="let item of ['fa-list','fa-grid-2']">
+                <!-- <img src="assets/images/{{item}}-view.png" alt="" /> -->
+                <i class="fa-sharp fa-solid {{item}}"></i>
             </span>
         </div>
 
@@ -17,7 +21,10 @@
         <div class="input-box" *ngFor="let item of searchBars[type]">
             <div class="d-flex" *ngIf="!['direction','type','date'].includes(item)">
                 <input (keyup)="onFilterSearch(type, item, $event)" type="text" placeholder="Search {{item}}">
-                <span class="search-btn"><img src="assets/images/dateIcon.png" alt="" /></span>
+                <span class="search-btn">
+                    <i class="fa-sharp fa-solid fa-magnifying-glass"></i>
+                    <!-- <img src="assets/images/dateIcon.png" alt="" /> -->
+                </span>
             </div>
 
             <div class="d-flex" *ngIf="item=='direction' || item=='type'">
@@ -39,7 +46,7 @@
                 </span>
             </div>
 
-            <div class="total-count"><span>Total:</span> {{copyDataArr.length || workspaceFolders.length}}</div>
+            <div class="total-count"><span>Total:</span> {{(type=='download' ? downloadDataArr.length : copyDataArr.length) || workspaceFolders.length}}</div>
         </div>
     </div>
     
@@ -56,7 +63,8 @@
                     <tr *ngFor="let item of workspaceFolders;let i=index;">
                         <td class="text-center">{{i+1}}.</td>
                         <td><div class="folder">
-                            <img src="assets/images/folder.png" alt="" />
+                            <i class="fa-duotone fa-solid fa-folder-open" style="--fa-primary-color:#4cbfa6; --fa-secondary-color:#4cbfa6;"></i>
+                            <!-- <img src="assets/images/folder.png" alt="" /> -->
                             <span (click)="openWorkSpaceFolder(item?.folder)">{{item?.folder | titlecase}}</span>
                         </div></td>
                         <td class="text-center">{{item?.createdOn | date:'yyyy-MM-dd hh:mm:ss a'}}</td>
@@ -67,7 +75,8 @@
             <div class="folder-grid-container pt-3" *ngIf="folderViewType=='grid'">
                 <div class="inner-folders">
                     <div class="grid-folder" (click)="openWorkSpaceFolder(item?.folder)" *ngFor="let item of workspaceFolders;let i=index;">
-                        <img src="assets/images/folder-lg.png" alt="" />
+                        <!-- <img src="assets/images/folder-lg.png" alt="" /> -->
+                        <i class="fa-sharp fa-solid fa-folder-open"></i>
                         <div class="folder-name">{{item?.folder | titlecase}}</div>
                     </div>
                 </div>
@@ -84,12 +93,14 @@
                 </thead>
                 <tbody *ngIf="!isLoading">
                     <tr *ngFor="let item of copyDataArr;">
-                        <td (click)="gotoSearch(item?.Searchbar, item?.Sidefilter, item?.Id, item?.foldername, item?.CustomAnalysis)">{{item?.Searchbar?.name}}</td>
+                        <td (click)="gotoSearch(item?.Searchbar, item?.Sidefilter, item?.Id, item?.foldername, item?.CustomAnalysis)"> 
+                            <i class="fa-sharp fa-regular fa-link"></i> &nbsp; {{item?.Searchbar?.name}} 
+                        </td>
                         <td>{{item?.Searchbar?.country}}</td>
                         <td>{{item?.Searchbar?.type}}</td>
                         <td>{{item?.Searchbar?.tariffCode}}</td>
-                        <td title="{{item?.Searchbar?.buyer}}">{{getEllipsedTd(item?.Searchbar?.buyer)}}</td>
-                        <td title="{{item?.Searchbar?.vender}}">{{getEllipsedTd(item?.Searchbar?.vender)}}</td>
+                        <td ngbTooltip="{{item?.Searchbar?.buyer}}">{{getEllipsedTd(item?.Searchbar?.buyer)}}</td>
+                        <td ngbTooltip="{{item?.Searchbar?.vender}}">{{getEllipsedTd(item?.Searchbar?.vender)}}</td>
                         <td>{{item?.Searchbar?.desc}}</td>
                         <td>{{item?.Searchbar?.records || 'N/A'}}</td>
                         <td>{{item?.Searchbar?.start}}</td>
@@ -120,7 +131,7 @@
                         (mouseout)="changeInfo($event,'out')" alt="">
 
                         <img class="delete" src="assets/images/bin.png" title="delete"
-                        (click)="onRemoveItem($event, item?.RecordID)" />
+                        (click)="onRemoveItem(item?.RecordID)" />
                     </td>
                     <!-- <td style="min-width:7rem;">{{item?.Date | date:'yyyy-MM-dd'}}</td> -->
                     <td *ngFor="let key of tableHeads2">
@@ -141,7 +152,8 @@
                 <th style="width:8%">Records</th>
                 <th style="width:25%;position:relative;">
                     <input type="checkbox" *ngIf="userRights?.Share" (click)="selectAllItems($event)"/>Filename
-                    <img title="Share Multiple Files" *ngIf="userRights?.Share" (click)="onClickShare(null)" src="assets/images/share-white.png" alt="" />
+                    <!-- <img title="Share Multiple Files" *ngIf="userRights?.Share" (click)="onClickShare(null)" src="assets/images/share-white.png" alt="" /> -->
+                    <i ngbTooltip="Share Multiple Files" *ngIf="userRights?.Share" (click)="onClickShare(null)" class="fa-duotone fa-solid fa-share-all"></i>
                 </th>
                 <th>Status</th>
                 <!-- <th *ngIf="!isDownloadingAllowed">Share</th> -->
@@ -155,11 +167,12 @@
                     <td class="filename">
                         <div class="d-flex align-items-center justify-content-between">
                             <span>
-                                <input type="checkbox" [checked]="isAllSelected" (click)="selectOneByOne(item?.Id)" *ngIf="userRights?.Share && item?.status=='Completed' && !isMultipleSharing"/>
+                                <input type="checkbox" [checked]="isAllSelected" (click)="selectOneByOne(item?.Id, item?.filePath)" *ngIf="userRights?.Share && item?.status=='Completed' && !isMultipleSharing"/>
                                 {{item?.workspacename}}
                             </span>
                             <span>
-                                <img class="download" title="Download File" *ngIf="userRights?.DownloadsAccess && item?.status=='Completed'" (click)="downloadFile(item)" src="assets/images/downloadFile.png" alt="" />
+                                <!-- <img class="download" title="Download File" *ngIf="userRights?.DownloadsAccess && item?.status=='Completed'" (click)="downloadFile(item)" src="assets/images/downloadFile.png" alt="" /> -->                                 
+                                <i ngbTooltip="Download File" *ngIf="userRights?.DownloadsAccess && item?.status=='Completed'" (click)="downloadFile(item)" class="fa-duotone fa-solid fa-download"></i>
                                 <!-- <img class="sharing" title="Share File" *ngIf="userRights?.Share && item?.status=='Completed' && !isMultipleSharing" (click)="onClickShare(item?.Id)" src="assets/images/share.png" alt="" /> -->
                             </span>
                         </div>
@@ -173,6 +186,33 @@
                 </tr>
             </tbody>
         </table>
+
+        <div class="pagination d-flex align-items-center justify-content-center" *ngIf="downloadDataArr.length>0">
+            <ngb-pagination [collectionSize]="collectionSize" [(page)]="page" [pageSize]="18" [boundaryLinks]="true" (pageChange)="onPageChange($event)">
+                <ng-template ngbPaginationPages let-page let-pages="pages">
+                    <li class="ngb-custom-pages-item" *ngIf="pages.length > 0">
+                        <div class="mb-3 d-flex flex-nowrap px-2">
+                            <label id="paginationInputLabel" for="paginationInput" class="col-form-label me-2 ms-1">Page</label>
+                            <input
+                                #j
+                                type="text"
+                                inputmode="numeric"
+                                pattern="[0-9]*"
+                                class="form-control custom-pages-input"
+                                id="paginationInput"
+                                [value]="page"
+                                (keyup.enter)="selectPage(j.value)"
+                                (blur)="selectPage(j.value)"
+                                (input)="formatInput($any($event).target)"
+                                aria-labelledby="paginationInputLabel paginationDescription"
+                                style="width: 2.5rem"
+                            />
+                            <span id="paginationDescription" class="col-form-label text-nowrap px-2"> of {{pages.length}}</span>
+                        </div>
+                    </li>
+                </ng-template>
+            </ngb-pagination>
+        </div>
     </div>
 
     <div class="workstation-loader" *ngIf="isLoading"><img src="assets/images/tableLoader.gif" alt="" /></div>

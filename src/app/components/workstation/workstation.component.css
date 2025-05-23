@@ -9,6 +9,14 @@ div.workstation-box{
     padding: 0 20px;
     position: relative;
 }
+div.workstation-box div.notice {
+    text-align: start;
+    font-size: 12px;
+    letter-spacing: 0.55px;
+    font-family: 'Roboto';
+    font-weight: 500;
+    background-color: #fcffad;
+}
 
 div.workstation-box div.workstation-loader{
     position: absolute;
@@ -34,22 +42,38 @@ div.workstation-box div.top-bar div.remaining-points.green{background-color: #4c
 div.workstation-box div.top-bar div.remaining-points.orange{background-color: orange;}
 div.workstation-box div.top-bar div.remaining-points.red{background-color: red;}
 
-div.workstation-box div.top-bar button{
-    padding: 2px 10px; 
-    padding-left: 20px;
+div.workstation-box div.top-bar button.backbtn{
+    padding: 1px 5px;
+    padding-left: 15px;
+    font-size: 13px;
+    font-weight: 500;
+    font-family: 'Roboto';
+    letter-spacing: 0.5px;
     border-radius: 0px;
     clip-path: polygon(25% 0%, 100% 0%, 100% 100%, 25% 100%, 0% 50%);
+}
+div.workstation-box div.top-bar button.refreshbtn{
+    position: absolute;
+    right: 55.5%;
+    top: 98%;
+    background-color: #8a9ea0;
+    border-color: #8a9ea0;
+    padding: 3px 10px;
+    font-size: 15px;
+    border-radius: 3px;
+    cursor: pointer;
+    z-index: 9;
 }
 div.workstation-box div.top-bar div.view-type {right: 10px;}
 div.workstation-box div.top-bar div.view-type span:first-child{margin-right: 10px}
 div.workstation-box div.top-bar div.view-type span{
-    border: 2px solid #afafaf;
+    border: 2px solid #535353;
     display: flex;
     padding: 3px;
     cursor: pointer;
 }
 div.workstation-box div.top-bar div.view-type span:active{border-color: blue;}
-div.workstation-box div.top-bar div.view-type span img{height: 20px;}
+div.workstation-box div.top-bar div.view-type span i{color: #535353;}
 
 div.workstation-box h4{
     color: #737373;
@@ -74,8 +98,9 @@ div.table-container.favourite-table table thead th{white-space: nowrap; padding:
 div.table-container.favourite-table table tbody td a{font-weight: 500;}
 
 /* div.table-container.download-table table tbody td.filename div span, */
+div.table-container.workspace div.folder-table table tbody td i.fa-link{font-size: 12px;}
 div.table-container.workspace div.folder-table table tbody td.delete div{display: flex;justify-content: center;}
-div.table-container.workspace div.folder-table table tbody td.delete div i{font-size: 17px;cursor: pointer;transform-origin: bottom;transition: all 0.3s ease-in-out; color: red;}
+div.table-container.workspace div.folder-table table tbody td.delete div i{font-size: 14px;cursor: pointer;transform-origin: bottom;transition: all 0.3s ease-in-out; color: #dc3545;}
 div.table-container.workspace div.folder-table table tbody td.delete div i:hover{transform: scale(1.15);}
 div.table-container.workspace div.folder-table table tbody td:first-child,
 div.table-container.workspace div.folder-container table tbody td:nth-child(2) span{
@@ -99,11 +124,11 @@ div.table-container.download-table table thead th input::after{
     bottom: -7px;
     right: -25px;
 }
-div.table-container.download-table table thead th img{
-    height: 20px;
+div.table-container.download-table table thead th i{
+    font-size: 20px;
     position: absolute;
-    right: 15px;
-    top: 6px;
+    right: 5px;
+    top: 8px;
     cursor: pointer;
     transition: all 0.4s ease-in-out;
 }
@@ -114,7 +139,7 @@ div.table-container.download-table table tbody td.filename div span img{
     transform-origin: bottom;
     cursor: pointer;
 }
-div.table-container.download-table table tbody td.filename div span img.download{height: 28px;}
+div.table-container.download-table table tbody td.filename div span i{font-size: 20px;color: #03a381;}
 div.table-container.download-table table tbody td.filename div span img.sharing{height:20px;margin-left:10px;}
 
 div.table-container.download-table table tbody td.filename div img:hover{transform: scale(1.2);}
@@ -128,14 +153,14 @@ div.table-container.workspace div.folder-container table tbody tr:not(:last-chil
 }
 /* div.table-container.workspace div.folder-container table tbody tr:last-child td:nth-child(2){border-bottom-width: 1px;} */
 div.table-container.workspace div.folder-container table tbody td:nth-child(2) div.folder{width: 100%;padding-left: 5%;}
-div.table-container.workspace div.folder-container table tbody td img{
-    height: 25px;
+div.table-container.workspace div.folder-container table tbody td i{
+    font-size: 18px;
+    margin-top: 2px;
     transition: all 0.3s ease-in-out;
     transform-origin: bottom;
-    transform: scaleX(-1);
-    margin-right: 2.5%;
+    margin-right: 1%;
 }
-div.table-container.workspace div.folder-container table tbody tr:hover td:nth-child(2) img{transform: scaleX(-1.2) scaleY(1.2);}
+div.table-container.workspace div.folder-container table tbody tr:hover td:nth-child(2) i{transform: scale(1.2);}
 
 /* div.table-container.download-table table tbody td.filename div :hover, */
 div.table-container.workspace div.folder-table table tbody td:first-child:hover,
@@ -158,16 +183,21 @@ div.table-container.workspace div.folder-container div.folder-grid-container div
     justify-content: start;
 }
 div.table-container.workspace div.folder-container div.folder-grid-container div.grid-folder{
-    margin-right: 3rem;
+    margin-right: 2rem;
     margin-bottom: 20px;
     cursor: pointer;
 }
-div.table-container.workspace div.folder-container div.folder-grid-container div.grid-folder:hover img{transform: scale(1.05);}
-div.table-container.workspace div.folder-container div.folder-grid-container div.grid-folder img{height: 90px;transition: all 0.3s ease-in-out;transform-origin: bottom;}
+div.table-container.workspace div.folder-container div.folder-grid-container div.grid-folder:hover i{transform: scale(1.05);}
+div.table-container.workspace div.folder-container div.folder-grid-container div.grid-folder i{
+    font-size: 4rem;
+    color: #4cbfa6;
+    transition: all 0.3s ease-in-out;
+    transform-origin: bottom;
+}
 div.table-container.workspace div.folder-container div.folder-grid-container div.grid-folder div.folder-name{
-    font-size: 15px;
+    font-size: 14px;
     font-family: 'Roboto';
-    letter-spacing: 0.2px;
+    letter-spacing: 0.5px;
     font-weight: 500;
     color: #736d6d;
 }
@@ -197,32 +227,41 @@ div.workstation-box div.filter-bar div.input-box div.total-count{
 
 div.workstation-box div.filter-bar input[type="text"]{
     border: 1px solid #c2c2c2;
-    padding: 4px 10px;
+    width: 12rem;
+    padding: 2px 10px;
     outline: none;
+    font-size: 14px;
+    font-weight: 500;
 }
 div.workstation-box div.filter-bar span.search-btn{
-    display: block;
     width: 35px;
-    padding-left: 4px;
     padding-top: 2px;
     background-color: #8a9ea0;
+    align-content: center;
+    text-align: center;
 }
+div.workstation-box div.filter-bar span.search-btn i{color: white; font-size: 17px;}
 div.workstation-box div.filter-bar span img{height: 25px;}
 
 div.workstation-box div.filter-bar select{
     border: 1px solid #c2c2c2;
     outline: none;
-    padding: 5px;
+    padding: 3px;
     width: 12rem;
+    font-weight: 500;
+    font-size: 14px;
 }
 div.workstation-box div.filter-bar input[type="date"] {
     border: 1px solid #c2c2c2;
-    padding: 5px 20px;
+    padding: 3px 20px;
+    font-size: 14px;
+    font-weight: 500;
     outline: none;
+    width: 12rem;
     user-select: all;
 }
 div.workstation-box div.filter-bar span.date-search label{
-    font-size: 15px;
+    font-size: 13px;
     font-weight: 500;
     font-family: 'Roboto';
     color: #606060;
@@ -246,6 +285,7 @@ div.workstation-box table thead th{
     letter-spacing: 0.5px;
     font-family: 'Roboto', sans-serif;
     padding: 5px 0;
+    font-size: 14px;
 }
 div.workstation-box table tbody tr{background-color: #f2f2f2;}
 div.workstation-box table tbody tr:hover{background-color: #ffffff;}
@@ -258,7 +298,7 @@ div.workstation-box:not(.favourite-table) table tbody td{
     text-align: left;
     font-family: 'Roboto', sans-serif;
     white-space: nowrap;
-    font-size: 14px;
+    font-size: 13px;
 }
 div.workstation-box table tbody td:first-child{border-left: none;}
 div.workstation-box table tbody td:last-child{border-right: none;}

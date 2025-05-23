@@ -66,21 +66,19 @@ export class SidefilterComponent implements OnInit, AfterViewInit, OnDestroy, On
       }, error: (err:any) => console.log(err)
     });
 
-    this.eventSubscription2 = this.eventService.currentCountry.subscribe({
-      next: res => {
-        if (res?.code == undefined || res?.direction == undefined) return;
-        
-        this.searchService.getSideFilterAccess(res?.code, res?.direction).subscribe({
-          next: (res2:any) => {
-            if(res2 != null && res2?.results.length > 0) {
-              const tempObj = {...res2?.results[0]};
-              delete tempObj['Id'];
-              tempObj['Country'] = true;
-              this.sideFilterAccess = tempObj;
-            }
-          }, error: (err:any) => console.log(err)
-        });
-      }, error: (err:any) => console.log(err)
+    this.eventSubscription2 = this.eventService.currentCountry.subscribe(res => {
+      if (res?.code == undefined || res?.direction == undefined || [undefined, "STATISTICAL"].includes(res?.type)) return;
+      
+      this.searchService.getSideFilterAccess(res?.code, res?.direction, res?.type).subscribe({
+        next: (res2:any) => {
+          if(res2 != null && res2?.results.length > 0) {
+            const tempObj = {...res2?.results[0]};
+            delete tempObj['Id'];
+            tempObj['Country'] = true;
+            this.sideFilterAccess = tempObj;
+          }
+        }, error: (err:any) => console.log(err)
+      });
     });
 
     this.eventSubscription4 = this.eventService.userDetailsStore.subscribe({

@@ -2,11 +2,9 @@ import { Component, OnInit } from '@angular/core';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import { forkJoin } from 'rxjs';
 import { ApiMsgRes } from 'src/app/models/api.types';
-import { AlertifyService } from 'src/app/services/alertify.service';
 import { ApiServiceService } from 'src/app/services/api-service.service';
 import { AuthService } from 'src/app/services/auth.service';
 import { EventemittersService } from 'src/app/services/eventemitters.service';
-import { UserService } from 'src/app/services/user.service';
 import { environment } from 'src/environments/environment';
 
 @Component({
@@ -17,7 +15,6 @@ import { environment } from 'src/environments/environment';
 export class CountryListComponent implements OnInit {
 
   constructor(
-    private alertService: AlertifyService,
     private apiService:ApiServiceService,
     public activeModal: NgbActiveModal, 
     private authService: AuthService,
@@ -27,7 +24,6 @@ export class CountryListComponent implements OnInit {
   apiRunCounter:number = 0;
   userDetails:any;
   totalCount = {all: 0, Detailed:0, Mirror: 0, Statics: 0};
-  countryList: any[] = [];
   combinedResponse:ApiMsgRes[] = [];
   lastTabTagId:string = "globeTab1";
   copiedCountryList:any[] = [];
@@ -37,7 +33,7 @@ export class CountryListComponent implements OnInit {
     "globeTab3": []
   };
   isApiInProcess:boolean = false;
-  countryHeads:string[] = ['countries', 'availability', 'direction', 'data coverage', 'data fields', 'sample'];
+  countryHeads:string[] = ['countries', 'availability', 'direction', 'data fields', 'sample'];//, 'data coverage'
   modalHeadWidth = {
     'countries': '20%', 
     'direction': '8%',
@@ -47,14 +43,50 @@ export class CountryListComponent implements OnInit {
   };
 
   tabs:any[] = [
-    {tabName: "Detailed", key: "globeTab1"},
-    {tabName: "Mirror", key: "globeTab2"},
-    {tabName: "Statics", key: "globeTab3"},
-    // {tabName: "", key: "globeTab4"}
+    {tabName: "Detailed", key: "globeTab1", dbType: "CUSTOM"},
+    {tabName: "Mirror", key: "globeTab2", dbType: "MIRROR"},
+    {tabName: "Statics", key: "globeTab3", dbType: "STATISTICAL"},
   ];
 
   ngOnInit(): void {
     this.userDetails = this.authService.getUserDetails();
+    this.cachingGlobalCountriesAPI();
+  }
+
+  cachingGlobalCountriesAPI() {
+    this.isApiInProcess = true;
+    const apiKey = `${environment.apiurl}api/getGlobalCountriesList?type=all`;
+
+    if(environment.apiDataCache.hasOwnProperty(apiKey)) {
+      const res = environment.apiDataCache[apiKey];
+      this.getGlobalCoutriesByType(res);
+    } else {
+      forkJoin([
+        this.apiService.getGlobalCountriesList("CUSTOM"),
+        this.apiService.getGlobalCountriesList("MIRROR"),
+        this.apiService.getGlobalCountriesList("STATISTICAL")
+      ]).subscribe({
+        next: (res:any) => {
+          this.getGlobalCoutriesByType(res);
+          environment.apiDataCache[apiKey] = res;
+        }, error: (err:any) => console.log(err)
+      });
+    }
+  }
+
+  getGlobalCoutriesByType(res:any) {
+    this.availableCoutriesTypes.globeTab1 = res[0].results;     
+    this.availableCoutriesTypes.globeTab2 = res[1].results;     
+    this.availableCoutriesTypes.globeTab3 = res[2].results;
+    this.totalCount = {
+      Detailed: res[0].results.length,
+      Mirror: res[1].results.length,
+      Statics: res[2].results.length,
+      all: res[0].results.length + res[1].results.length + res[2].results.length
+    }
+    
+    this.copiedCountryList = JSON.parse(JSON.stringify(this.availableCoutriesTypes[this.lastTabTagId]));
+    this.isApiInProcess = false;
   }
 
   isAvailbale(country:string):boolean {
@@ -68,57 +100,28 @@ export class CountryListComponent implements OnInit {
   }
 
   onClickTab(id:string) {
-    if(id == this.lastTabTagId) return;
+    this.isApiInProcess = true;
+    if(id == this.lastTabTagId) {
+      this.isApiInProcess = false;
+      return;
+    }
     
     if(this.lastTabTagId == "") {this.lastTabTagId = id;} 
     else {this.lastTabTagId = id;}
     
-    this.getCountryList(this.countryList, id);
+    this.copiedCountryList = JSON.parse(JSON.stringify(this.availableCoutriesTypes[id]));
+    setTimeout(() => this.isApiInProcess = false, 1000);
   }
 
-  getCountryListInit(result:any[]) {
-    this.countryList = JSON.parse(JSON.stringify(result));
-    this.getCountryList(this.countryList, "globeTab1");
-  }
-
-  setTotalCount(result:any[]) {
-    this.totalCount = {Detailed: 0, Mirror: 0, Statics: 0, all: 0};
-    this.totalCount.all = result.length;
-
-    for(let i=0; i<this.totalCount.all; i++) {
-      if(['CUSTOM', 'BILL OF LADINGS','TRANSHIPMENT'].includes(result[i]["data_type"])) { this.totalCount.Detailed += 1; }
-
-      if(result[i]["data_type"] == "MIRROR") this.totalCount.Mirror += 1;
-        
-      if(result[i]["data_type"] == "STATISTICAL") this.totalCount.Statics += 1;
-    }
-  }
-
-  //hitting api to get all country
-  getCountryList(result:any[], tabKey:string="globeTab1") {
-    this.isApiInProcess = true;
-    const {Detailed, Mirror, Statics} = this.totalCount;
-    // this.copiedCountryList = [];
-
-    if(result.length == 0) this.getCountryListApi(tabKey);
-    else {
-      if(tabKey=="globeTab1") {
-        this.availableCoutriesTypes[tabKey] = result.filter(item => ['CUSTOM', 'BILL OF LADINGS','TRANSHIPMENT'].includes(item?.data_type));
-        if([Detailed, Mirror, Statics].includes(0)) this.setTotalCount(result);
-      } else if(tabKey=="globeTab2") {
-        this.availableCoutriesTypes[tabKey] = result.filter(item => item?.data_type == "MIRROR");
-      } else if(tabKey=="globeTab3") {
-        this.availableCoutriesTypes[tabKey] = result.filter(item => item?.data_type == "STATISTICAL");
-      }
-
-      this.copiedCountryList = JSON.parse(JSON.stringify(this.availableCoutriesTypes[tabKey]));
-      this.isApiInProcess = false;
-    }
-  }
 
   //to set the current country and send to the homepage this value
-  onSelectCountry(item:any, direction:string) {
-    const objData = {country: item?.CountryName, direction, code: item?.Countrycode};
+  onSelectCountry(item:any) {
+    const objData = {
+      country: item?.CountryName, 
+      direction: item?.Direction,
+      code: item?.Countrycode, 
+      type: item?.data_type
+    };
     this.eventService.currentCountry.next(objData);
     this.eventService.refreshPageNameEvent.next("country");
     this.eventService.headerClickEvent.emit('home');
@@ -127,7 +130,6 @@ export class CountryListComponent implements OnInit {
 
   onSearch(e:any) {//{Coutrycode: 'IND', CountryName: 'India'}
     const currentVal = (e.target.value).toLowerCase();
-    // const tempArr = this.countryList.filter(obj => ((obj?.CountryName).toLowerCase()).includes(currentVal));
     const tempArr = this.availableCoutriesTypes[this.lastTabTagId].filter((obj:any) => ((obj?.CountryName).toLowerCase()).includes(currentVal));
     this.copiedCountryList = JSON.parse(JSON.stringify(tempArr));
   }
@@ -144,53 +146,6 @@ export class CountryListComponent implements OnInit {
 
   isIndiaCountry(item:any):boolean {
     return (item?.CountryName==this.userDetails?.CountryCode && this.userDetails?.CountryCode=='India');
-  }
-
-  getCountryListApi(tabKey:string) {
-    if(this.apiRunCounter>0) return;
-
-    this.apiRunCounter++;
-
-    const countryAPIkey = `${environment.apiurl}api/getAllGlobeCountries`;
-
-    if((environment.apiDataCache).hasOwnProperty(countryAPIkey)) {
-      this.countryList = environment.apiDataCache[countryAPIkey];
-      this.getCountryList(JSON.parse(JSON.stringify(this.countryList)));
-    } else {
-      forkJoin([
-        this.apiService.getAllGlobeCountries(),
-        this.apiService.getAllCountriesDates()
-      ]).subscribe({
-        next: async(res:ApiMsgRes[]) => {
-          this.combinedResponse = res;
-          this.countryList = await this.alertService.refineGlobalCountryList(this.combinedResponse);
-          environment.apiDataCache[countryAPIkey] = JSON.parse(JSON.stringify(this.countryList));
-          environment.apiDataCache[countryAPIkey] = this.countryList;
-          this.getCountryList(this.countryList, tabKey);
-        }, error: (err:any) => console.log(err)
-      });
-
-
-      
-      // this.apiService.getAllGlobeCountries().subscribe({
-      //   next: (res:ApiMsgRes) => {
-      //     if(!res.error) {
-      //       this.getCountryList(res?.results);
-      //       environment.apiDataCache[countryAPIkey] = res?.results;
-      //     }
-      //   }, error: (err:ApiMsgRes) => console.log(err.message)
-      // })
-
-
-      // this.userService.getCountrylist().subscribe({
-      //   next: (res:any) => {
-      //     if(!res?.error) {
-      //       this.getCountryList(res?.results);
-      //       environment.apiurl[countryAPIkey] = res?.results;
-      //     }
-      //   }
-      // });
-    }
   }
 }
 

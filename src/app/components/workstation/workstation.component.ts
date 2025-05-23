@@ -38,11 +38,19 @@ export class WorkstationComponent implements OnInit, OnChanges, AfterViewInit, O
   isDownloadingAllowed: boolean = true;
   isMultipleSharing:boolean = false;
   isAllSelected:boolean = false;
+  hasShownNotice:boolean = false;
+
+  workspaceTimeoutId:any;
+
   fileIds:any[] = [];
 
   allCountries: any[] = []; //temporary
 
   userRights: UserRoleAccess = new UserRoleAccess();
+
+  //pagination
+  collectionSize:number = 0;
+  page:number = 1;
 
   searchBars: any = {
     download: ['name', 'country', 'direction'],
@@ -86,24 +94,40 @@ export class WorkstationComponent implements OnInit, OnChanges, AfterViewInit, O
     } else if (this.type == 'workspace') this.onWorkspaceInIt();
     else if (this.type == 'download') this.onDownloadListInIt();
 
-    this.setDownloadInterval();
+    this.onDownloadListInIt(); 
   }
 
-  setDownloadInterval() {
-    if (this.type == "download") {
-      this.intervalSubscription = interval(10000)
-      .subscribe(() => this.onDownloadListInIt());
-    }
+  removeDownloadingNotice() {
+    this.intervalSubscription = interval(10000)
+    .subscribe(() => { this.hasShownNotice = true; });
+  }
+
+  onClickRefresh() {
+    this.isLoading = true;
+    this.downloadDataArr = [];
+    this.copyDataArr = [];
+    this.onDownloadListInIt();
   }
 
   onDownloadListInIt() {
+    if(this.apiSubscription1) this.apiSubscription1.unsubscribe();
+
     this.eventService.downloadListUpdate.next({ action: "remove" });
-    this.apiSubscription1 = this.apiService.getDownloadedRecord().pipe(takeUntil(this.destroy$)).subscribe((res: any) => {
-      if (res != null && !res?.error) {
-        this.downloadDataArr = this.getSortedArray(res?.results, "datetime");
-        this.copyDataArr = this.downloadDataArr;
-        this.isLoading = false;
-      }
+    this.apiSubscription1 = this.apiService.getDownloadedRecord()
+    .pipe(takeUntil(this.destroy$)).subscribe({
+      next: (res: any) => {
+        if (res != null && !res?.error) {
+          this.downloadDataArr = this.getSortedArray(res?.results, "datetime");
+          const tempArr = JSON.parse(JSON.stringify(this.downloadDataArr));
+          this.copyDataArr = tempArr.splice(0, 18);
+          this.collectionSize = this.downloadDataArr.length;
+          this.page = 1;
+          this.isLoading = false;
+
+          //to remove downloading yellow notice bar
+          if(!this.hasShownNotice) this.removeDownloadingNotice();
+        }
+      }, error: (err:any) => console.log(err)
     });
   }
 
@@ -179,7 +203,8 @@ export class WorkstationComponent implements OnInit, OnChanges, AfterViewInit, O
     });
   }
 
-  setViewType = (type:string) => {
+  setViewType = (iconType:string) => {
+    const type = iconType=="fa-list" ? "list" : "grid";
     this.folderViewType = type;
     this.userService.setUserPref('folderView', type);
   }
@@ -193,10 +218,14 @@ export class WorkstationComponent implements OnInit, OnChanges, AfterViewInit, O
   }
 
   openWorkSpaceFolder(foldername: string) {
-    const currentFolderData = this.workspaceFolders.find(item => item["folder"] == foldername)["data"];
-    this.copyDataArr = this.getSortedArray(currentFolderData, "transaction");
-    this.openWorkSpaceTable = true;
-    this.currentDirName = foldername;
+    if(this.workspaceTimeoutId) clearTimeout(this.workspaceTimeoutId);
+
+    this.workspaceTimeoutId = setTimeout(() => {
+      const currentFolderData = this.workspaceFolders.find(item => item["folder"] == foldername)["data"];
+      this.copyDataArr = this.getSortedArray(currentFolderData, "transaction");
+      this.openWorkSpaceTable = true;
+      this.currentDirName = foldername;
+    }, 500)
   }
 
   backToFolders() {
@@ -205,7 +234,7 @@ export class WorkstationComponent implements OnInit, OnChanges, AfterViewInit, O
   }
 
 
-  onDownloadUpdateEvent(res) {
+  onDownloadUpdateEvent(res:any) {
     if (res?.action == "highlight") {
       const selector = `div#downloadTable table tbody tr[title="${res?.filename}"]`;
       const selectedTr = document.querySelector(selector) as HTMLTableRowElement;
@@ -241,11 +270,12 @@ export class WorkstationComponent implements OnInit, OnChanges, AfterViewInit, O
   }
 
   //on click table data info icon
-  changeInfo(e, type) {
+  changeInfo(event:MouseEvent, type:string) {
+    const imgTag = event.target as HTMLImageElement;
     const imgPath = 'assets/images/';
 
-    if (type == 'in') e.target.setAttribute('src', imgPath + 'info2.png');
-    else e.target.setAttribute('src', imgPath + 'info.png');
+    if (type == 'in') imgTag.setAttribute('src', imgPath + 'info2.png');
+    else imgTag.setAttribute('src', imgPath + 'info.png');
   }
 
   //on click td to show detailed model of specific data
@@ -262,20 +292,25 @@ export class WorkstationComponent implements OnInit, OnChanges, AfterViewInit, O
       tempArr.push(temObj);
     }
 
-    const modalRef = this.modalService.open(TableDataModalComponent, { windowClass: 'tableDataPopUpModalClass' });
+    const modalRef = this.modalService.open(TableDataModalComponent, { windowClass: 'tableDataPopUpModalClass', centered: true });
     (<TableDataModalComponent>modalRef.componentInstance).tableData = tempArr;
   }
 
-  onRemoveItem(e:any, dataId:any) {
-    const modalRef = this.modalService.open(ConfirmationComponent, { windowClass: 'confirmModalClass' });
+  onRemoveItem(dataId:any) {
+    const modalRef = this.modalService.open(ConfirmationComponent, { windowClass: 'confirmModalClass', centered: true });
     (<ConfirmationComponent>modalRef.componentInstance).dataId = dataId;
   }
 
-  gotoSearch(data:any, filter:any, ...args) {
+  gotoSearch(data:any, filter:any, ...args:any[]) {
     const fileRelated = {workspace_id: args[0], foldername: args[1]};
     const selectedOne = this.allCountries.filter(item => item?.CountryName == data?.country);
 
-    const dataObj = { country: data?.country, direction: data?.type, code: selectedOne[0]['Countrycode'] };
+    const dataObj = { 
+      country: data?.country, 
+      direction: data?.type, 
+      code: selectedOne[0]['Countrycode'],
+      type: data?.countryType || "CUSTOM"
+    };
     this.eventService.savedWorkspaceEvent.next({ data, filter, fileRelated });
 
     this.eventService.currentCountry.next(dataObj);
@@ -287,7 +322,7 @@ export class WorkstationComponent implements OnInit, OnChanges, AfterViewInit, O
   }
 
 
-  downloadFile(data) {
+  downloadFile(data:any) {
     // if (this.isDownloadingAllowed) {
       if(![""," ",null,undefined].includes(data["expirydate"])) {
         const expiredDateValue = new Date(data["expirydate"]).valueOf();
@@ -299,8 +334,9 @@ export class WorkstationComponent implements OnInit, OnChanges, AfterViewInit, O
     // } 
   }
 
-  onFilterSearch(tableType, searchType, event) {
-    const data = (event.target.value).toLowerCase();
+  onFilterSearch(tableType:string, searchType:string, event:Event) {
+    const inputTag = event.target as HTMLInputElement;
+    const data = (inputTag.value).toLowerCase();
 
     if (tableType == 'download' && typeof data == 'string') {
       const itemKey = searchType == "name"
@@ -315,24 +351,22 @@ export class WorkstationComponent implements OnInit, OnChanges, AfterViewInit, O
           ? "type" : searchType == "country" ? "country" : searchType;
 
       const searchedItems = !['start', 'end'].includes(itemKey)
-        ? tempWorkspaceArr.filter(item => ((item["Searchbar"][itemKey]).substring(0, data.length)).toLowerCase() == data)
-        : data != "" ? tempWorkspaceArr.filter(item => item["Searchbar"][itemKey] == this.datePipe.transform(data, 'yyyy-MM-dd')) : tempWorkspaceArr;
+        ? tempWorkspaceArr.filter((item:any) => ((item["Searchbar"][itemKey]).substring(0, data.length)).toLowerCase() == data)
+        : data != "" ? tempWorkspaceArr.filter((item:any) => item["Searchbar"][itemKey] == this.datePipe.transform(data, 'yyyy-MM-dd')) : tempWorkspaceArr;
 
       this.copyDataArr = this.getSortedArray(searchedItems, "transaction");
     }
   }
 
-  getEllipsedTd(data): string {
+  getEllipsedTd(data:string):string {
     try {
       if (data.length > 30) {
         return this.ellipsePipe.transform(data, 30);
       } else return data;
-    } catch (error) {
-      return "N/A";
-    }
+    } catch (error) { return "N/A"; }
   }
 
-  getSortedArray(dataArr: any[], key) {
+  getSortedArray(dataArr: any[], key:string):any[] {
     return dataArr.sort(function (a, b) {
       const aDate: any = new Date(key == "transaction" ? a["Searchbar"][key] : a[key]);
       const bDate: any = new Date(key == "transaction" ? b["Searchbar"][key] : b[key]);
@@ -341,10 +375,10 @@ export class WorkstationComponent implements OnInit, OnChanges, AfterViewInit, O
     });
   }
 
-  onClickDelete(id, filename) {
+  onClickDelete(id:string, filename:string) {
     const cacheKey = `${environment.apiurl}api/getWorkSpace?UserId=${this.authService.getUserId()}`;
 
-    const modalRef = this.modalService.open(ConfirmationComponent, { windowClass: 'confirmModalClass' });
+    const modalRef = this.modalService.open(ConfirmationComponent, { windowClass: 'confirmModalClass', centered: true });
     (<ConfirmationComponent>modalRef.componentInstance).dataId = id;
     (<ConfirmationComponent>modalRef.componentInstance).deleteType = "delete";
     (<ConfirmationComponent>modalRef.componentInstance).confirmationMsg = `Are you sure to delete workspace (${filename})`;
@@ -359,31 +393,33 @@ export class WorkstationComponent implements OnInit, OnChanges, AfterViewInit, O
     });
   }
 
-  onClickShare(id) {
+  onClickShare(id:any) {
     if(this.fileIds.length == 0) return;
     
-    const modalRef = this.modalService.open(ConfirmationComponent, { windowClass: 'confirmShareModalClass' });
+    const modalRef = this.modalService.open(ConfirmationComponent, { windowClass: 'confirmShareModalClass', centered: true });
     (<ConfirmationComponent>modalRef.componentInstance).downloadWorkspaceId = id!=null ? id : this.fileIds;
+    (<ConfirmationComponent>modalRef.componentInstance).downloadingIDsList = this.fileIds;
     (<ConfirmationComponent>modalRef.componentInstance).currentPopUp = "sharing";
     const callBackEvent = (<ConfirmationComponent>modalRef.componentInstance).callBack.subscribe(res => {
       callBackEvent.unsubscribe();
     });
   }
 
-  selectOneByOne(id) {
+  selectOneByOne(id:string) {
     if(this.fileIds.includes(id)) this.fileIds.splice(this.fileIds.indexOf(id), 1);
     else this.fileIds.push(Number(id)); 
     
-    if(this.intervalSubscription) this.intervalSubscription.unsubscribe();
+    // if(this.intervalSubscription) this.intervalSubscription.unsubscribe();
   }
-  selectAllItems(e) {
+  selectAllItems(event:MouseEvent) {
+    const checkTag = event.target as HTMLInputElement;
     this.fileIds = [];
-    this.isAllSelected = e.target.checked;
+    this.isAllSelected = checkTag.checked;
     if(this.isAllSelected) this.copyDataArr.map(item => {
       if(item?.status=="Completed") this.fileIds.push(item?.Id);
     });
 
-    if(this.intervalSubscription) this.intervalSubscription.unsubscribe();
+    // if(this.intervalSubscription) this.intervalSubscription.unsubscribe();
     // this.isMultipleSharing = !this.isMultipleSharing;
     // if(!this.isAllSelected) this.setDownloadInterval();
     // else { if(this.intervalSubscription)this.intervalSubscription.unsubscribe(); }
@@ -392,6 +428,14 @@ export class WorkstationComponent implements OnInit, OnChanges, AfterViewInit, O
   setGoogleLink(company: string): string {
     const query = (company.trim()).replace(new RegExp(" ", "g"), "+");
     return `https://www.google.com/search?q=${query}&ie=UTF-8`;
+  }
+
+  //pagination
+  selectPage(page: string) { this.page = Number(page); }
+  formatInput(input: HTMLInputElement) { input.value = input.value.replace(/[^0-9]/g, ''); }
+  onPageChange(pageNum:any) {
+    const tempArr = JSON.parse(JSON.stringify(this.downloadDataArr));
+    this.copyDataArr = tempArr.splice((pageNum-1)*18, 18);
   }
 }
 

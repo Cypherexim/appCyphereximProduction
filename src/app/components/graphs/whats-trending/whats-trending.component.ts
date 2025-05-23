@@ -1,4 +1,4 @@
-import { Component, OnInit, Input, OnDestroy, AfterViewInit } from '@angular/core';
+import { Component, OnInit, Input, OnDestroy } from '@angular/core';
 import { Utility } from 'src/app/models/others';
 import { EventemittersService } from 'src/app/services/eventemitters.service';
 import { Subscription } from 'rxjs';
@@ -15,7 +15,7 @@ import { ApiMsgRes } from 'src/app/models/api.types';
   templateUrl: './whats-trending.component.html',
   styleUrls: ['./whats-trending.component.css']
 })
-export class WhatsTrendingComponent implements OnInit, OnDestroy, AfterViewInit {
+export class WhatsTrendingComponent implements OnInit, OnDestroy {
   @Input() currentPage:string = "";
 
   exportValue:string = "";
@@ -104,7 +104,18 @@ export class WhatsTrendingComponent implements OnInit, OnDestroy, AfterViewInit 
     private eventService: EventemittersService
   ) { }
 
-  ngOnInit(): void {    
+  ngOnInit(): void {
+    if(this.currentPage==="trending") this.onWhatsTrandingInit();
+  }
+
+  ngOnDestroy(): void {
+    this.eventSubscription?.unsubscribe();
+    this.eventSubscription2?.unsubscribe();
+    this.eventSubscription3?.unsubscribe();
+    this.apiSubscription?.unsubscribe();
+  }
+
+  onWhatsTrandingInit() {
     this.getWorldMapData();
     this.getChartDirection();
 
@@ -133,17 +144,6 @@ export class WhatsTrendingComponent implements OnInit, OnDestroy, AfterViewInit 
     this.getTotalShipmentValue(2022);
   }
 
-  ngAfterViewInit(): void {
-    // this.worldMapInit();
-  }
-
-  ngOnDestroy(): void {
-    this.eventSubscription.unsubscribe();
-    this.eventSubscription2.unsubscribe();
-    this.eventSubscription3.unsubscribe();
-    this.apiSubscription.unsubscribe();
-  }
-
   getChartDirection() {
     this.eventSubscription3 = this.eventService.onChangeDirectionBullet.subscribe({
       next: (res:any) => {
@@ -156,7 +156,7 @@ export class WhatsTrendingComponent implements OnInit, OnDestroy, AfterViewInit 
     });
   }
 
-  getWorldMapData() {   
+  getWorldMapData() {
     this.isAPIinProcess = true; 
     this.apiSubscription = this.apiService.getWhatsTrandingMap().subscribe({
       next: (res:ApiMsgRes) => {
@@ -213,9 +213,6 @@ export class WhatsTrendingComponent implements OnInit, OnDestroy, AfterViewInit 
       }, error: (err:any) => {console.log(err);}
     });
   }
-
-
-
 
   worldMapInit() {
     const labelName = this.directionType=="export"? "Exporters": "Importers";
@@ -297,3 +294,6 @@ export class WhatsTrendingComponent implements OnInit, OnDestroy, AfterViewInit 
     });
   }
 }
+
+
+

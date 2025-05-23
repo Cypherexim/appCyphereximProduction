@@ -50,6 +50,7 @@ export class HomepageComponent implements OnInit, OnChanges, AfterViewInit, OnDe
   apiSubscription4: Subscription;
   apiSubscription5: Subscription;
   apiSubscription6: Subscription;
+  apiSubscription7: Subscription;
   analysisApiSubscription:Subscription[] = [];
 
   destory$: Subject<any> = new Subject<any>();
@@ -244,16 +245,15 @@ export class HomepageComponent implements OnInit, OnChanges, AfterViewInit, OnDe
 
     this.eventSubscription = this.eventService.currentCountry.subscribe({
       next: (res:any) => {
-        
         this.disableLocatorBar(res); //to enabled or disabled the locator box
 
         //just unsubscribe before we subscribe another api hit
         this.apiSubscription2?.unsubscribe();
-  
+
         // to set the input fields according to choosen country and its direction
-        if (res.hasOwnProperty("country") && this.authService.getUserCountry() != res?.Country && res.direction) {
+        if (res.hasOwnProperty("country") && this.authService.getUserCountry() != res?.country && res.direction) {
           this.currentCountry = res.country || "India";
-          this.direction = res.direction;
+          this.direction = res?.direction;
           this.currentCountryData = res;
   
           const arrIndx = this.direction == 'export' ? 1 : 0;
@@ -262,6 +262,7 @@ export class HomepageComponent implements OnInit, OnChanges, AfterViewInit, OnDe
           tag.classList.remove('disable');
   
           this.getCountryLocator();
+
           this.getSideFilterAccess(res);
           this.getCountryLatestDate();
         }
@@ -353,7 +354,12 @@ export class HomepageComponent implements OnInit, OnChanges, AfterViewInit, OnDe
       this.direction = "";
       this.firstSelectVal = "Select Direction";
       this.currentCountry = "India";
-      this.eventService.currentCountry.next({ country: "India" });
+      this.eventService.currentCountry.next({ 
+        // country: "India", 
+        country: "",
+        type: "CUSTOM",
+        code: "IND" 
+      });
       this.firstSelectClass = "custom-dropdown";
     } else this.firstSelectClass = "inactive custom-dropdown";
 
@@ -442,13 +448,13 @@ export class HomepageComponent implements OnInit, OnChanges, AfterViewInit, OnDe
   }
 
   getSideFilterAccess(res:any) {
-    if (res?.code == undefined || res?.direction == undefined) return;
+    if (res?.code == undefined || res?.direction == undefined || [undefined, "STATISTICAL"].includes(res?.type)) return;
 
     //to get all side filter access as per current country
-    this.apiSubscription2 = this.searchService.getSideFilterAccess(res?.code, res?.direction).subscribe({
-      next: (res: any) => {
-        if (!res?.error && res?.results.length > 0) {
-          const tempObj = { ...res?.results[0] };
+    this.apiSubscription2 = this.searchService.getSideFilterAccess(res?.code, res?.direction, res?.type).subscribe({
+      next: (res2: any) => {
+        if (!res2?.error && res2?.results.length > 0) {          
+          const tempObj = { ...res2?.results[0] };
           delete tempObj['Id'];
           tempObj['Country'] = true;
           this.filterAccess = tempObj;
@@ -526,6 +532,7 @@ export class HomepageComponent implements OnInit, OnChanges, AfterViewInit, OnDe
       this.apiBodyObj.base = {
         country: this.currentCountry,
         direction: this.direction,
+        countryType: this.currentCountryData?.type,
         body: {
           page: 1,
           toDate: this.toDate,
@@ -554,7 +561,7 @@ export class HomepageComponent implements OnInit, OnChanges, AfterViewInit, OnDe
     });
   }
 
-  OnClickSearch(callBy = "self") {    
+  OnClickSearch(callBy = "self") {
     if (!this.userRightService.search()) {
       this.alertService.showPackageAlert("Oops!, It seems that you have no right to search the data. Please contact your service provider.");
       return;
@@ -576,7 +583,7 @@ export class HomepageComponent implements OnInit, OnChanges, AfterViewInit, OnDe
     }
 
     if (
-      this.hsCode == "" 
+      this.hsCode == ""
       && this.exporterList.length == 0 
       && this.importerList.length == 0 
       && this.product.length == 0
@@ -597,7 +604,7 @@ export class HomepageComponent implements OnInit, OnChanges, AfterViewInit, OnDe
 
     this.apiSubscription4?.unsubscribe();
 
-    this.inItSearchClickProcess(callBy).then(() => {    
+    this.inItSearchClickProcess(callBy).then(() => {
       this.getSearchData(this.apiBodyObj.base, callBy)
         .then((resolve: any) => {
           if (resolve.status == "done") {
@@ -645,126 +652,150 @@ export class HomepageComponent implements OnInit, OnChanges, AfterViewInit, OnDe
         const counterApiBody = { //to create counter API body obj
           countryname: (apiData["country"]).toLowerCase(),
           direction: apiData["direction"],
+          countryType: apiData?.countryType,
           ...apiData["body"]
         };
 
         //to record the log on click of main search button
         this.onSetUserSearchLog(JSON.stringify(apiData));
-
-        this.apiSubscription3 = forkJoin([
-          this.searchService.getSearchedRecordCounting(counterApiBody),
-          this.searchService.getSearchedDataWithFilter(apiData)
-        ]).subscribe({
-          next: async (responseArr:any[]) => {
-            if(!responseArr[0]?.error) {
-              const tempCounters = responseArr[0]?.results?.counters;
-              const keys = ["total_records", "totalhscode", "exp_namecount", "imp_namecount", "totalcountry", "valueinusd"];
-              const counterObjKeys = ["total", "hsCode", "exporters", "importers", "country", "values"];
-              keys.forEach((key:string, index:number) => {
-                this.counterObj[counterObjKeys[index]] = Number(tempCounters[key]);
-              });
-
-              setTimeout(() => this.setCounterValues(), 200);              
-
-              if (this.counterObj.total > 500000 && callBy=="self") {
-                this.eventService.filterSidebarEvent.emit(false);
-                this.timerSubscription?.unsubscribe();
-                this.eventService.toggleSearchLoader.next(false);
-                this.showAlertForSearch(this.warningMsg.results);
-                reject(new Error("More than 5 lack records are fetched!"));
-                return;
-              }
-            }
-
-            if(!responseArr[1]?.error) {
-              this.timerSubscription?.unsubscribe();
-              const results: any[] = responseArr[1]?.results?.data || responseArr[1]?.results || [];
-              
-              if (this.isSearchingData) this.isSearchingData = false;
-
-              if (this.currentCountry !== "India") {
-                if (results.length > 0 && ["filter", "self", "workspace"].includes(callBy)) this.tableHeads = this.getUserGenHeads(Object.keys(results[0]));
-              } else {
-                // India has different heads  
-                this.arrangeTableHeads(); //setting 
-                setTimeout(() => this.backToPrevState(), 1000);          
-              }
-
-              this.searchResult = results;
-              this.perPageData = JSON.parse(JSON.stringify(this.searchResult));
-              this.eventService.toggleSearchLoader.next({flag: false, page: "home"});
-
-               //If result is blank then back to empty page showing "Data Not Found"
-              if (this.searchResult.length == 0 && ["self", "workspace"].includes(callBy)) {
-                this.timerSubscription?.unsubscribe();
-                this.eventService.filterSidebarEvent.emit(false);
-                this.eventService.toggleSearchLoader.next({flag: false, page: "home"});
-                reject(new Error("No Data Found!"));
-                return;
-              }
-
-              this.colShifterInit(); //to start tableDnD on column shifter function
-
-              if (["pagination-perpage", "self", "workspace", "filter"].includes(callBy)) {
-                this.setCurrentTablePreview();
-                this.isSearchBtnClicked = true;
-              } else {
-                if (results.length > 0) {
-                  this.onBindBookmark().then((res: any[]) => {
-                    this.scrollToTop();
-                    this.perPageData = res;
-                    const totalData = results.length > 0 ? Number(this.counterObj.total) <= ALLOWED_RECORDS ? Number(this.counterObj.total) : ALLOWED_RECORDS : 1;
-                    this.totalPages = Math.ceil(totalData / this.pagePerView);
-                    this.isTableLoader = false;
-                  });
-                }
-              }
-
-              if (!apiData["body"]["IsWorkspaceSearch"]) this.eventService.userStatusEvent.emit('update');
-
-              //================== side filter fetching values with their counters ====================//
-              const paginationTypes = ["pagination-arrow","pagination-perpage"];
-              this.eventService.filterSidebarEvent.emit(true); //to display ON of sidefilter options
-
-              if (["self"].includes(callBy) && results.length > 0) {                  
-                //api for getting data for side filters
-                if (this.refreshPageName == "advance" || this.currentCountry == "India") {
-                  this.currentCountryData = { country: "India", code: "IND", direction: this.direction };
-                }
-
-                if(!paginationTypes.includes(callBy)) await this.getSideFilterData(callBy, "base");
-              } else {
-                  if(!paginationTypes.includes(callBy)) await this.getSideFilterData(callBy, "filter");
-              }
-
-              if (this.perPageData.length == 0) this.setCounterValues(true); //if data is received [] then zero all counters
-              else this.setCounterValues();              
-            } else {
+        const queryStr = `searchCountry=${this.currentCountry}&direction=${this.direction}&fromDate=${this.fromDate}&toDate=${this.toDate}&hscode=${this.hsCode}&product=${this.product}&buyer=${this.importerList.toString().replace(new RegExp(",","g"),"")}&supplier=${this.exporterList.toString().replace(new RegExp(",","g"),"")}&country=${this.countryWord}&query=${JSON.stringify(apiData["body"])}`;
+        const apiKey = `${environment.apiurl}api/get${this.country}${this.direction}?${queryStr}`;
+        
+        if(environment.apiDataCache.hasOwnProperty(apiKey) && environment.apiDataCache[apiKey][1]["results"]["data"].length>0) {
+        // if(environment.apiDataCache.hasOwnProperty(apiKey)) {
+          const response = environment.apiDataCache[apiKey];
+          const promiseRes = await this.onFetchingSearchedDataFromCache({resolve, reject}, response, apiData, callBy);
+          return promiseRes;
+        } else {
+          this.apiSubscription3 = forkJoin([
+            this.searchService.getSearchedRecordCounting(counterApiBody),
+            this.searchService.getSearchedDataWithFilter(apiData)
+          ]).subscribe({
+            next: async (responseArr:any[]) => {              
+              environment.apiDataCache[apiKey] = responseArr;
+              const promiseRes = this.afterFetchingOnSearchDataInternalProcess({resolve, reject}, responseArr, apiData, callBy);
+              return promiseRes;
+            }, error: (err:any) => {
+              this.perPageData = [];
+              this.searchResult = [];
+              this.isSearchingData = false;
+              this.isTotalDataReceived = true;
+              this.isSearchBtnClicked = true;
               this.eventService.toggleSearchLoader.next({flag: false, page: "home"});
               this.eventService.filterSidebarEvent.emit(false);
-              this.showAlertForSearch(responseArr[1]?.message);
-              resolve({ status: 'done' });
+              this.timerSubscription?.unsubscribe();
+              reject({ status: 'done', msg: err });
             }
-            
-            this.getAllFullSideFilterData(callBy, apiData);
-          }, error: (err:any) => {
-            this.perPageData = [];
-            this.searchResult = [];
-            this.isSearchingData = false;
-            this.isTotalDataReceived = true;
-            this.isSearchBtnClicked = true;
-            this.eventService.toggleSearchLoader.next({flag: false, page: "home"});
-            this.eventService.filterSidebarEvent.emit(false);
-            this.timerSubscription?.unsubscribe();
-            reject({ status: 'done', msg: err });
-          }
-        });
+          });
+        }
+
       } catch (error) {
         console.log(error);
         this.eventService.filterSidebarEvent.emit(false);
         reject({ status: 'done', msg: error });
       }
     });
+  }
+
+  onFetchingSearchedDataFromCache(promise:any, responseArr:any[], apiData:any, callBy:string) {
+    return new Promise((resolve) => {
+      setTimeout(() => {
+        const promiseRes = this.afterFetchingOnSearchDataInternalProcess(promise, responseArr, apiData, callBy);
+        resolve(promiseRes);
+      }, 2000);
+    });
+  }
+
+  async afterFetchingOnSearchDataInternalProcess(promise:any, responseArr:any[], apiData:any, callBy:string) {
+    if(!responseArr[0]?.error) {
+      const tempCounters = responseArr[0]?.results?.counters;    
+      const keys = ["totalrecordscount", "hscodecount", "suppliercount", "buyercount", "countrycount", "totalvaluecount"];
+      const counterObjKeys = ["total", "hsCode", "exporters", "importers", "country", "values"];
+      keys.forEach((key:string, index:number) => {
+        this.counterObj[counterObjKeys[index]] = Number(tempCounters[key]);
+      });
+
+      setTimeout(() => this.setCounterValues(), 200);              
+
+      if (this.counterObj.total > 500000 && callBy=="self") {
+        this.eventService.filterSidebarEvent.emit(false);
+        this.timerSubscription?.unsubscribe();
+        this.eventService.toggleSearchLoader.next(false);
+        this.showAlertForSearch(this.warningMsg.results);
+        return promise?.reject(new Error("More than 5 lack records are fetched!"));
+      }
+    }
+
+    if(!responseArr[1]?.error) {
+      this.timerSubscription?.unsubscribe();
+      const results: any[] = responseArr[1]?.results?.data || responseArr[1]?.results || [];
+      
+      if (this.isSearchingData) this.isSearchingData = false;
+
+      if (this.currentCountry !== "India") {
+        if (results.length > 0 && ["filter", "self", "workspace"].includes(callBy)) this.tableHeads = this.getUserGenHeads(Object.keys(results[0]));
+      } else {
+        // India has different heads  
+        this.arrangeTableHeads(); //setting 
+        setTimeout(() => this.backToPrevState(), 1000);          
+      }
+
+      this.searchResult = results;
+      this.perPageData = JSON.parse(JSON.stringify(this.searchResult));
+      this.eventService.toggleSearchLoader.next({flag: false, page: "home"});
+
+       //If result is blank then back to empty page showing "Data Not Found"
+      if (this.searchResult.length == 0 && ["self", "workspace"].includes(callBy)) {
+        this.timerSubscription?.unsubscribe();
+        this.eventService.filterSidebarEvent.emit(false);
+        this.eventService.toggleSearchLoader.next({flag: false, page: "home"});
+        return promise?.reject(new Error("No Data Found!"));
+      }
+
+      this.colShifterInit(); //to start tableDnD on column shifter function
+
+      if (["pagination-perpage", "self", "workspace", "filter"].includes(callBy)) {
+        this.setCurrentTablePreview();
+        this.isSearchBtnClicked = true;
+      } else {
+        if (results.length > 0) {
+          this.onBindBookmark().then((res: any[]) => {
+            this.scrollToTop();
+            this.perPageData = res;
+            const totalData = results.length > 0 ? Number(this.counterObj.total) <= ALLOWED_RECORDS ? Number(this.counterObj.total) : ALLOWED_RECORDS : 1;
+            this.totalPages = Math.ceil(totalData / this.pagePerView);
+            this.isTableLoader = false;
+          });
+        }
+      }
+
+      if (!apiData["body"]["IsWorkspaceSearch"]) this.eventService.userStatusEvent.emit('update');
+
+      //================== side filter fetching values with their counters ====================//
+      const paginationTypes = ["pagination-arrow","pagination-perpage"];
+      this.eventService.filterSidebarEvent.emit(true); //to display ON of sidefilter options
+
+      if (["self"].includes(callBy) && results.length > 0) {                  
+        //api for getting data for side filters
+        if (this.refreshPageName == "advance" || this.currentCountry == "India") {
+          this.currentCountryData = { country: "India", code: "IND", direction: this.direction, type: this.currentCountryData?.type };
+        }
+
+        if(this.currentCountryData?.type !== "STATISTICAL" && !paginationTypes.includes(callBy)) await this.getSideFilterData(callBy, "base");
+      } else {
+        if(this.currentCountryData?.type !== "STATISTICAL" && !paginationTypes.includes(callBy)) await this.getSideFilterData(callBy, "filter");
+      }
+
+      if (this.perPageData.length == 0) this.setCounterValues(true); //if data is received [] then zero all counters
+      else this.setCounterValues();              
+    } else {
+      this.eventService.toggleSearchLoader.next({flag: false, page: "home"});
+      this.eventService.filterSidebarEvent.emit(false);
+      this.showAlertForSearch(responseArr[1]?.message);
+      return promise?.resolve({ status: 'done' });
+    }
+    
+    this.getAllFullSideFilterData(callBy, apiData);
   }
 
 
@@ -776,8 +807,8 @@ export class HomepageComponent implements OnInit, OnChanges, AfterViewInit, OnDe
   
         if (apiBodyType == "filter") {
           apiBodyType = Object.keys(this.apiBodyObj[apiBodyType]).length > 0 ? "filter" : "base";
-        }
-  
+        }        
+
         this.getSideFilterSegmentsData(callBy).then((res: any) => {
           if (!res.error) {
             const singleFilterLength = res.results[Object.keys(res.results)[0]];
@@ -858,6 +889,7 @@ export class HomepageComponent implements OnInit, OnChanges, AfterViewInit, OnDe
       // const tempUrlArr = this.searchService.getSideFilterSegments(this.apiBodyObj[tempType]["body"], this.currentCountryData);
       const filterApiBody = {
         ...(JSON.parse(JSON.stringify(this.apiBodyObj[tempType]["body"]))), 
+        countryType: this.currentCountryData?.type,
         CountryCode: this.currentCountryData?.code,
         CountryName: this.currentCountryData?.country,
         Direction: this.currentCountryData?.direction,
@@ -867,28 +899,37 @@ export class HomepageComponent implements OnInit, OnChanges, AfterViewInit, OnDe
       const tempUrlArr = this.apiService.getAllSideFilters(filterApiBody, this.filterAccess);
       let sideFilterData = {};
 
-      this.eventSubscription11 = this.apiSubscription4 = forkJoin(tempUrlArr).subscribe({
-          next: (res:any) => {
-            for(let i=0; i<res.length; i++) {
-              const singleFilterItem = Object.keys(res[i]?.results[0]);
-              const filterNameKey = singleFilterItem[0]!="valueinusd" ? singleFilterItem[0]: singleFilterItem[1];
+      const queryStr = `searchCountry=${this.currentCountry}&direction=${this.direction}&fromDate=${this.fromDate}&toDate=${this.toDate}&hscode=${this.hsCode}&product=${this.product}&buyer=${this.importerList.toString().replace(new RegExp(",","g"),"")}&supplier=${this.exporterList.toString().replace(new RegExp(",","g"),"")}&country=${this.countryWord}&query=${JSON.stringify(filterApiBody)}`;
+      const apiKey = `${environment.apiurl}api/getPartialAllSideFilter?${queryStr}`;
 
-              if(filterNameKey=="Quantity") {
-                sideFilterData[filterNameKey] = res[i]?.results.map((item:any) => Number(item["Quantity"]));
-              } else sideFilterData[filterNameKey] = res[i]?.results;
-            }
-
-            resolve({ message: "Ok", error: false, code: 200, results: sideFilterData });            
-          },error: (err:any) => console.log(err)
+      if(environment.apiDataCache.hasOwnProperty(apiKey)) {
+        const sideFilterData = environment.apiDataCache[apiKey];
+        resolve({ message: "Ok", error: false, code: 200, results: sideFilterData });
+      } else {
+        this.eventSubscription11 = this.apiSubscription4 = forkJoin(tempUrlArr).subscribe({
+            next: (res:any) => {
+              for(let i=0; i<res.length; i++) {
+                const singleFilterItem = Object.keys(res[i]?.results[0]);
+                const filterNameKey = singleFilterItem[0]!="valueinusd" ? singleFilterItem[0]: singleFilterItem[1];
+  
+                if(filterNameKey=="Quantity") {
+                  sideFilterData[filterNameKey] = res[i]?.results.map((item:any) => Number(item["Quantity"]));
+                } else sideFilterData[filterNameKey] = res[i]?.results;
+              }
+              environment.apiDataCache[apiKey] = sideFilterData;
+              resolve({ message: "Ok", error: false, code: 200, results: sideFilterData });           
+            },error: (err:any) => console.log(err)
         });
+      }
     });
   }
 
 
   getUserGenHeads(headsArr: string[]): string[] {
     const oldHeadsArr = headsArr;
-    oldHeadsArr.splice(oldHeadsArr.indexOf("RecordID"), 1);
-    oldHeadsArr.splice(oldHeadsArr.indexOf("total_records"), 1);
+    const index = oldHeadsArr.indexOf("RecordID");
+    if(index>-1) oldHeadsArr.splice(index, 1);
+    //oldHeadsArr.splice(oldHeadsArr.indexOf("totalValueCount"), 1);
     const newHeadsArr = [];
     const requiredPreHeads = [
       "Date",
@@ -896,7 +937,7 @@ export class HomepageComponent implements OnInit, OnChanges, AfterViewInit, OnDe
       this.filterNames.ProductDesc.key,
       this.filterNames.Exp_Name.key,
       this.filterNames.Imp_Name.key,
-      this.filterNames.CountryofDestination.key,
+      this.direction=="export" ? this.filterNames.CountryofDestination.key: this.filterNames.CountryofOrigin.key,
       this.filterNames.Quantity.key,
       this.filterNames.uqc.key,
       this.filterNames.Currency.key
@@ -1013,7 +1054,11 @@ export class HomepageComponent implements OnInit, OnChanges, AfterViewInit, OnDe
   }
 
   getCountryLatestDate() {
-    const dataObj = { country: this.currentCountryData.code, direction: this.direction };
+    const dataObj = { 
+      country: this.currentCountryData?.code, 
+      direction: this.direction, 
+      countryType: this.currentCountryData?.type 
+    };
     this.apiService.getCountryLatestDate(dataObj).subscribe({
       next: (res: any) => {
         if (!res.error && res.results.length > 0) {
@@ -1049,8 +1094,13 @@ export class HomepageComponent implements OnInit, OnChanges, AfterViewInit, OnDe
       //gets what it is suppose to have
       if (["advance", ""].includes(this.refreshPageName)) {
         if (this.refreshPageName == "") this.refreshPageName = "advance"; //here it get the real value
-        this.eventService.currentCountry.next({ country: "", code: "IND", direction: this.direction });
-        this.currentCountryData = { country: "India", code: "IND", direction: this.direction };
+        this.eventService.currentCountry.next({ 
+          country: "", 
+          code: "IND", 
+          direction: this.direction, 
+          type: "CUSTOM",
+        });
+        this.currentCountryData = { country: "India", code: "IND", direction: this.direction, type: "CUSTOM" };
         this.getSideFilterAccess(this.currentCountryData);
       }
       this.getCountryLatestDate();
@@ -1094,14 +1144,16 @@ export class HomepageComponent implements OnInit, OnChanges, AfterViewInit, OnDe
 
   getGlobeLocators(body:any, direction:any) {
     body = {...body, direction: this.direction,
+      countryType: this.currentCountryData?.type,
       locatorType: direction=="import"? "Buyer": "Supplier"
     };
 
     const apiCacheKey = `${environment.apiurl}api/locator/${this.currentCountry}/${this.direction}/${direction}er`;
     if(environment.apiDataCache.hasOwnProperty(apiCacheKey)) {
       this.eventService.locatorDataMove.next(environment.apiDataCache[apiCacheKey]);
-    } else {      
-      this.apiService.getGlobeImpExpLocator(body).subscribe({
+    } else {
+      // this.apiSubscription7?.unsubscribe();
+      this.apiSubscription7 = this.apiService.getGlobeImpExpLocator(body).subscribe({
         next: async(res:any) => {
           if (!res?.error) {
             if(direction == "import") {this.locatorData["Imp_Name"] = await this.alertService.getModifiedObj(res?.results, "Imp_Name");}
@@ -1173,12 +1225,14 @@ export class HomepageComponent implements OnInit, OnChanges, AfterViewInit, OnDe
   }
 
   rmLocData(item:any, type:string) {
-    if (type == 'exporter') {
+    if (type == 'exporter' && this.exporterList.indexOf(item)>-1) {
       // this.exporter = '';
       this.exporterList.splice(this.exporterList.indexOf(item), 1);
     } else {
       // this.importer = '';
-      this.importerList.splice(this.importerList.indexOf(item), 1);
+      if(this.importerList.indexOf(item)>-1) {
+        this.importerList.splice(this.importerList.indexOf(item), 1);
+      }
     }
   }
 
@@ -1396,7 +1450,7 @@ export class HomepageComponent implements OnInit, OnChanges, AfterViewInit, OnDe
       this.workstationCache[mainKey] = {};
     } else {
       const indexVal = this.allSelectCheckedArr.indexOf(mainKey);
-      this.allSelectCheckedArr.splice(indexVal, 1);
+      if (indexVal > -1) this.allSelectCheckedArr.splice(indexVal, 1);
       delete this.workstationCache[mainKey];
     }
 
@@ -1461,6 +1515,8 @@ export class HomepageComponent implements OnInit, OnChanges, AfterViewInit, OnDe
       end: this.toDate,
       desc: this.product[0],
       type: this.direction,
+      countryCode: this.currentCountryData?.code,
+      countryType: this.currentCountryData?.type,
       buyer: this.importerList.toString(),
       vender: this.exporterList.toString(),
       tariffCode: this.hsCode,
@@ -1520,8 +1576,10 @@ export class HomepageComponent implements OnInit, OnChanges, AfterViewInit, OnDe
     //to provide country details to company profile
     if (this.refreshPageName == "advance") {
       this.eventService.currentCountry.next({
-        country: "India",
-        companyDirection: this.direction
+        // country: "India",
+        country: "",
+        companyDirection: this.direction,
+        type: "CUSTOM"
       });
     }
 
@@ -1531,7 +1589,7 @@ export class HomepageComponent implements OnInit, OnChanges, AfterViewInit, OnDe
       directionTag.classList.remove("disable");
       this.firstSelectClass = "custom-dropdown";
       this.firstSelectVal = this.dropdownVal1.filter(item => item.value == this.direction)[0]["placeholder"];
-      this.currentCountryData = { country: "India", code: "IND", direction: this.direction };
+      this.currentCountryData = { country: "India", code: "IND", direction: this.direction, type: "CUSTOM" };
       this.getSideFilterAccess(this.currentCountryData);
     }
 
@@ -1597,8 +1655,10 @@ export class HomepageComponent implements OnInit, OnChanges, AfterViewInit, OnDe
       if (res2.status == 'DONE') {
         const dataObj = {
           direction: this.direction,
+          countryType: this.currentCountryData?.type,
           recordIds: this.getSeletedItemIds(),
-          filename: res2.name,
+          filename: res2?.name,
+          totalDownloadCost: res2?.remainingPoints|0,
           ...(Object.keys(this.apiBodyObj.filter).length > 0 ? this.apiBodyObj.filter["body"] : this.apiBodyObj.base["body"])
         }; //data related to download table
 
@@ -1633,7 +1693,7 @@ export class HomepageComponent implements OnInit, OnChanges, AfterViewInit, OnDe
               this.eventService.downloadListUpdate.next({ action: "update", status: "failed", filename: this.ellipsePipe.transform(dataObj?.filename, 22) });
             }
           });
-      }
+        }
     });
   }
   onGenerateDownloadLink() {
@@ -1732,6 +1792,7 @@ export class HomepageComponent implements OnInit, OnChanges, AfterViewInit, OnDe
     this.apiBodyObj.filter = {
       country: this.currentCountry,
       direction: this.direction,
+      countryType: this.currentCountryData?.type,
       body: this.createBodyToFilter({
         toDate: this.toDate,
         fromDate: this.fromDate,
@@ -1820,6 +1881,7 @@ export class HomepageComponent implements OnInit, OnChanges, AfterViewInit, OnDe
     const tempType = ["self"].includes(callBy) ? "base" : "filter";
     const filterApiBody = {
       ...(JSON.parse(JSON.stringify(this.apiBodyObj[tempType]["body"]))), 
+      countryType: this.currentCountryData?.type,
       CountryCode: this.currentCountryData?.code,
       CountryName: this.currentCountryData?.country,
       Direction: this.currentCountryData?.direction,
@@ -1827,22 +1889,35 @@ export class HomepageComponent implements OnInit, OnChanges, AfterViewInit, OnDe
     };
     const tempUrlArr = this.apiService.getAllSideFilters(filterApiBody, this.filterAccess, true);
 
-    this.eventSubscription10 = forkJoin(tempUrlArr).subscribe({
-      next: (responses:any[]) => {
-        setTimeout(() => {
-          const fullSideFiltersObj = {HsCode: this.sideFilterOptions2["HsCode"]};
-          for(let i=0; i<responses.length; i++) {
-            const keyArr = Object.keys(responses[i]?.results[0]);
-            const objKey = keyArr[0]!="valueinusd" ? keyArr[0]: keyArr[1];
-            fullSideFiltersObj[objKey] = responses[i]?.results;
-          }
-  
-          this.eventService.passFullSideFilterData.next(fullSideFiltersObj);
-          this.isFilteringData = false;
-          this.getAnalysisData(apiData); //right now it has to be called at the very end coz it takes time where it is not required in the first place
-        }, 2000);
-      }, error: (err:any) => console.log(err)
-    });
+    const queryStr = `searchCountry=${this.currentCountry}&direction=${this.direction}&fromDate=${this.fromDate}&toDate=${this.toDate}&hscode=${this.hsCode}&product=${this.product}&buyer=${this.importerList.toString().replace(new RegExp(",","g"),"")}&supplier=${this.exporterList.toString().replace(new RegExp(",","g"),"")}&country=${this.countryWord}&query=${JSON.stringify(filterApiBody)}`;
+    const apiKey = `${environment.apiurl}api/getFullAllSideFilter?${queryStr}`;
+
+    if(environment.apiDataCache.hasOwnProperty(apiKey)) {
+      const fullSideFiltersObj = environment.apiDataCache[apiKey];
+      this.eventService.passFullSideFilterData.next(fullSideFiltersObj);
+      this.getAnalysisData(apiData);
+      setTimeout(() => this.isFilteringData = false, 2000);
+    } else {
+      this.eventSubscription10 = forkJoin(tempUrlArr).subscribe({
+        next: (responses:any[]) => {
+          setTimeout(() => {
+            const fullSideFiltersObj = {};
+            for(let i=0; i<responses.length; i++) {
+              const keyArr = Object.keys(responses[i]?.results[0]);
+              const objKey = keyArr[0]!="valueinusd" ? keyArr[0]: keyArr[1];
+              fullSideFiltersObj[objKey] = responses[i]?.results;
+            }
+    
+            fullSideFiltersObj["HsCode"] = this.sideFilterOptions["HsCode"];
+
+            environment.apiDataCache[apiKey] = fullSideFiltersObj;
+            this.eventService.passFullSideFilterData.next(fullSideFiltersObj);
+            this.isFilteringData = false;
+            this.getAnalysisData(apiData); //right now it has to be called at the very end coz it takes time where it is not required in the first place
+          }, 2000);
+        }, error: (err:any) => console.log(err)
+      });
+    }
   }
 
   onClickSelect(tag:HTMLSelectElement) {tag.click();}
@@ -1867,6 +1942,7 @@ export class HomepageComponent implements OnInit, OnChanges, AfterViewInit, OnDe
     const apiDataObj = {
       countryname: this.currentCountryData["country"] || "India",
       CountryCode: this.currentCountryData["code"] || "IND",
+      countryType: this.currentCountryData?.type,
       direction: dataObj["direction"],
       ...bodyObj
     };
@@ -1875,21 +1951,29 @@ export class HomepageComponent implements OnInit, OnChanges, AfterViewInit, OnDe
     
     for(let i=0; i<fieldName.length; i++) {
       apiDataObj["fieldName"] = fieldName[i];
-      const newSubscription:Subscription = this.apiService.getAnalysisData(apiDataObj).subscribe({
-        next: (res:any) => {
-          // if(!res.error) { this.analysisDataObj[fieldName[i]] = res.results; }
-          if(!res.error) {
-            const companyTempArr:any[] = JSON.parse(JSON.stringify(res.results));
-            const arrLen:number = companyTempArr.length;
+      const queryStr = `searchCountry=${this.currentCountry}&direction=${this.direction}&fromDate=${this.fromDate}&toDate=${this.toDate}&hscode=${this.hsCode}&product=${this.product}&buyer=${this.importerList.toString().replace(new RegExp(",","g"),"")}&supplier=${this.exporterList.toString().replace(new RegExp(",","g"),"")}&country=${this.countryWord}&query=${JSON.stringify(apiDataObj)}`;
+      const apiKey = `${environment.apiurl}api/getAnalysisReport/${fieldName[i]}?${queryStr}`;
 
-            if(["CountryofOrigin","CountryofDestination"].includes(fieldName[i])) {
-              for(let j=0; j<arrLen; j++) { companyTempArr[j][fieldName[i]] = (<string>companyTempArr[j][fieldName[i]])?.toUpperCase()?.trim(); }
-              this.analysisDataObj[fieldName[i]] = companyTempArr;
-            } else {this.analysisDataObj[fieldName[i]] = res.results;}                        
-          }
-        }, error: (err:any) => console.log(err)
-      });
-      this.analysisApiSubscription.push(newSubscription);
+      if(environment.apiDataCache.hasOwnProperty(apiKey)) {
+        this.analysisDataObj[fieldName[i]] = environment.apiDataCache[apiKey];
+      } else {
+        const newSubscription:Subscription = this.apiService.getAnalysisData(apiDataObj).subscribe({
+          next: (res:any) => {
+            if(!res.error) {
+              const companyTempArr:any[] = JSON.parse(JSON.stringify(res.results));
+              const arrLen:number = companyTempArr.length;
+  
+              if(["CountryofOrigin","CountryofDestination"].includes(fieldName[i])) {
+                for(let j=0; j<arrLen; j++) { companyTempArr[j][fieldName[i]] = (<string>companyTempArr[j][fieldName[i]])?.toUpperCase()?.trim(); }
+                this.analysisDataObj[fieldName[i]] = companyTempArr;
+              } else {this.analysisDataObj[fieldName[i]] = res.results;}
+              
+              environment.apiDataCache[apiKey] = this.analysisDataObj[fieldName[i]];
+            }
+          }, error: (err:any) => console.log(err)
+        });
+        this.analysisApiSubscription.push(newSubscription);        
+      }
     }
 
     // this.getAllFullSideFilterData(callBy);//call full side filter details
