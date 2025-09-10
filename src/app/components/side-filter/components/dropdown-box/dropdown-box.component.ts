@@ -99,7 +99,7 @@ export class DropdownBoxComponent implements OnInit, OnChanges, OnDestroy {
   }
 
   saveExistingFilterData(filename:string) {
-    const modalRef = this.modalService.open(SaveFileComponent, { backdrop: "static", keyboard: false, windowClass: 'saveFileModalClass' });
+    const modalRef = this.modalService.open(SaveFileComponent, { backdrop: "static", keyboard: false, windowClass: 'saveFileModalClass', centered: true });
     (<SaveFileComponent>modalRef.componentInstance).targetBy = 'side-filter';
     (<SaveFileComponent>modalRef.componentInstance).fileName = filename;
     (<SaveFileComponent>modalRef.componentInstance).saveTitle = `You have to save first, before you explore more options.`;
@@ -112,7 +112,7 @@ export class DropdownBoxComponent implements OnInit, OnChanges, OnDestroy {
   }
 
   showMoreFilterOptions() {
-    const modalRef = this.modalService.open(FilterDataListComponent, { backdrop: "static", keyboard: false, windowClass: 'locatorModalClass' });  
+    const modalRef = this.modalService.open(FilterDataListComponent, { backdrop: "static", keyboard: false, windowClass: 'locatorModalClass', centered: true });  
     (<FilterDataListComponent>modalRef.componentInstance).filterNameKey = this.filterName;//?.name.toLowerCase();
     (<FilterDataListComponent>modalRef.componentInstance).alreadySelectedItems = this.selectedItem;
     const eventRef = (<FilterDataListComponent>modalRef.componentInstance).emitSelectedData.subscribe(res => {

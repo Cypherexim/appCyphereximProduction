@@ -619,7 +619,7 @@ export class CustomAnalysisComponent implements OnInit, OnDestroy {
   }
 
   saveExistingFilterData(filename:string) {
-    const modalRef = this.modalService.open(SaveFileComponent, { backdrop: "static", keyboard: false, windowClass: 'saveFileModalClass' });
+    const modalRef = this.modalService.open(SaveFileComponent, { backdrop: "static", keyboard: false, windowClass: 'saveFileModalClass', centered: true });
     (<SaveFileComponent>modalRef.componentInstance).targetBy = 'side-filter';
     (<SaveFileComponent>modalRef.componentInstance).fileName = filename;
     (<SaveFileComponent>modalRef.componentInstance).saveTitle = `You have to save first, before you use custom analysis.`;
@@ -632,7 +632,7 @@ export class CustomAnalysisComponent implements OnInit, OnDestroy {
   }
 
   onRemoveItem(chartId:string) {
-    const modalRef = this.modalService.open(ConfirmationComponent, { windowClass: 'confirmModalClass' });
+    const modalRef = this.modalService.open(ConfirmationComponent, { windowClass: 'confirmModalClass', centered: true });
     (<ConfirmationComponent>modalRef.componentInstance).confirmationMsg = "Are you sure to delete this chart for permanently?";
     (<ConfirmationComponent>modalRef.componentInstance).deleteType = "customAnalysis";
     (<ConfirmationComponent>modalRef.componentInstance).callBack.subscribe({

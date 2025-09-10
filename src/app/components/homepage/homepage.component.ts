@@ -1,7 +1,7 @@
 import { Component, Input, OnInit, AfterViewInit, OnDestroy, OnChanges, Output, EventEmitter, ChangeDetectionStrategy } from '@angular/core';
 import { UserService } from 'src/app/services/user.service';
 import { EventemittersService } from 'src/app/services/eventemitters.service';
-import { Subscription, timer, forkJoin, Subject, takeUntil, Observable, of, concatMap, from, timeout, catchError } from 'rxjs';
+import { Subscription, forkJoin, Subject, timeout, of, catchError, map, debounceTime, retry } from 'rxjs';
 import { SearchService } from 'src/app/services/search.service';
 import { CounterTabsModel, SideFilterModel, FilterNames, SideFilterAccessModel } from 'src/app/models/others';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
@@ -19,7 +19,7 @@ import { environment } from 'src/environments/environment';
 import { AllRightsService } from 'src/app/services/all-rights.service';
 import { SplitHsCodePipe } from 'src/app/common/Pipes/split-hs-code.pipe';
 import { NotifyAlertMsgComponent } from '../workstation/modals/notify-alert-msg/notify-alert-msg.component';
-import { ApiMsgRes } from 'src/app/models/api.types';
+import { ApiMsgRes, SearchingErrorType } from 'src/app/models/api.types';
 const ALLOWED_RECORDS = 10000;
 declare const $:any;
 
@@ -55,7 +55,7 @@ export class HomepageComponent implements OnInit, OnChanges, AfterViewInit, OnDe
 
   destory$: Subject<any> = new Subject<any>();
 
-  timerSubscription: Subscription;
+  // timerSubscription: Subscription;
   isDownloadingFile: boolean = false;
   isAnalysisTabActive: boolean = false;
   tableHeads: string[] = [];
@@ -128,6 +128,7 @@ export class HomepageComponent implements OnInit, OnChanges, AfterViewInit, OnDe
   isCountryDropdown: boolean = false; // for country dropdown visibility
   isOverDropItem:boolean = false;
 
+  productSearch:Subject<string> = new Subject<string>();
   wordsArr: any[] = [];
   dateRange: any = "0";
   today = new Date();
@@ -159,7 +160,7 @@ export class HomepageComponent implements OnInit, OnChanges, AfterViewInit, OnDe
   isSearchBtnClicked: boolean = false; //if the search btn is clicked then returned data is empty so the msg will come
   isFilteringData: boolean = false;
   isSearchingData: boolean = false;
-  isSearchingTimeOut: boolean = false;
+  searchingError: SearchingErrorType;
   isTableLoader: boolean = false;
   selectedFilterArr: string[] = [];
   sortedHsCodeArr: any = {};
@@ -178,6 +179,7 @@ export class HomepageComponent implements OnInit, OnChanges, AfterViewInit, OnDe
   perPageData: any[] = [];
   //------------------------//
 
+  // retryChance:number = 3;
   isTotalDataReceived: boolean = false;
   isMainChecked: boolean = false;
   allSelectCheckedArr: string[] = [];
@@ -211,7 +213,20 @@ export class HomepageComponent implements OnInit, OnChanges, AfterViewInit, OnDe
     private apiService: ApiServiceService,
     private searchService: SearchService,
     private eventService: EventemittersService
-  ) { }
+  ) {
+    this.productSearch.pipe(debounceTime(800)).subscribe({
+      next: (word:string) => {
+        this.isWordDropdown = true;
+        this.apiService.getProductDescWords(word).subscribe({
+          next: (res: any) => {
+            if (!res.error && res.results.length > 0) {
+              this.wordsArr = res?.results.splice(0, 10);
+            }
+          }
+        });
+      }, error: err => console.error(err) 
+    })
+  }
 
   ngOnChanges() {
     if (this.refresh) this.refreshCurrentPage();
@@ -448,7 +463,8 @@ export class HomepageComponent implements OnInit, OnChanges, AfterViewInit, OnDe
   }
 
   getSideFilterAccess(res:any) {
-    if (res?.code == undefined || res?.direction == undefined || [undefined, "STATISTICAL"].includes(res?.type)) return;
+    //  || [undefined, "STATISTICAL"].includes(res?.type)
+    if (res?.code == undefined || res?.direction == undefined) return;
 
     //to get all side filter access as per current country
     this.apiSubscription2 = this.searchService.getSideFilterAccess(res?.code, res?.direction, res?.type).subscribe({
@@ -476,7 +492,7 @@ export class HomepageComponent implements OnInit, OnChanges, AfterViewInit, OnDe
     this.eventSubscription9?.unsubscribe();
     this.eventSubscription10?.unsubscribe();
     this.eventSubscription11?.unsubscribe();
-    if (this.timerSubscription) this.timerSubscription?.unsubscribe();
+    // this.timerSubscription?.unsubscribe();
     if(this.analysisApiSubscription.length>0) {
       this.analysisApiSubscription.forEach((apiSub:Subscription, index:number) => { 
         apiSub?.unsubscribe();
@@ -519,6 +535,7 @@ export class HomepageComponent implements OnInit, OnChanges, AfterViewInit, OnDe
       this.apiBodyObj = { base: {}, filter: {} };
       this.isTotalDataReceived = false;
       this.setCounterValues(true);
+      // if(triggerMsg!=="RETRY") this.retryChance = 3;
       this.bottomTableView = true;
       this.isMainChecked = false;
       this.workstationCache = {};
@@ -625,24 +642,28 @@ export class HomepageComponent implements OnInit, OnChanges, AfterViewInit, OnDe
       this.apiSubscription3?.unsubscribe();
 
       this.isTabsVisible = false;
-      this.isSearchingTimeOut = false;
+      
+      this.searchingError = { isError: false, errorMessage: "" };
+
       this.eventService.toggleSearchLoader.next({flag: true, page: "home"});
 
-      //just in case the data will not be received then it should be
-      this.timerSubscription?.unsubscribe();
-      this.timerSubscription = timer(300000).subscribe({
-        next: (res:any) => {
-          console.log("%cI am Timeout", "color:red;font-size:20px");
-          if (this.searchResult.length == 0) {
-            this.searchResult = [];
-            this.isSearchingData = false;
-            this.isSearchingTimeOut = true;
-            this.eventService.toggleSearchLoader.next({flag: false, page: "home"});
-            this.apiSubscription3?.unsubscribe();
-            this.apiSubscription4?.unsubscribe();
-          }
-        }, error: (err:any) => console.log(err)
-      });
+      // //just in case the data will not be received then it should be      
+      // this.timerSubscription = timer(300000).subscribe({
+      //   next: (res:any) => {
+      //     console.log("%cI am Timeout", "color:red;font-size:20px");
+      //     if (this.searchResult.length == 0) {
+      //       this.searchResult = [];
+      //       this.isSearchingData = false;
+      //       this.searchingError = { isError: true, errorMessage: "Server Timeout" };
+      //       this.eventService.toggleSearchLoader.next({flag: false, page: "home"});
+      //       this.apiSubscription3?.unsubscribe();
+      //       this.apiSubscription4?.unsubscribe();
+      //     }
+      //   }, error: (err:any) => {
+      //     console.error(err);
+      //     this.searchingError = { isError: true, errorMessage: "Server Error!" };
+      //   }
+      // });
 
       this.searchResult = []; 
       this.perPageData = [];      
@@ -661,34 +682,73 @@ export class HomepageComponent implements OnInit, OnChanges, AfterViewInit, OnDe
         const queryStr = `searchCountry=${this.currentCountry}&direction=${this.direction}&fromDate=${this.fromDate}&toDate=${this.toDate}&hscode=${this.hsCode}&product=${this.product}&buyer=${this.importerList.toString().replace(new RegExp(",","g"),"")}&supplier=${this.exporterList.toString().replace(new RegExp(",","g"),"")}&country=${this.countryWord}&query=${JSON.stringify(apiData["body"])}`;
         const apiKey = `${environment.apiurl}api/get${this.country}${this.direction}?${queryStr}`;
         
-        if(environment.apiDataCache.hasOwnProperty(apiKey) && environment.apiDataCache[apiKey][1]["results"]["data"].length>0) {
+        if(environment?.apiDataCache.hasOwnProperty(apiKey) && environment.apiDataCache[apiKey]["search"]["results"]["data"].length>0) {
         // if(environment.apiDataCache.hasOwnProperty(apiKey)) {
           const response = environment.apiDataCache[apiKey];
           const promiseRes = await this.onFetchingSearchedDataFromCache({resolve, reject}, response, apiData, callBy);
           return promiseRes;
         } else {
-          this.apiSubscription3 = forkJoin([
-            this.searchService.getSearchedRecordCounting(counterApiBody),
-            this.searchService.getSearchedDataWithFilter(apiData)
-          ]).subscribe({
-            next: async (responseArr:any[]) => {              
-              environment.apiDataCache[apiKey] = responseArr;
-              const promiseRes = this.afterFetchingOnSearchDataInternalProcess({resolve, reject}, responseArr, apiData, callBy);
-              return promiseRes;
-            }, error: (err:any) => {
-              this.perPageData = [];
-              this.searchResult = [];
-              this.isSearchingData = false;
-              this.isTotalDataReceived = true;
-              this.isSearchBtnClicked = true;
-              this.eventService.toggleSearchLoader.next({flag: false, page: "home"});
-              this.eventService.filterSidebarEvent.emit(false);
-              this.timerSubscription?.unsubscribe();
-              reject({ status: 'done', msg: err });
+          // this.apiSubscription3 = forkJoin([
+          //   this.searchService.getSearchedRecordCounting(counterApiBody),
+          //   this.searchService.getSearchedDataWithFilter(apiData)
+          // ])
+
+          this.apiSubscription3 = forkJoin({
+            counts: this.searchService.getSearchedRecordCounting(counterApiBody).pipe(
+              map(data => ({...data, error: false, errorInfo: {}})),
+              catchError(err => { console.error(err);
+                return of({error: true, errorInfo: err});
+              }
+            )),
+            search: this.searchService.getSearchedDataWithFilter(apiData).pipe(
+              map(data => ({...data, error: false, errorInfo: {}})),
+              catchError(err => { console.error(err);
+                return of({error: true, errorInfo: err});
+              }
+            ))
+          }).pipe(retry(3)).subscribe({
+            next: async (responseArr) => {
+              // this.timerSubscription?.unsubscribe();
+
+              if(!responseArr?.counts?.error && !responseArr?.search?.error) {
+                environment.apiDataCache[apiKey] = responseArr;
+                const promiseRes = this.afterFetchingOnSearchDataInternalProcess({resolve, reject}, responseArr, apiData, callBy);
+                return promiseRes;
+              } else {
+                const errorMessage = responseArr?.search?.errorInfo?.status===500 ? "Server Error": "Data Connection Failure";
+                // if(errorMessage === "Data Connection Failure" && this.retryChance>0) {
+                //   this.retryChance--;
+                //   // this.OnClickSearch(callBy, "RETRY");
+                // } else {
+                // }
+                this.searchingError = { isError: true, errorMessage };
+                this.perPageData = [];
+                this.searchResult = [];
+                this.isSearchingData = false;
+                this.isTotalDataReceived = true;
+                this.isSearchBtnClicked = true;
+                this.eventService.toggleSearchLoader.next({flag: false, page: "home"});
+                this.eventService.filterSidebarEvent.emit(false);
+                // this.timerSubscription?.unsubscribe();
+                reject({ status: 'done', msg: responseArr });
+              }
             }
+
+            // , error: (err:any) => {
+            //   const errorMessage = err.status===500 ? "Server Error": "Data Connection Failure";
+            //   this.searchingError = {isError: true, errorMessage };
+            //   this.perPageData = [];
+            //   this.searchResult = [];
+            //   this.isSearchingData = false;
+            //   this.isTotalDataReceived = true;
+            //   this.isSearchBtnClicked = true;
+            //   this.eventService.toggleSearchLoader.next({flag: false, page: "home"});
+            //   this.eventService.filterSidebarEvent.emit(false);
+            //   this.timerSubscription?.unsubscribe();
+            //   reject({ status: 'done', msg: err });
+            // }
           });
         }
-
       } catch (error) {
         console.log(error);
         this.eventService.filterSidebarEvent.emit(false);
@@ -697,7 +757,7 @@ export class HomepageComponent implements OnInit, OnChanges, AfterViewInit, OnDe
     });
   }
 
-  onFetchingSearchedDataFromCache(promise:any, responseArr:any[], apiData:any, callBy:string) {
+  onFetchingSearchedDataFromCache(promise:any, responseArr:any, apiData:any, callBy:string) {
     return new Promise((resolve) => {
       setTimeout(() => {
         const promiseRes = this.afterFetchingOnSearchDataInternalProcess(promise, responseArr, apiData, callBy);
@@ -706,9 +766,9 @@ export class HomepageComponent implements OnInit, OnChanges, AfterViewInit, OnDe
     });
   }
 
-  async afterFetchingOnSearchDataInternalProcess(promise:any, responseArr:any[], apiData:any, callBy:string) {
-    if(!responseArr[0]?.error) {
-      const tempCounters = responseArr[0]?.results?.counters;    
+  async afterFetchingOnSearchDataInternalProcess(promise:any, responseArr:any, apiData:any, callBy:string) {
+    if(!responseArr?.counts?.error) {
+      const tempCounters = responseArr?.counts?.results?.counters;    
       const keys = ["totalrecordscount", "hscodecount", "suppliercount", "buyercount", "countrycount", "totalvaluecount"];
       const counterObjKeys = ["total", "hsCode", "exporters", "importers", "country", "values"];
       keys.forEach((key:string, index:number) => {
@@ -719,16 +779,16 @@ export class HomepageComponent implements OnInit, OnChanges, AfterViewInit, OnDe
 
       if (this.counterObj.total > 500000 && callBy=="self") {
         this.eventService.filterSidebarEvent.emit(false);
-        this.timerSubscription?.unsubscribe();
+        // this.timerSubscription?.unsubscribe();
         this.eventService.toggleSearchLoader.next(false);
         this.showAlertForSearch(this.warningMsg.results);
         return promise?.reject(new Error("More than 5 lack records are fetched!"));
       }
     }
 
-    if(!responseArr[1]?.error) {
-      this.timerSubscription?.unsubscribe();
-      const results: any[] = responseArr[1]?.results?.data || responseArr[1]?.results || [];
+    if(!responseArr?.search?.error) {
+      // this.timerSubscription?.unsubscribe();
+      const results: any[] = responseArr?.search?.results?.data || responseArr?.search?.results || [];
       
       if (this.isSearchingData) this.isSearchingData = false;
 
@@ -746,7 +806,7 @@ export class HomepageComponent implements OnInit, OnChanges, AfterViewInit, OnDe
 
        //If result is blank then back to empty page showing "Data Not Found"
       if (this.searchResult.length == 0 && ["self", "workspace"].includes(callBy)) {
-        this.timerSubscription?.unsubscribe();
+        // this.timerSubscription?.unsubscribe();
         this.eventService.filterSidebarEvent.emit(false);
         this.eventService.toggleSearchLoader.next({flag: false, page: "home"});
         return promise?.reject(new Error("No Data Found!"));
@@ -773,7 +833,10 @@ export class HomepageComponent implements OnInit, OnChanges, AfterViewInit, OnDe
 
       //================== side filter fetching values with their counters ====================//
       const paginationTypes = ["pagination-arrow","pagination-perpage"];
-      this.eventService.filterSidebarEvent.emit(true); //to display ON of sidefilter options
+      
+      if(this.currentCountryData?.type !== "STATISTICAL") {
+        this.eventService.filterSidebarEvent.emit(true); //to display ON of sidefilter options
+      }
 
       if (["self"].includes(callBy) && results.length > 0) {                  
         //api for getting data for side filters
@@ -781,9 +844,9 @@ export class HomepageComponent implements OnInit, OnChanges, AfterViewInit, OnDe
           this.currentCountryData = { country: "India", code: "IND", direction: this.direction, type: this.currentCountryData?.type };
         }
 
-        if(this.currentCountryData?.type !== "STATISTICAL" && !paginationTypes.includes(callBy)) await this.getSideFilterData(callBy, "base");
+        if(!paginationTypes.includes(callBy)) await this.getSideFilterData(callBy, "base");
       } else {
-        if(this.currentCountryData?.type !== "STATISTICAL" && !paginationTypes.includes(callBy)) await this.getSideFilterData(callBy, "filter");
+        if(!paginationTypes.includes(callBy)) await this.getSideFilterData(callBy, "filter");
       }
 
       if (this.perPageData.length == 0) this.setCounterValues(true); //if data is received [] then zero all counters
@@ -791,7 +854,7 @@ export class HomepageComponent implements OnInit, OnChanges, AfterViewInit, OnDe
     } else {
       this.eventService.toggleSearchLoader.next({flag: false, page: "home"});
       this.eventService.filterSidebarEvent.emit(false);
-      this.showAlertForSearch(responseArr[1]?.message);
+      this.showAlertForSearch(responseArr?.search?.message);
       return promise?.resolve({ status: 'done' });
     }
     
@@ -1037,7 +1100,9 @@ export class HomepageComponent implements OnInit, OnChanges, AfterViewInit, OnDe
     this.firstSelectVal = "Select Direction";
     this.secSelectVal = "Latest Month";
     this.secSelectClass = "custom-dropdown";
+    this.firstSelectClass = "inactive custom-dropdown";
     this.isCustomDate = false;
+    // this.retryChance = 3;
     this.exporterList = []; this.importerList = [];
     this.eventService.filterSidebarEvent.emit(false);
     this.eventService.currentCountry.next({});
@@ -1054,17 +1119,19 @@ export class HomepageComponent implements OnInit, OnChanges, AfterViewInit, OnDe
   }
 
   getCountryLatestDate() {
-    const dataObj = { 
-      country: this.currentCountryData?.code, 
+    const dataObj = {
+      countryName: this.currentCountryData?.country?.toLowerCase(),
+      countryCode: this.currentCountryData?.code,
       direction: this.direction, 
-      countryType: this.currentCountryData?.type 
+      countryType: this.currentCountryData?.type
     };
     this.apiService.getCountryLatestDate(dataObj).subscribe({
       next: (res: any) => {
         if (!res.error && res.results.length > 0) {
           const rawDate = res?.results[0]["LatestDate"];
+
           if (!this.isCurrentUserDemo) { //in case of Main Plan user, they get latest update limit
-            this.max = new Date(rawDate).toISOString().split('T')[0];
+            this.max = this.alertService.getFormattedDate(rawDate);//new Date(rawDate).toISOString().split('T')[0];
             this.changeDateRange(this.dateRange);
           } else {  //in case of demo or trail Plan users, they will get their data-access limit
             const dataAccessDate: string = this.userService.getUserDataAccess();
@@ -1076,8 +1143,8 @@ export class HomepageComponent implements OnInit, OnChanges, AfterViewInit, OnDe
             const [latest, dataAccess] = [latestDate.valueOf(), toDate.valueOf()];
   
             (latest < dataAccess)
-              ? this.max = new Date(rawDate).toISOString().split('T')[0]
-              : this.max = new Date(toDate).toISOString().split('T')[0];
+              ? this.max = this.alertService.getFormattedDate(rawDate)//new Date(rawDate).toISOString().split('T')[0]
+              : this.max = this.alertService.getFormattedDate(toDate.toISOString());//new Date(toDate).toISOString().split('T')[0];
             this.changeDateRange(this.dateRange);
           }
         }
@@ -1095,7 +1162,7 @@ export class HomepageComponent implements OnInit, OnChanges, AfterViewInit, OnDe
       if (["advance", ""].includes(this.refreshPageName)) {
         if (this.refreshPageName == "") this.refreshPageName = "advance"; //here it get the real value
         this.eventService.currentCountry.next({ 
-          country: "", 
+          country: "",
           code: "IND", 
           direction: this.direction, 
           type: "CUSTOM",
@@ -1207,10 +1274,11 @@ export class HomepageComponent implements OnInit, OnChanges, AfterViewInit, OnDe
       return;
     }
 
-    const modalRef = this.modalService.open(LocatorModalComponent, { windowClass: 'locatorModalClass' });
+    const modalRef = this.modalService.open(LocatorModalComponent, { windowClass: 'locatorModalClass', centered: true });
     (<LocatorModalComponent>modalRef.componentInstance).locatorType = type;
     (<LocatorModalComponent>modalRef.componentInstance).locatorObj = {
       country: this.currentCountry,
+      countryType: this.currentCountryData?.type,
       type: this.direction,
       fromDate: this.fromDate,
       toDate: this.toDate
@@ -1383,7 +1451,7 @@ export class HomepageComponent implements OnInit, OnChanges, AfterViewInit, OnDe
       tempArr.push(temObj);
     }
 
-    const modalRef = this.modalService.open(TableDataModalComponent, { windowClass: 'tableDataPopUpModalClass' });
+    const modalRef = this.modalService.open(TableDataModalComponent, { windowClass: 'tableDataPopUpModalClass', centered: true });
     (<TableDataModalComponent>modalRef.componentInstance).tableData = tempArr;
   }
 
@@ -1396,6 +1464,8 @@ export class HomepageComponent implements OnInit, OnChanges, AfterViewInit, OnDe
         this.alertService.showPackageAlert("Oops!, It seems that you have used your all favorite shipment point. Please recharge your favorite shipment points.");
         return;
       }
+
+      if(!data.hasOwnProperty("Type")) data["Type"] = this.direction.toUpperCase(); //in case the table does not have "Type" column
 
       const bookmarkObj = {country: this.currentCountry, ...data};
       this.userService.setBookmarks(bookmarkObj)
@@ -1490,7 +1560,7 @@ export class HomepageComponent implements OnInit, OnChanges, AfterViewInit, OnDe
   openSaveModal(options:any = undefined) {
     if (options == undefined) {
       const folderName = this.savedStatus.saveFolder;
-      const modalRef = this.modalService.open(SaveFileComponent, { windowClass: 'saveFileModalClass' });
+      const modalRef = this.modalService.open(SaveFileComponent, { windowClass: 'saveFileModalClass', centered: true });
       (<SaveFileComponent>modalRef.componentInstance).targetBy = 'home';
       (<SaveFileComponent>modalRef.componentInstance).isAlreadySaved = this.savedStatus.isAlreadySaved;
       (<SaveFileComponent>modalRef.componentInstance).fileName = this.savedStatus.savedFileName;
@@ -1646,7 +1716,7 @@ export class HomepageComponent implements OnInit, OnChanges, AfterViewInit, OnDe
   //to download selected or all given table records
   downloadRecords() {
     const numberOfSelectedRecords = this.getSelectedItemCount();
-    const modalRef = this.modalService.open(DownloadModelComponent, { backdrop: "static", keyboard: false, windowClass: 'downloadModalClass' });
+    const modalRef = this.modalService.open(DownloadModelComponent, { backdrop: "static", keyboard: false, windowClass: 'downloadModalClass', centered: true });
     (<DownloadModelComponent>modalRef.componentInstance).modalType = 'download';
     (<DownloadModelComponent>modalRef.componentInstance).allDownloadNames = this.allDownloadNames;
     (<DownloadModelComponent>modalRef.componentInstance).numberOfRecords = numberOfSelectedRecords;
@@ -1681,7 +1751,7 @@ export class HomepageComponent implements OnInit, OnChanges, AfterViewInit, OnDe
                 //---------------------------to stop loader--------------------------------//
                 setTimeout(() => {
                   //download success popup
-                  const modalRef2 = this.modalService.open(DownloadModelComponent, { backdrop: "static", keyboard: false, windowClass: 'downloadModalClass' });
+                  const modalRef2 = this.modalService.open(DownloadModelComponent, { backdrop: "static", keyboard: false, windowClass: 'downloadModalClass', centered: true });
                   (<DownloadModelComponent>modalRef2.componentInstance).modalType = 'download-msg';
                   this.eventService.userStatusEvent.emit('update');
                   this.eventService.downloadListUpdate.next({ action: "add", status: "done", filename: this.ellipsePipe.transform(dataObj?.filename, 22) });
@@ -1704,7 +1774,7 @@ export class HomepageComponent implements OnInit, OnChanges, AfterViewInit, OnDe
 
     //if recoreds are not downloaded then save the searched records first before download
     if (!this.savedStatus.isAlreadySaved) {
-      const modalRef = this.modalService.open(SaveFileComponent, { backdrop: "static", keyboard: false, windowClass: 'saveFileModalClass' });
+      const modalRef = this.modalService.open(SaveFileComponent, { backdrop: "static", keyboard: false, windowClass: 'saveFileModalClass', centered: true });
       (<SaveFileComponent>modalRef.componentInstance).targetBy = 'download';
       (<SaveFileComponent>modalRef.componentInstance).isAlreadySaved = this.savedStatus.isAlreadySaved;
       (<SaveFileComponent>modalRef.componentInstance).saveCallBack.subscribe(res => {
@@ -1789,6 +1859,7 @@ export class HomepageComponent implements OnInit, OnChanges, AfterViewInit, OnDe
     this.currentSearchingMode = "filter";
     this.currentPageNum = 0;
     this.isFilteringData = true;
+    // this.retryChance = 3;
     this.apiBodyObj.filter = {
       country: this.currentCountry,
       direction: this.direction,
@@ -1828,14 +1899,7 @@ export class HomepageComponent implements OnInit, OnChanges, AfterViewInit, OnDe
     }
 
     if (this.word.length >= 3 && type == "product") {
-      this.isWordDropdown = true;
-      this.apiService.getProductDescWords(this.word.toUpperCase()).subscribe({
-        next: (res: any) => {
-          if (!res.error && res.results.length > 0) {
-            this.wordsArr = res?.results.splice(0, 10);
-          }
-        }
-      });
+      this.productSearch.next(this.word.toUpperCase());
     } else {
       const wordLen = this.countryWord.length;
       this.countriesList.copy = this.countriesList.base.filter(item => item?.country.substring(0, wordLen) == this.countryWord.toUpperCase());
@@ -1946,8 +2010,8 @@ export class HomepageComponent implements OnInit, OnChanges, AfterViewInit, OnDe
       direction: dataObj["direction"],
       ...bodyObj
     };
-    const fieldName = ["HsCode", "Imp_Name", "Exp_Name", "Date",
-    apiDataObj.direction=="import"? "CountryofOrigin": "CountryofDestination"];
+    const locators = this.currentCountryData?.type!=="STATISTICAL" ? ["Imp_Name", "Exp_Name"]: [];
+    const fieldName = ["HsCode", "Date", apiDataObj.direction=="import"? "CountryofOrigin": "CountryofDestination", ...locators];
     
     for(let i=0; i<fieldName.length; i++) {
       apiDataObj["fieldName"] = fieldName[i];
@@ -1998,9 +2062,10 @@ export class HomepageComponent implements OnInit, OnChanges, AfterViewInit, OnDe
 
 
   async showCounterModal(tabType: string, key: string) {
+    if(this.currentCountryData?.type=="STATISTICAL" && ["suppliers", "buyers"].includes(tabType)) return;
     if (["records","values"].includes(tabType)) return;
     
-    const modalRef = this.modalService.open(SaveFileComponent, { backdrop: "static", keyboard: false, windowClass: 'saveFileModalClass counterFileModalClass' });
+    const modalRef = this.modalService.open(SaveFileComponent, { backdrop: "static", keyboard: false, windowClass: 'saveFileModalClass counterFileModalClass', centered: true });
     (<SaveFileComponent>modalRef.componentInstance).currentModal = "counter-modal";
     (<SaveFileComponent>modalRef.componentInstance).listTitle = tabType == "code" ? "hs codes" : tabType;
     (<SaveFileComponent>modalRef.componentInstance).direction = this.direction;
@@ -2016,18 +2081,19 @@ export class HomepageComponent implements OnInit, OnChanges, AfterViewInit, OnDe
     if(callByHtml) { tabType = tabType=="Imp_Name" ? "buyers": "suppliers"; }
 
     const eventObj = {
-      companyName: companyName,
+      companyName,
       country: this.currentCountry,
       direction: this.direction,
       target: "navbar",
       selectedDate: this.toDate,
+      countryType: this.currentCountryData?.type,
       tabDirectionType: tabType == "buyers" ? "buyer" : "supplier"
     };
 
     analysisTab.click();
     setTimeout(() => {
       this.eventService.companyProfileEvent.next(eventObj);
-    }, 1000);
+    }, 500);
   }
 
   setGoogleLink(key:string, value:string): string {
@@ -2049,7 +2115,7 @@ export class HomepageComponent implements OnInit, OnChanges, AfterViewInit, OnDe
 
           if(status && show_popup && startDateVal<currentDateVal && currentDateVal<endDateVal) {
             setTimeout(() => {
-              const modalRef = this.modalService.open(NotifyAlertMsgComponent, { backdrop: "static", keyboard: false, windowClass: 'saveFileModalClass alertModalClass' });
+              const modalRef = this.modalService.open(NotifyAlertMsgComponent, { backdrop: "static", keyboard: false, windowClass: 'saveFileModalClass alertModalClass', centered: true });
               (<NotifyAlertMsgComponent>modalRef.componentInstance).alertMsg = (JSON.parse(txt_msg))["popup"];
               const callBackRef = (<NotifyAlertMsgComponent>modalRef.componentInstance).saveCallBack.subscribe({
                 next: (res: any) => callBackRef?.unsubscribe(),

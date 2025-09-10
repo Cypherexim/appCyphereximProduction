@@ -6,7 +6,7 @@ import { AlertifyService } from 'src/app/services/alertify.service';
 import { ApiServiceService } from 'src/app/services/api-service.service';
 import { EventemittersService } from 'src/app/services/eventemitters.service';
 import { environment } from 'src/environments/environment';
-
+/////////////countryType
 @Component({
   selector: 'app-locator-modal',
   templateUrl: './locator-modal.component.html',
@@ -19,7 +19,7 @@ export class LocatorModalComponent implements OnInit, AfterViewInit, OnDestroy {
   isApiProcess:boolean = false;
   isMainSelect:boolean = false;
   isSelectAllShow:boolean = false;
-  locatorObj = { country: "", type: "", fromDate: "", toDate: "" };
+  locatorObj = { country: "", type: "", fromDate: "", toDate: "", countryType: "" };
   listArr:any[] = [];
   copyArr:any[] = [];
   backupLocatorData:any = {};
@@ -126,7 +126,7 @@ export class LocatorModalComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   searchingMoreLocator() {
-    const { country, type, fromDate, toDate } = this.locatorObj;
+    const { country, type, fromDate, toDate, countryType } = this.locatorObj;
     
     if(this.searchVal.length > 2) {
       this.isSelectAllShow = false;
@@ -135,7 +135,7 @@ export class LocatorModalComponent implements OnInit, AfterViewInit, OnDestroy {
       const word = this.searchVal.toUpperCase();
       const locatorType = directionType=="import"? "Buyer": "Supplier";
       const direction = type;
-      const dataObj = { country, direction, word, locatorType, date: {from: fromDate, to: toDate} };
+      const dataObj = { country, direction, word, locatorType, countryType,  date: {from: fromDate, to: toDate} };
 
       this.apiSubscription2?.unsubscribe();
       this.apiSubscription2 = this.apiService.getGlobeImpExpLocator(dataObj, word).subscribe({
@@ -153,7 +153,7 @@ export class LocatorModalComponent implements OnInit, AfterViewInit, OnDestroy {
               this.isSelectAllShow = false;
               this.perPageLocators = [];
               this.isError = true;
-            }            
+            }
           } else {
             this.isApiProcess = false;
             this.isError = true;
@@ -239,6 +239,8 @@ export class LocatorModalComponent implements OnInit, AfterViewInit, OnDestroy {
     this.isMainSelect = !this.isMainSelect;
     const key = this.locatorType=='exporter' ? "Exp_Name" : "Imp_Name";
     this.selectedArr = this.isMainSelect ? dataArr.map(item => item[key]) : [];
+    // const selectedAllItems = this.isMainSelect ? dataArr.map(item => item[key]) : [];
+    // selectedAllItems.forEach(item => this.selectedArr.push(item));
   }
 
   applyLocator() {

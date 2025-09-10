@@ -32,13 +32,13 @@ export class AlertifyService {
 
   //==============custom popup alerts on insufficient points or errors==============//
   showWarningAlert(msg:string) {
-    const modalRef = this.modalService.open(DownloadModelComponent, { windowClass: 'alertWarningClass' });
+    const modalRef = this.modalService.open(DownloadModelComponent, { windowClass: 'alertWarningClass', centered: true });
     (<DownloadModelComponent>modalRef.componentInstance).modalType = 'credit-msg';
     (<DownloadModelComponent>modalRef.componentInstance).warningMsg = msg;
   }
 
   showPackageAlert(msg:string=this.staticAlertMsg) {
-    const modalRef = this.modalService.open(UserAlertModalComponent, { backdrop: "static", keyboard: false, windowClass: 'alertWarningClass2' });
+    const modalRef = this.modalService.open(UserAlertModalComponent, { backdrop: "static", keyboard: false, windowClass: 'alertWarningClass2', centered: true });
     (<UserAlertModalComponent>modalRef.componentInstance).alertMsg = msg;
   }
 
@@ -50,6 +50,16 @@ export class AlertifyService {
     const timeDifference = toDate.getTime() - fromDate.getTime();
     const numOfDays = timeDifference / (1000 * 60 * 60 * 24);
     return numOfDays;
+  }
+
+  getFormattedDate(isoDateStr:string):string {
+    const formattedDate = new Intl.DateTimeFormat("en-CA", {
+      year: "numeric",
+      month: "2-digit",
+      day: "2-digit"
+    }).format(new Date(isoDateStr));
+
+    return formattedDate;
   }
 
   dateInFormat(strDate:any) {

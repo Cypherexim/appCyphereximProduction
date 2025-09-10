@@ -1,6 +1,6 @@
 import { Component, OnInit, OnDestroy, AfterViewInit } from '@angular/core';
 import { Router } from '@angular/router';
-import { Subscription } from 'rxjs';
+import { Subscription, interval } from 'rxjs';
 import { SideFilterModel } from 'src/app/models/others';
 import { AuthService } from 'src/app/services/auth.service';
 import { EventemittersService } from 'src/app/services/eventemitters.service';
@@ -19,12 +19,14 @@ export class SearchDataComponent implements OnInit, OnDestroy, AfterViewInit{
   isAnalysisTabActive:boolean = false; //to switch tab from analysis to data or vice-verse
   currentEventBind:any;
   profileOption:string = '';
+  
   eventSubscription: Subscription;
+  intervalVal:Subscription;
+
   filterOptions:SideFilterModel = new SideFilterModel;
   navBarShowpages:string[] = ['home', 'workspace', 'download', 'favourite', 'analysisNav']; // 'analysis', >>> analysis comp. is gone
   analysisNavs:string[] = ['trending', 'companyProfile', 'hsCodeAnalysis', 'countryAnalysis', 'timeAnalysis', 'exporterAnalysis', 'importerAnalysis', 'customizeAnalysis'];
   currentAnalysisPage:string = '';
-  intervalVal:any;
 
   loadingFacts:string[] = [
     "Import and Export data are used to determine the value of goods and services traded between countries.", 
@@ -51,8 +53,8 @@ export class SearchDataComponent implements OnInit, OnDestroy, AfterViewInit{
 
   constructor(
     private eventService: EventemittersService,
-    private router: Router,
-    private authService: AuthService
+    // private router: Router,
+    // private authService: AuthService
   ) { }
 
   ngOnInit() {
@@ -81,10 +83,11 @@ export class SearchDataComponent implements OnInit, OnDestroy, AfterViewInit{
       this.eventService.toggleSearchLoader.subscribe(res => {
         this.isSearchingData = res?.flag;
         if(this.isSearchingData) {
-          this.intervalVal = setInterval(() => {
-            this.currentFact = Math.floor(Math.random()*20);
-          }, 10000);
-        } else clearTimeout(this.intervalVal);
+          this.intervalVal = interval(1000*10).subscribe({
+            next: () => { this.currentFact = Math.floor(Math.random()*20); },
+            error: err => console.log(err)
+          });
+        } else { this.intervalVal?.unsubscribe(); }
       });
     } else {
       const logoutTag = document.getElementById("logoutAnchor") as HTMLAnchorElement;
@@ -101,6 +104,7 @@ export class SearchDataComponent implements OnInit, OnDestroy, AfterViewInit{
   ngOnDestroy(): void {
     if(this.eventSubscription) this.eventSubscription.unsubscribe();
     this.eventService.stopSearchingEvent.next(false);
+    this.intervalVal?.unsubscribe();
   }
 
   sidebarToggle() {
@@ -133,11 +137,11 @@ export class SearchDataComponent implements OnInit, OnDestroy, AfterViewInit{
     const hasUserLoggedIn = JSON.parse(window.localStorage.getItem("currentUser"));
     const currentpath = window.location.pathname;
     
-    if(Object.keys(hasUserLoggedIn).length==0 && currentpath == "/home") return false;
+    if(Object.keys(hasUserLoggedIn).length===0 && currentpath == "/home") return false;
     else return true;
   }
 
-  closeAlertBos() {
+  closeAlertBox() {
     this.isCloseAlertBox = true;
   }
 }

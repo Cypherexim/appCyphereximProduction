@@ -22,20 +22,25 @@
     </div>
     <div class="table-container" *ngIf="copyArr.length>0 && !isApiProcess">
         
-        <cdk-virtual-scroll-viewport [itemSize]="10">
-            <table id="locatorTable">
-                <tbody>
-                    <tr class="selectAll" *ngIf="isSelectAllShow">
-                        <td><input type="checkbox" (click)="selectAllValues(perPageLocators)" id=""></td>
-                        <td colspan="2">Select All</td>
-                    </tr>
-                    <tr tabindex="-1" *cdkVirtualFor="let item of perPageLocators;let i=index;">
-                        <td><input type="checkbox" [checked]="isMainSelect" (click)="selectSingleValue($event, item)" id=""></td>
-                        <td colspan="2">{{locatorType=='exporter' ? item?.Exp_Name : item?.Imp_Name}}</td>
-                    </tr>
-                </tbody>
-            </table>
-        </cdk-virtual-scroll-viewport>
+        <!-- <cdk-virtual-scroll-viewport [itemSize]="10"> -->
+        <table id="locatorTable">
+            <tbody>
+                <tr class="selectAll" *ngIf="isSelectAllShow">
+                    <td><input type="checkbox" (click)="selectAllValues(perPageLocators)" id="locatorSelectAllId"></td>
+                    <td colspan="2"><label for="locatorSelectAllId">Select All</label></td>
+                </tr>
+                <!-- <tr tabindex="-1" *cdkVirtualFor="let item of perPageLocators;let i=index;"> -->
+                <tr tabindex="-1" *ngFor="let item of perPageLocators;let i=index;">
+                    <td><input type="checkbox" [checked]="isMainSelect" (click)="selectSingleValue($event, item)" id="{{locatorType=='exporter' ? item?.Exp_Name : item?.Imp_Name}}CheckboxId"></td>
+                    <td colspan="2">
+                        <label for="{{locatorType=='exporter' ? item?.Exp_Name : item?.Imp_Name}}CheckboxId">
+                            {{locatorType=='exporter' ? item?.Exp_Name : item?.Imp_Name}}
+                        </label>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+        <!-- </cdk-virtual-scroll-viewport> -->
         <div class="copy-tab-foot">
             <div class="pagination" *ngIf="locatorObj?.country=='India'">
                 <img src="assets/images/rightArrow.png" (click)="partitionLocator('prev')" alt="">

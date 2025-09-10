@@ -148,7 +148,7 @@ export class ClientsComponent implements OnInit, OnDestroy {
     
     if(data.hasOwnProperty("index_num")) delete data["index_num"];
 
-    const modalRef = this.modalService.open(ListModalComponent, {windowClass: 'tableDataPopUpModalClass'});
+    const modalRef = this.modalService.open(ListModalComponent, {windowClass: 'tableDataPopUpModalClass', centered: true});
     (<ListModalComponent>modalRef.componentInstance).tableName = this.listType;
     (<ListModalComponent>modalRef.componentInstance).getAllHeads(data);
     (<ListModalComponent>modalRef.componentInstance).passback.subscribe((res:any) => {

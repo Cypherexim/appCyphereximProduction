@@ -35,8 +35,8 @@ export class SideFilterModel {
 
 //side Filter model
 export class SideFilterAccessModel {
-    HsCode:boolean = true;
-    ProductDesc:boolean = true;
+    HsCode:boolean = false;
+    ProductDesc:boolean = false;
     Exp_Name:boolean = false;
     Imp_Name:boolean = false;
     CountryofDestination:boolean = false;
@@ -47,8 +47,8 @@ export class SideFilterAccessModel {
     uqc:boolean = false;
     Quantity:boolean = false;
     Currency:boolean = false;
-    Month:boolean = true;
-    Year:boolean = true;
+    Month:boolean = false;
+    Year:boolean = false;
     Country:string = '';
     Direction:string = '';
     LoadingPort:boolean = false;

@@ -75,8 +75,7 @@ export class OtherListComponent implements OnInit, OnChanges, AfterViewInit {
   }
 
   getLastUpdatedDate() {
-    const {countryCode, direction, countryType} = this.countryDateObj;
-    this.apiService.getCountryLatestDate({country: countryCode, direction, countryType}).subscribe({
+    this.apiService.getCountryLatestDate(this.countryDateObj).subscribe({
       next: (res:any) => {
         this.hasSelected.direction = true;
         if(!res.error && res?.results.length > 0) {

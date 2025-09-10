@@ -205,7 +205,7 @@ ngb-pagination ul li input[type="text"]{font-size: 0.8rem;}
     overflow: hidden;
     height: 60vh;
     margin: auto;
-    margin-top: 12.5rem;
+    /* margin-top: 12.5rem; */
 }
 
 /*save changes modal css*/
@@ -217,7 +217,7 @@ ngb-pagination ul li input[type="text"]{font-size: 0.8rem;}
     overflow: hidden;
     height: 40vh;
     margin: auto;
-    margin-top: 12.5rem;
+    /* margin-top: 12.5rem; */
 }
 .alertModalClass .modal-content{height: 40vh !important;margin-top: 19rem !important;}
 .alertModalClass .modal-dialog{max-width: 50% !important;}
@@ -240,7 +240,7 @@ ngb-pagination ul li input[type="text"]{font-size: 0.8rem;}
 
 .confirmModalClass .modal-content{
     height: 25vh;
-    margin-top: 21rem;
+    /* margin-top: 21rem; */
 }
 
 
@@ -250,7 +250,7 @@ ngb-pagination ul li input[type="text"]{font-size: 0.8rem;}
     max-height: 90vh;
     width: 40%;
     margin: auto;
-    margin-top: 3rem;
+    /* margin-top: 3rem; */
 }
 .tableDataPopUpModalClass .modal-dialog{max-width: 100%;}
 .tableDataPopUpModalClass .modal-content app-edit-plan-form,
@@ -339,6 +339,13 @@ div.loader span{
     font-weight: 500;
 }
 
+.modalHeader{
+    color: white;
+    font-size: 18px;
+    letter-spacing: 0.35px;
+    font-weight: 500;
+}
+
 @keyframes spin {
     from {transform: rotate(0deg);}
     to {transform: rotate(360deg);}
@@ -396,33 +403,41 @@ select::-webkit-scrollbar-thumb:hover {background: #555;}
     .alertWarningClass .modal-content{height: 35vh;}
     .timeoutClass .modal-dialog{min-width: 30% !important;}
     .confirmShareModalClass .modal-content{
-        margin-top: 10rem;
+        /* margin-top: 10rem; */
         height: 50vh;
     }
 }
 @media screen and (max-width: 1440px) {
     .alertModalClass .modal-content{height: 35vh !important;margin-top: 17rem !important;}
     .countryModalClass .modal-dialog{max-width: 90% !important;}
-    .confirmModalClass .modal-content{height: 28vh;margin-top: 17rem;}
+    .confirmModalClass .modal-content{height: 28vh;
+        /* margin-top: 17rem; */
+    }
 }
 @media screen and (max-width: 1400px) {
     .timeoutClass .modal-content{height: 20vh;}
-    .confirmShareModalClass .modal-content{margin-top: 20rem;height: 40vh;}
-    .alertModalClass .modal-content{height: 40vh !important; margin-top: 18rem !important;}
+    .confirmShareModalClass .modal-content{
+        /* margin-top: 20rem; */
+    height: 40vh;}
+    .alertModalClass .modal-content{height: 40vh !important;
+         /* margin-top: 18rem !important; */
+    }
 }
 @media screen and (max-width: 1366px) {
     .timeoutClass .modal-content{height: 28vh;}
-    .alertModalClass .modal-content{height: 52vh !important;margin-top: 8rem !important;}
+    .alertModalClass .modal-content{height: 52vh !important;
+        /* margin-top: 8rem !important; */
+    }
     div::-webkit-scrollbar {
         width: 10px;
         height: 10px;
     }
     .confirmModalClass .modal-content{
         height: 35vh;
-        margin-top: 10rem;
+        /* margin-top: 10rem; */
     }
     .confirmShareModalClass .modal-content{
-        margin-top: 10rem;
+        /* margin-top: 10rem; */
         height: 55vh;
     }
 }
@@ -434,10 +449,14 @@ select::-webkit-scrollbar-thumb:hover {background: #555;}
 
 @media screen and (max-width: 1280px) {
     @media screen and (max-height: 1024px){
-        .alertModalClass .modal-content{height: 40vh !important;margin-top: 17rem !important;}
+        .alertModalClass .modal-content{height: 40vh !important;
+            /* margin-top: 17rem !important; */
+        }
     }
     @media screen and (max-height: 800px){
-        .alertModalClass .modal-content{height: 50vh !important;margin-top: 10rem !important;}
+        .alertModalClass .modal-content{height: 50vh !important;
+            /* margin-top: 10rem !important; */
+        }
         .saveFileModalClass .modal-content{height: 45vh !important;}
     }
     @media screen and (max-height: 768px){
@@ -446,7 +465,7 @@ select::-webkit-scrollbar-thumb:hover {background: #555;}
     @media screen and (max-height: 720px){
         .alertModalClass .modal-content{height: 55vh !important;margin-top: 7rem !important;}
         .saveFileModalClass .modal-content{
-            margin-top: 9rem;
+            /* margin-top: 9rem; */
             height: 50vh !important;
         }
         .downloadModalClass .modal-content{height: 50vh;}

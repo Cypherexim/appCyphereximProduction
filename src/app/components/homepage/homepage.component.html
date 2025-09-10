@@ -287,7 +287,7 @@
         </tr>
       </tbody>
     </table>
-    <h4 class="nodatamsg" *ngIf="searchResult.length==0 && !isSearchingData && !isTableLoader">{{isSearchingTimeOut ?'Connection Timeout' : 'No Data Found'}}</h4>
+    <h4 class="nodatamsg" *ngIf="searchResult.length==0 && !isSearchingData && !isTableLoader">{{searchingError.isError ? searchingError.errorMessage : 'Data Not Found'}}</h4>
     <!-- <div class="loader" *ngIf="isSearchingData"><img src="assets/images/loader.png" alt=""></div> -->
     <!-- <div class="per-page-record-loader" [ngStyle]="{'bottom': lowerPanelObj?.arrowBtnClassName=='up-arrow'?'25%':'35%'}" *ngIf="isTableLoader"><img src="assets/images/tableLoader.gif" alt=""/></div> -->
   </div>

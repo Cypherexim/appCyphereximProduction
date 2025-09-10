@@ -138,7 +138,7 @@ export class UserPanelComponent implements OnInit, OnChanges, OnDestroy {
 
 
   showFinalPreview(data) {
-    const modalRef = this.modalService.open(PreviewComponent, { backdrop: "static", keyboard: false, windowClass: "countryModalClass" });
+    const modalRef = this.modalService.open(PreviewComponent, { backdrop: "static", keyboard: false, windowClass: "countryModalClass", centered: true });
     (<PreviewComponent>modalRef.componentInstance).combinedData = data;
     const callBackSub =(<PreviewComponent>modalRef.componentInstance).callBack.subscribe((res:any) => {
       if(res != "OK") this.alertifyService.error(res);

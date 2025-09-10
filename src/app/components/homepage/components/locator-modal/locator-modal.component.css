@@ -56,7 +56,7 @@ div.locator-box div.head-bar{
 div.locator-box div.head-bar h5{color: white;}
 div.locator-box div.head-bar img{height: 25px;cursor: pointer;}
 
-div.locator-box div.table-container{height: 85%;width: 100%;overflow-y: hidden;}
+div.locator-box div.table-container{height: 85%;width: 100%;overflow: auto;}
 div.locator-box div.alphabets-search{ display: flex; justify-content: space-evenly; background-color: white; }
 div.locator-box div.alphabets-search span{
     font-size: 14px;

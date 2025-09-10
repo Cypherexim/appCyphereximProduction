@@ -129,7 +129,7 @@ export class LogsComponent implements OnInit{
       tempArr.push(temObj);
     }
 
-    const modalRef = this.modalService.open(TableDataModalComponent, { windowClass: 'tableDataPopUpModalClass' });
+    const modalRef = this.modalService.open(TableDataModalComponent, { windowClass: 'tableDataPopUpModalClass', centered: true });
     (<TableDataModalComponent>modalRef.componentInstance).popupName = "Log";
     (<TableDataModalComponent>modalRef.componentInstance).tableData = tempArr;
   }

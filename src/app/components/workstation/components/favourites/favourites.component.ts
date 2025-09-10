@@ -21,11 +21,11 @@ export class FavouritesComponent implements OnInit{
   isLoading:boolean = false;
 
   ngOnInit(): void {
-    setTimeout(() => console.log(this.favouritesArr), 2000)
+    // setTimeout(() => console.log(this.favouritesArr), 2000)
   }
 
   onRemoveItem(dataId:any) {
-    const modalRef = this.modalService.open(ConfirmationComponent, { windowClass: 'confirmModalClass' });
+    const modalRef = this.modalService.open(ConfirmationComponent, { windowClass: 'confirmModalClass', centered: true });
     (<ConfirmationComponent>modalRef.componentInstance).dataId = dataId;
   }
 
@@ -54,7 +54,7 @@ export class FavouritesComponent implements OnInit{
       tempArr.push(temObj);
     }
 
-    const modalRef = this.modalService.open(TableDataModalComponent, { windowClass: 'tableDataPopUpModalClass' });
+    const modalRef = this.modalService.open(TableDataModalComponent, { windowClass: 'tableDataPopUpModalClass', centered: true });
     (<TableDataModalComponent>modalRef.componentInstance).tableData = tempArr;
   }
 

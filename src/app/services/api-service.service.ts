@@ -30,7 +30,7 @@ export class ApiServiceService {
   }
 
   deleteWorkspace(Id:any){
-    return this.http.post(this.apiUrl + "api/deleteWorkspace", {visibility: false, Id});
+    return this.http.get(`${this.apiUrl}api/deleteWorkspace?id=${Id}`);
   }
 
   //download search data api
@@ -136,8 +136,8 @@ export class ApiServiceService {
     
   //get latest date of country's shipment
   getCountryLatestDate(countryData:any) {
-    const {country, direction, countryType} = countryData;
-    return this.http.get(this.apiUrl + `api/getlatestdate?countryName=${country}&direction=${direction}&countryType=${countryType}`);
+    const {countryCode, countryName, direction, countryType} = countryData;
+    return this.http.get(this.apiUrl + `api/getlatestdate?countryName=${countryName}&countryCode=${countryCode}&direction=${direction}&countryType=${countryType}`);
   }
 
   //get All SidefilterAccess

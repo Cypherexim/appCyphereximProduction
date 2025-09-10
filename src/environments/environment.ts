@@ -8,7 +8,7 @@ export const environment = {
   unlimitedDownload: 2000000,
   unlimitedSearch: 50000,
   // apiurl:'https://www.api.cypherexim.com/',
-  apiurl:'http://localhost:8081/',
+  apiurl:'http://localhost:8080/',
   linkedInBaseUrl: "https://api.linkedin.com/",
   apiDataCache: {}
 };

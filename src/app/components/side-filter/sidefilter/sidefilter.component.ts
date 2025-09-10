@@ -203,7 +203,7 @@ export class SidefilterComponent implements OnInit, AfterViewInit, OnDestroy, On
   }
 
   getAdvanceAccess():boolean {
-    if(this.authService.getUserCountry()=='India'){
+    if(this.authService.getUserCountry()==='India'){
       if(this.authService.getUserDetails()["CountryAccess"] == "All") return true;
       else {
         const countriesArr:string[] = (this.authService.getUserDetails()["CountryAccess"]).split(",");

@@ -10,11 +10,13 @@ export interface FeedbackBody{
     time: string;
 }
 
-export interface CompanyFetchBody {
+export type CompanyFetchBody = {
     countryname: string;
     companyname: string;
     direction: string;
     date: string;
+    offset: number;
+    countryType: string;
     sameCompanyCountry: boolean;
 }
 
@@ -29,8 +31,13 @@ export type ApiMsgRes = {
 }
 
 export type PivotType = {
-    keysArr: string[],
-    direction: string,
-    isSameCountryCompany: boolean
+    keysArr: string[];
+    direction: string;
+    isSameCountryCompany: boolean;
+}
+
+export type SearchingErrorType = {
+    isError: boolean;
+    errorMessage: string;
 }
 

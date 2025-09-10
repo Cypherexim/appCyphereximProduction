@@ -245,7 +245,7 @@ export class UserProfileComponent implements OnInit, OnChanges, AfterViewInit {
 
     this.userService.changePassword(apiBody).subscribe((res:any) => {
       if(!res.error) {
-        const modalRef2 = this.modalService.open(DownloadModelComponent, { backdrop: "static", keyboard: false, windowClass: 'downloadModalClass' });
+        const modalRef2 = this.modalService.open(DownloadModelComponent, { backdrop: "static", keyboard: false, windowClass: 'downloadModalClass', centered: true });
         (<DownloadModelComponent>modalRef2.componentInstance).modalType = 'password-msg';
         this.password = {oldP: "", newP: "", confirmP: ""};
       } 

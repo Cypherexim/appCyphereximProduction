@@ -12,13 +12,13 @@
             <table id="locatorTable">
                 <tbody>
                     <tr #selectAll>
-                        <td><input type="checkbox" (click)="onSelectAll(selectAll, 20)" /></td>
-                        <td><span class="label">Select All</span></td>
+                        <td><input type="checkbox" (click)="onSelectAll(selectAll, 20)" id="selectAllCheckItem" /></td>
+                        <td><span class="label"><label for="selectAllCheckItem">Select All</label></span></td>
                     </tr>
                     <tr *cdkVirtualFor="let item of copiedDataArr">
                         <td><input type="checkbox" [checked]="isChecked(replaceSpace(item))" value="{{getValueFromObj(item)}}" [id]="replaceSpace(item)" (click)="onSelectData($event, item, i)" /></td>
                         <td colspan="2">
-                            <span class="label">{{getValueFromObj(item)}}</span>
+                            <span class="label"><label [for]="replaceSpace(item)">{{getValueFromObj(item)}}</label></span>
                             <span title="Value" class="value" *ngIf="currentCountry=='INDIA'">&nbsp;({{convertor(item['valueinusd'])}})</span>
                         </td>
                     </tr>
@@ -35,5 +35,7 @@
         <span>Please wait...</span>
     </div>
 </div>
+
+
 
 

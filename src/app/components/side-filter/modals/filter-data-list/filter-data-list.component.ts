@@ -138,7 +138,7 @@ export class FilterDataListComponent implements OnInit, AfterViewInit, OnDestroy
     else return item[this.filterNameKey["key"]];
   }
 
-  replaceSpace(name, type="self"):string {
+  replaceSpace(name:string, type="self"):string {
     if(typeof name == "string") {
       return type == "other" ? (name+'').replace(new RegExp(' ', 'g'), '_').toLowerCase()
       : (name+'').replace(new RegExp(' ', 'g'), '_').toLowerCase()+"_modal";

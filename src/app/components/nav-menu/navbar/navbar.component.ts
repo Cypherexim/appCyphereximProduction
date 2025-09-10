@@ -14,6 +14,7 @@ export class NavbarComponent implements OnInit, AfterViewInit, OnDestroy, OnChan
   isToggleClosed: boolean = true;
   lastHtmlTag: HTMLSpanElement;
   userPlanDetails: any = {};
+  isStatisticalCountry:boolean = false;
 
   searchedAnalysisData: any = {};
 
@@ -21,6 +22,7 @@ export class NavbarComponent implements OnInit, AfterViewInit, OnDestroy, OnChan
   eventSubscription2: Subscription;
   eventSubscription3: Subscription;
   eventSubscription4: Subscription;
+  eventSubscription5: Subscription;
 
   constructor(
     private eventService: EventemittersService,
@@ -48,6 +50,7 @@ export class NavbarComponent implements OnInit, AfterViewInit, OnDestroy, OnChan
     });
 
     this.setToCompanyProfile();
+    this.getCurrentCountry();
   }
 
   hasAleradySearched(): boolean {
@@ -81,6 +84,7 @@ export class NavbarComponent implements OnInit, AfterViewInit, OnDestroy, OnChan
     this.eventSubscription2.unsubscribe();
     this.eventSubscription3.unsubscribe();
     this.eventSubscription4.unsubscribe();
+    this.eventSubscription5.unsubscribe();
   }
 
   ngAfterViewInit(): void {
@@ -104,7 +108,7 @@ export class NavbarComponent implements OnInit, AfterViewInit, OnDestroy, OnChan
         const pageName = page == "companyProfile" ? 'company profile' : 'analysis';
         //<temp>,"companyProfile"      !this.hasAleradySearched() && !["trending"].includes(page)
 
-        if (!this.hasAleradySearched() && !["trending"].includes(page)) this.alertService.showPackageAlert(`You cannot see the ${pageName} without searching data. You have to search the data in order to see the ${pageName}.`);
+        if (!this.hasAleradySearched() && !["trending", "companyProfile"].includes(page)) this.alertService.showPackageAlert(`You cannot see the ${pageName} without searching data. You have to search the data in order to see the ${pageName}.`);
         else {
           if (page == "companyProfile" && e.target.dataset.click == "self") this.alertService.showPackageAlert("Please choose any one company from 'Exporter' or 'Importer' counter tab in order to obtain company profile.");
           else {
@@ -127,16 +131,24 @@ export class NavbarComponent implements OnInit, AfterViewInit, OnDestroy, OnChan
   setToCompanyProfile() {
     this.eventSubscription4 = this.eventService.companyProfileEvent.subscribe((res: any) => {
       if (Object.keys(res).length > 0 && res?.target == "navbar") {
-        const { companyName, direction, country, tabDirectionType, selectedDate } = res;
+        const { companyName, direction, country, tabDirectionType, selectedDate, countryType } = res;
         const navBtn = document.getElementById("profile-btn-1") as HTMLSpanElement;
         navBtn.dataset.click = "auto";
 
         this.eventService.companyProfileEvent.next({
           target: "companyProfile", tabDirectionType,
-          companyName, direction, country, selectedDate
+          companyName, direction, country, selectedDate, countryType
         });
         navBtn.click();
       }
+    });
+  }
+
+  getCurrentCountry() {
+    this.eventSubscription5 = this.eventService.currentCountry.subscribe({
+      next: (res:any) => {
+        this.isStatisticalCountry = res?.type === "STATISTICAL";
+      }, error: (err:any) => console.log(err)
     });
   }
 }

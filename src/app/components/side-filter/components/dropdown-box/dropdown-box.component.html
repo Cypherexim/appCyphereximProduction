@@ -13,7 +13,7 @@
       <ul class="list-box">
         <li class="checkbox-container" *ngFor="let item of copyFilterOptions | slice:0:10;let i=index;">
           <input [checked]="item?.isChecked" type="checkbox" id="{{replaceSpace(filterName?.name)}}_{{replaceSpace(item?.name)}}" [value]="getSideFilterValue(item?.name, false)" (click)="onSelectItem($event, item?.name, filterName?.name)" />
-          <span class="label" ngbTooltip="{{getSideFilterValue(item?.name, false)}}">{{getSideFilterValue(item?.name, false) |ellipsis :25}}</span>          
+          <span class="label" ngbTooltip="{{getSideFilterValue(item?.name, false)}}"><label for="{{replaceSpace(filterName?.name)}}_{{replaceSpace(item?.name)}}">{{getSideFilterValue(item?.name, false) |ellipsis :25}}</label></span>          
           <span title="Value" class="value" *ngIf="item['name']['valueinusd']">&nbsp;({{convertor(item?.name['valueinusd'])}})</span>
         </li>
       </ul>

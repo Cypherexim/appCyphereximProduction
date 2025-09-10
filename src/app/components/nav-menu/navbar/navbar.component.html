@@ -4,8 +4,8 @@
     <span tabindex="1" class='header-btns' id="btn-2" (focusout)="onFocusOut($event)" (click)="onClickNavBtn($event, 'hsCodeAnalysis')">Hs Code Analysis</span>
     <span tabindex="1" class='header-btns' id="btn-3" (focusout)="onFocusOut($event)" (click)="onClickNavBtn($event, 'countryAnalysis')">Country Analysis</span>
     <span tabindex="1" class='header-btns' id="btn-4" (focusout)="onFocusOut($event)" (click)="onClickNavBtn($event, 'timeAnalysis')">Time Analysis</span>
-    <span tabindex="1" class='header-btns' id="btn-4" (focusout)="onFocusOut($event)" (click)="onClickNavBtn($event, 'exporterAnalysis')">Supplier Analysis</span>
-    <span tabindex="1" class='header-btns' id="btn-4" (focusout)="onFocusOut($event)" (click)="onClickNavBtn($event, 'importerAnalysis')">Buyer Analysis</span>
+    <span tabindex="1" *ngIf="!isStatisticalCountry" class='header-btns' id="btn-4" (focusout)="onFocusOut($event)" (click)="onClickNavBtn($event, 'exporterAnalysis')">Supplier Analysis</span>
+    <span tabindex="1" *ngIf="!isStatisticalCountry" class='header-btns' id="btn-4" (focusout)="onFocusOut($event)" (click)="onClickNavBtn($event, 'importerAnalysis')">Buyer Analysis</span>
     <span tabindex="1" class='header-btns' id="btn-5" (focusout)="onFocusOut($event)" (click)="onClickNavBtn($event, 'customizeAnalysis')">Customize Analysis</span>
 </div>
 

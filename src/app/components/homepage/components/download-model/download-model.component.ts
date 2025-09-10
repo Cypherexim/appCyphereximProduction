@@ -42,24 +42,7 @@ export class DownloadModelComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     setTimeout(() => this.currentTab='phase1', 800);
-
-    this.apiSubscription1 = this.userService.updateUserPoints().subscribe({
-      next: (res:any) => {
-        if(res != null && !res?.error) {
-          const {code, type} = this.countryData;
-          this.availablePoints = Number(res?.results[0]?.Downloads);
-  
-          this.apiSubscription2 = this.apiService.getCountryDownloadCost(code, type).subscribe({
-            next: (res2:any) => {
-              if(res2 != null && !res2?.error) {
-                this.costPoints = res2?.results[0]?.CostPerRecord ? Number(res2?.results[0]?.CostPerRecord) : 1;        
-                this.remainingPoints = this.availablePoints - (this.numberOfRecords * this.costPoints);
-              }
-            }, error: (err2:any) => console.log(err2)
-          });
-        }
-      }, error: (err:any) => console.log(err)
-    });
+    this.getUserPointsUpdated();
   }
 
   ngOnDestroy(): void {
@@ -96,6 +79,26 @@ export class DownloadModelComponent implements OnInit, OnDestroy {
         resultSpanTag.classList.add("active");
       }
     }, 300);
+  }
+
+  getUserPointsUpdated() {
+    this.apiSubscription1 = this.userService.updateUserPoints().subscribe({
+      next: (res:any) => {
+        if(res != null && !res?.error) {
+          const {code, type} = this.countryData;
+          this.availablePoints = Number(res?.results[0]?.Downloads);
+  
+          this.apiSubscription2 = this.apiService.getCountryDownloadCost(code, type).subscribe({
+            next: (res2:any) => {
+              if(res2 != null && !res2?.error) {
+                this.costPoints = res2?.results[0]?.CostPerRecord ? Number(res2?.results[0]?.CostPerRecord) : 1;        
+                this.remainingPoints = this.availablePoints - (this.numberOfRecords * this.costPoints);
+              }
+            }, error: (err2:any) => console.log(err2)
+          });
+        }
+      }, error: (err:any) => console.log(err)
+    });
   }
 
   onClickPrev() {

@@ -290,7 +290,7 @@ export class UserLoginComponent implements OnInit, AfterViewInit, OnDestroy {
       Validity: "7 days",
       DataAccess: "oct~2022,mar~2023",
       CountryAccess: "All",
-      Downloads: "0 ",
+      Downloads: "10 ",
       Searches: "50",
       User: "1",
       CommodityAccess: "All",

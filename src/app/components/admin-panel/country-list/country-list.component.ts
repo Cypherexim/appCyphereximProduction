@@ -27,6 +27,12 @@ export class CountryListComponent implements OnInit {
   combinedResponse:ApiMsgRes[] = [];
   lastTabTagId:string = "globeTab1";
   copiedCountryList:any[] = [];
+  currentSelectedTab:string = "CUSTOM";
+  availableColumns = {
+    CUSTOM: "Date, Importer, Supplier, Hs Code, Product Description, Quantity, Unit, Value, Currency, Trade Partner Countries, Ports and many more",
+    MIRROR: "Date, Importer, Supplier, Hs Code, Product Description, Quantity, Unit, Value, Currency, Trade Partner Countries, Ports",
+    STATISTICAL: "Date, Hs Code, Product Description, Quantity, Unit, Value, Currency, Trade Partner Countries"
+  }
   availableCoutriesTypes = {
     "globeTab1": [],
     "globeTab2": [],
@@ -51,6 +57,8 @@ export class CountryListComponent implements OnInit {
   ngOnInit(): void {
     this.userDetails = this.authService.getUserDetails();
     this.cachingGlobalCountriesAPI();
+    console.log(this.userDetails?.CountryCode);
+    
   }
 
   cachingGlobalCountriesAPI() {
@@ -99,8 +107,11 @@ export class CountryListComponent implements OnInit {
     }
   }
 
-  onClickTab(id:string) {
+  onClickTab(tabItem:any) {
     this.isApiInProcess = true;
+    const {key:id, dbType} = tabItem;
+    this.currentSelectedTab = dbType;
+
     if(id == this.lastTabTagId) {
       this.isApiInProcess = false;
       return;

@@ -22,6 +22,7 @@ export class CompanyProfileComponent implements OnInit, OnDestroy {
   pivotPipe: PivotPipe = new PivotPipe();
   selectedDate:string = "";
   companyName:string = "";
+  countryType:string = "";
   mapHighcharts:any;
   page:number = 1;
   collectionSize:number = 0;
@@ -125,15 +126,16 @@ export class CompanyProfileComponent implements OnInit, OnDestroy {
     this.isCompanySelected = true;
   }
 
-  getRequiredCounts() {
-    const {country, companyDirection} = this.countryObj;    
-    
+  getRequiredCounts(offset:number = 0) {
+    const {country, companyDirection} = this.countryObj;  
     const apiObj:CompanyFetchBody = {
       countryname: country==""?"India":country,
       companyname: this.searchInp.toUpperCase(),
       direction: this.currentTab,
       date: this.selectedDate,
-      sameCompanyCountry: this.isCompanyFromSameCountry
+      countryType: this.countryObj?.type,
+      sameCompanyCountry: this.isCompanyFromSameCountry,
+      offset
     };
 
     this.getSelectedCompanyData(apiObj);
@@ -186,16 +188,16 @@ export class CompanyProfileComponent implements OnInit, OnDestroy {
   furtherLinkedInCompanyProcessAfterCallingAPI(res:ApiMsgRes, arrData:any[]) {
     const phNum = arrData.length ? (arrData[0]["Importer_Phone"] || arrData[0]["Exp_Phone"] || "N/A"): "N/A";
     if(res.results.length>0) {
-      const { 
+      const {
         company_name, company_aboutUs, company_website, company_size, 
         company_headquarter, company_linkedin, company_contact, 
         company_address, company_googleDirection } = res.results[0];
 
       this.companyName = company_name;
       this.companyInfoPoints[0]["data"] = !["N/A","#N/A", null].includes(phNum) ? `${phNum}, ${(company_contact || "")}`: (company_contact || "");
-      this.companyInfoPoints[2]["data"] = company_headquarter || "";
-      this.companyInfoPoints[3]["data"] = company_address || "";
-      this.companyInfoPoints[4]["data"] = company_aboutUs || "";
+      this.companyInfoPoints[2]["data"] = company_headquarter || "N/A";
+      this.companyInfoPoints[3]["data"] = company_address || "N/A";
+      this.companyInfoPoints[4]["data"] = company_aboutUs || "N/A";
       
       this.socialLinks = {
         web: company_website || "",
@@ -206,8 +208,8 @@ export class CompanyProfileComponent implements OnInit, OnDestroy {
       this.searchLinkedInEmployees();
     } else {
       this.companyInfoPoints[0]["data"] = phNum;
-      this.companyInfoPoints[2]["data"] = arrData.length ? (arrData[0]["Importer_City"] || arrData[0]["Exp_City"] || "N/A") : "N/A";
-      this.companyInfoPoints[3]["data"] = arrData.length ? (arrData[0]["Importer_Address"] && `${arrData[0]["Importer_Address"]}, ${arrData[0]["Importer_PIN"]}` || arrData[0]["Exp_City"] && `${arrData[0]["Exp_City"]}, ${arrData[0]["Exp_PIN"]}` || "N/A") : "N/A";
+      // this.companyInfoPoints[2]["data"] = arrData.length ? (arrData[0]["Importer_City"] || arrData[0]["Exp_City"] || "N/A") : "N/A";
+      // this.companyInfoPoints[3]["data"] = arrData.length ? (arrData[0]["Importer_Address"] && `${arrData[0]["Importer_Address"]}, ${arrData[0]["Importer_PIN"]}` || arrData[0]["Exp_City"] && `${arrData[0]["Exp_City"]}, ${arrData[0]["Exp_PIN"]}` || "N/A") : "N/A";
     }
 
     this.companyInfoPoints[1]["data"] = arrData.length ? (arrData[0]["Importer_Email"] || arrData[0]["Exp_Email"] || "N/A") : "N/A";
@@ -329,11 +331,12 @@ export class CompanyProfileComponent implements OnInit, OnDestroy {
     this.eventSubscription1 = this.eventService.companyProfileEvent.subscribe({
       next: (res:any) => {
         if(Object.keys(res).length>0 && res.target == "companyProfile") {
-          const {direction, tabDirectionType, companyName, country, selectedDate} = res;
+          const {direction, tabDirectionType, companyName, country, selectedDate, countryType} = res;
           this.counterEvenObj = {...res};
           this.isCompanyFromSameCountry = (direction=="import" && tabDirectionType=="buyer" || direction=="export" && tabDirectionType=="supplier") ? true: false;
           this.currentTab = direction;//this.isCompanyFromSameCountry ? direction : direction=="import" ? "export" : "import";
           this.searchInp = companyName;
+          this.countryType = countryType;
           this.selectedDate = selectedDate;
           this.companyName = companyName;
           this.subHeads2 = [this.isCompanyFromSameCountry 
@@ -341,6 +344,7 @@ export class CompanyProfileComponent implements OnInit, OnDestroy {
             : this.currentTab=="import"?"buyers":"suppliers", ...this.subHeads2];
           
           this.profileApiObj = {
+            countryType,
             date: selectedDate,
             countryname: country,
             direction: this.currentTab,
@@ -357,8 +361,9 @@ export class CompanyProfileComponent implements OnInit, OnDestroy {
 
   public getColName(key:string):string {
     const country:string = this.profileApiObj.countryname;
-    const countryName = country[0].toUpperCase() + country.slice(1, country.length);
-    return this.tableColNames[countryName][this.currentTab][key];
+    const countryName = this.countryType==="CUSTOM" ? country[0].toUpperCase() + country.slice(1, country.length): "ANY";
+
+    return this.tableColNames?.fetchCountryHeads(countryName)["locators"][this.currentTab][key];//this.tableColNames[countryName][this.currentTab][key];
   }
 
   showShipmentTable(keyType:string) {
