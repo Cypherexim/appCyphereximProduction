@@ -1,6 +1,7 @@
 import { DatePipe } from '@angular/common';
 import { Component, OnDestroy, OnInit } from '@angular/core';
-import { Subscription } from 'rxjs';
+import { FormControl } from '@angular/forms';
+import { debounceTime, Subscription } from 'rxjs';
 import { ApiMsgRes, FeedbackBody, NewCompanyObj } from 'src/app/models/api.types';
 import { AlertifyService } from 'src/app/services/alertify.service';
 import { ApiServiceService } from 'src/app/services/api-service.service';
@@ -22,11 +23,19 @@ export class CompanyHunterComponent implements OnInit, OnDestroy{
     private datePipe: DatePipe,
     private userService: UserService,
     private excelService:ExcelService
-  ) {}
+  ) {
+    this.searchControl.valueChanges.pipe(debounceTime(800)).subscribe({
+      next: (text:any) => {
+        this.typedTxt = text;
+        this.onKeyUpInput('searchList');
+      }
+    });
+  }
 
 
   timeout:any;
   typedTxt:string = "";
+  searchControl:FormControl = new FormControl();
   currentSection:string = "dashboard";
   choosenCompanyId:number = 0;
   isSeeMoreOpen:boolean = false;
@@ -143,11 +152,11 @@ export class CompanyHunterComponent implements OnInit, OnDestroy{
       this.apiSubscription1 = this.apiService.getCompanyListByKeyword(this.typedTxt).subscribe({
         next: (res:ApiMsgRes) => {
           this.companyList = res.results;
-          if(this.timeout) {clearTimeout(this.timeout);}
-          this.timeout = setTimeout(() => {
-            const listTag = document.getElementById(listId) as HTMLUListElement;
-            if(listTag) listTag.focus();            
-          }, 200);
+          // if(this.timeout) {clearTimeout(this.timeout);}
+          // this.timeout = setTimeout(() => {
+          //   const listTag = document.getElementById(listId) as HTMLUListElement;
+          //   if(listTag) listTag.focus();            
+          // }, 200);
         }, error: (err:ApiMsgRes) => console.log(err)
       });
     } else { this.companyList = []; }  
@@ -205,7 +214,7 @@ export class CompanyHunterComponent implements OnInit, OnDestroy{
   }
 
   onFocusOutSearch() {
-    this.companyList = [];
+    setTimeout(() => this.companyList = [], 200);
   }
 
   unlockPad() {

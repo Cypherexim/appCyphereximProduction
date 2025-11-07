@@ -531,6 +531,15 @@ export class HomepageComponent implements OnInit, OnChanges, AfterViewInit, OnDe
   inItSearchClickProcess(callBy:string) {
     return new Promise((resolve, reject) => {
       if (callBy != "workspace") this.savedStatus = { isAlreadySaved: false, savedFileName: '', savedFileId: '', saveFolder: '' };
+
+      //********************* unsubscribing running sidefilters & analysis ****************//
+      this.eventSubscription10?.unsubscribe();
+      this.eventSubscription11?.unsubscribe();
+      if(this.analysisApiSubscription.length>0) {
+        this.analysisApiSubscription.forEach(analysisSubscribe => analysisSubscribe?.unsubscribe());
+      }
+      //**********************************************************************************//
+
       this.analysisApiSubscription = [];
       this.apiBodyObj = { base: {}, filter: {} };
       this.isTotalDataReceived = false;
@@ -1587,8 +1596,8 @@ export class HomepageComponent implements OnInit, OnChanges, AfterViewInit, OnDe
       type: this.direction,
       countryCode: this.currentCountryData?.code,
       countryType: this.currentCountryData?.type,
-      buyer: this.importerList.toString(),
-      vender: this.exporterList.toString(),
+      buyer: this.importerList,//.toString(),
+      vender: this.exporterList,//.toString(),
       tariffCode: this.hsCode,
       country: this.currentCountry,
       countries: this.selectedCountries,
@@ -1620,7 +1629,7 @@ export class HomepageComponent implements OnInit, OnChanges, AfterViewInit, OnDe
             }
           }
   
-          if (eventType != "download") this.workstationCache = {};
+          if (eventType !== "download") this.workstationCache = {};
           this.allSelectCheckedArr = [];
           this.eventService.sendChoosenWorkspace.next({id: res["results"]["Id"], graphs: null});
         }
@@ -1654,7 +1663,7 @@ export class HomepageComponent implements OnInit, OnChanges, AfterViewInit, OnDe
     }
 
     //In case of India country is being used via workspace
-    if (this.currentCountry == "India") {
+    if (this.currentCountry === "India") {
       const directionTag = document.getElementById("firstSelect") as HTMLDivElement;
       directionTag.classList.remove("disable");
       this.firstSelectClass = "custom-dropdown";
@@ -1666,11 +1675,11 @@ export class HomepageComponent implements OnInit, OnChanges, AfterViewInit, OnDe
     // this.importer = res?.data?.buyer;
     // this.exporter = res?.data?.vender;
 
-    if(this.currentCountry=="India") this.getCountryLocator();
+    if(this.currentCountry==="India") this.getCountryLocator();
     else this.eventService.locatorDataMove.next([]);
 
-    if (res?.data?.buyer) this.importerList = (res?.data?.buyer).split(",");
-    if (res?.data?.vender) this.exporterList = (res?.data?.vender).split(",");
+    if (res?.data?.buyer) this.importerList = typeof (res?.data?.buyer) === "string" ?  (res?.data?.buyer).split(","): res?.data?.buyer;
+    if (res?.data?.vender) this.exporterList = typeof (res?.data?.vender) === "string" ? (res?.data?.vender).split(","): res?.data?.vender;
 
     this.product = errorParams.includes(res?.data?.desc) ? [] : [res?.data?.desc];
     this.dateRange = res?.data?.dateRange;
@@ -2258,14 +2267,37 @@ export class HomepageComponent implements OnInit, OnChanges, AfterViewInit, OnDe
         userPref["tableOrderedCols"][this.currentCountry].hasOwnProperty(this.direction)
       ) {
         const {activeCols, orderedCols} = userPref["tableOrderedCols"][this.currentCountry][this.direction];
-        this.tableHeads = orderedCols.filter((headKey:string) => activeCols[headKey]);
+        const columnKeys = orderedCols.filter((headKey:string) => activeCols[headKey]);
+        this.tableHeads = this.addNewColumnForTotheOrder(columnKeys);
       } else {
-        this.tableHeads = Object.keys(new CountryHeads().fetchCountryHeads(this.currentCountry)[this.direction]);        
+        const columnKeys = Object.keys(new CountryHeads().fetchCountryHeads(this.currentCountry)[this.direction]);
+        this.tableHeads = this.addNewColumnForTotheOrder(columnKeys);
         this.tableHeads.forEach(key => this.preferedTableColHeads[key] = true);
       }
     } else {}
 
     this.isColumnExchangeInProcess = false;
+  }
+
+  addNewColumnForTotheOrder(columnKeys:string[]):string[] {
+    const tableHeads = [];
+    for(let i=0; i<columnKeys.length; i++) {
+      if((this.direction==="export" && columnKeys[i]==="Imp_Name")) {
+        tableHeads.push(columnKeys[i]);
+        tableHeads.push("ToTheOrder");
+      } else { tableHeads.push(columnKeys[i]); }
+    }
+    return tableHeads;
+  }
+
+  getToTheOrderRealName(tdId:string) {
+    const iconTag = document.getElementById("ICON"+tdId) as HTMLElement;
+    iconTag.className = "fa-regular fa-loader fa-spin";
+
+    setTimeout(() => {
+      const tdTag = document.getElementById("TD"+tdId) as HTMLDivElement;
+      tdTag.classList.add("reveal");
+    }, 3000);
   }
 
   onTapCheckVal(event:any) {

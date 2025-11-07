@@ -74,7 +74,7 @@ export class FilterNames {
     Mode:FilterName = {name: 'Mode', key: 'Mode'};
     Quantity:FilterName = {name: 'Quantity', key: 'Quantity'};
     uqc:FilterName = {name: 'UQC', key: 'uqc'};
-    Currency:FilterName = {name: 'Currency', key: 'Currency'};
+    Currency:FilterName = {name: 'Currency', key: 'Currency'};  
     Month:FilterName = {name: 'Month', key: 'Month'};
     Year:FilterName = {name: 'Year', key: 'Year'};
     Imp_Name:FilterName = {name: 'Buyer', key: 'Imp_Name'};
@@ -82,6 +82,7 @@ export class FilterNames {
     Hs2Digit:FilterName = {name: 'HS Code 2 Digit', key: 'HSCode2Dig'};
     Hs4Digit:FilterName = {name: 'HS Code 4 Digit', key: 'HSCode4Dig'};
     Hs6Digit:FilterName = {name: 'HS Code 6 Digit', key: 'HSCode6Dig'};
+    ToTheOrder:FilterName = {name: 'Updated', key: 'ToTheOrder'};
 }
 
 class ProfileData { count:number; dataList:any[]; }

@@ -364,7 +364,7 @@ export class NavMenuComponent implements OnInit, OnDestroy {
         if(!res.error) {
           this.eventService.sendNotifications.next(res.results);
 
-          const userPrefs = JSON.parse((this.authService.getUserDetails())["userPreference"]);
+          const userPrefs = JSON.parse(this.authService?.getUserDetails()?.userPreference);
           if(!userPrefs.hasOwnProperty("notification")) {userPrefs["notification"] = [];}
           const seenIDs = userPrefs!=null ? userPrefs["notification"] : [];
 

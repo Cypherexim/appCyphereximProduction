@@ -247,7 +247,9 @@
           <input type="checkbox" (click)="onCheckboxAll($event)" style="margin-right:10px;" [checked]="isMainChecked" />
           <span>(All)</span>
         </th>
-        <th *ngFor="let head of tableHeads;let i=index;" id="head-{{i}}">{{getTableHeads(head)}}</th>
+        <th *ngFor="let head of tableHeads;let i=index;" id="head-{{i}}">
+          {{head==='ToTheOrder' && currentCountry=='India' && direction==='export' ? 'UPDATED BUYER' : getTableHeads(head)}}
+        </th>
       </thead>
       <tbody>
         <tr *ngFor="let data of perPageData;">
@@ -276,8 +278,16 @@
               <!-- <a *ngIf="key!='HsCode'" (click)="openCompanyProfile(key, modifyTableData(key, data[key]))">{{modifyTableData(key, data[key])}}</a> -->
             </span>
 
+            <!-- only to the order column -->
+            <span *ngIf="key===filterNames.ToTheOrder.key" [id]="'SPAN'+data?.RecordID" class="toTheOrderTd">
+              TO THE ORDER
+              <div class="icon-loader" [id]="'TD'+data?.RecordID">
+                <i class="fa-solid fa-eye-slash" [id]="'ICON'+data?.RecordID" (click)="getToTheOrderRealName(data?.RecordID)"></i>
+              </div>
+            </span>
+
             <!-- rest of the columns apart from export and import companies -->
-            <span *ngIf="key!=filterNames.ProductDesc.key && key!=filterNames.Imp_Name.key && key!=filterNames.Exp_Name.key && key!=filterNames.HsCode.key" 
+            <span *ngIf="key!=filterNames.ToTheOrder.key && key!=filterNames.ProductDesc.key && key!=filterNames.Imp_Name.key && key!=filterNames.Exp_Name.key && key!=filterNames.HsCode.key" 
               [openDelay]="200" placement="bottom" ngbTooltip="{{key==filterNames.ProductDesc.key ? data[key] : ''}}">
               {{key=='Date' ? (alertService.dateInFormat(data[key])) : modifyTableData(key, data[key])}}
             </span>

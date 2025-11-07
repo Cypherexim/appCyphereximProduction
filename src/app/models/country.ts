@@ -34,6 +34,7 @@ export class CountryHeads {
             ProductDesc: "ITEM DESCRIPTION",
             Exp_Name: "SUPPLIER",
             Imp_Name: "BUYER",
+            ToTheOrder: "Updated",
             CountryofDestination: "COUNTRY",
             uqc: "UQC",
             Mode: "MODE",

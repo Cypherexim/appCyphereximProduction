@@ -129,7 +129,7 @@ export class CompanyProfileComponent implements OnInit, OnDestroy {
   getRequiredCounts(offset:number = 0) {
     const {country, companyDirection} = this.countryObj;  
     const apiObj:CompanyFetchBody = {
-      countryname: country==""?"India":country,
+      countryname: country===""?"India":country,
       companyname: this.searchInp.toUpperCase(),
       direction: this.currentTab,
       date: this.selectedDate,

@@ -1,6 +1,7 @@
 import { Component, Input, OnInit } from '@angular/core';
+import { FormControl } from '@angular/forms';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
-import { Subscription } from 'rxjs';
+import { debounceTime, Subscription } from 'rxjs';
 import { DownloadModelComponent } from 'src/app/components/homepage/components/download-model/download-model.component';
 import { AlertifyService } from 'src/app/services/alertify.service';
 import { ApiServiceService } from 'src/app/services/api-service.service';
@@ -17,10 +18,18 @@ export class NotificationPasswordComponent implements OnInit{
     private modalService: NgbModal,
     private alertService: AlertifyService,
     private apiService: ApiServiceService
-  ) {}
+  ) {
+    this.searchControl.valueChanges.pipe(debounceTime(800)).subscribe({
+      next: (text:string) => {
+        this.searchInp = text;
+        this.contactFilter();
+      }, error: (err:any) => console.log(err)
+    })
+  }
 
   @Input() pageType:string = "";
   
+  searchControl:FormControl = new FormControl();
   searchInp:string = "";
   heading:string = "";
   apiSubscription:Subscription;
