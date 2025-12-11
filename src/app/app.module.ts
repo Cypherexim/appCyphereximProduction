@@ -69,6 +69,8 @@ import { CompanyHunterComponent } from './components/company-hunter/company-hunt
 import { FavouritesComponent } from './components/workstation/components/favourites/favourites.component';
 import { PivotPipe } from './common/Pipes/pivot.pipe';
 import { CalculateFinancialValuePipe } from './common/Pipes/calculate-financial-value.pipe';
+import { ProfileValuePipe } from './common/Pipes/profile-value.pipe';
+
 
 @NgModule({
   declarations: [
@@ -130,6 +132,8 @@ import { CalculateFinancialValuePipe } from './common/Pipes/calculate-financial-
     FavouritesComponent,
     PivotPipe,
     CalculateFinancialValuePipe,
+    ProfileValuePipe,
+ 
   ],
   imports: [
     BrowserModule,

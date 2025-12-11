@@ -79,6 +79,7 @@ export class InputFieldComponent implements OnInit, OnChanges, OnDestroy {
     favourite: this.planFormData.Favoriteshipment.hasFavorite,
     trending: this.planFormData.Whatstrending,
     profile: this.planFormData.Companyprofile.hasProfile,
+    totheorder: this.planFormData.UpdateCompanyNamePoint.hasTotheOrder,
     contact: this.planFormData.Contactdetails,
     facility: this.planFormData.Addonfacility,
     analysis: this.planFormData.Analysis.hasAnalysis
@@ -106,7 +107,7 @@ export class InputFieldComponent implements OnInit, OnChanges, OnDestroy {
   //on click next button on admin panel
   ngOnChanges(changes: SimpleChanges): void {}
 
-  onSubmitSignalChange(res) {
+  onSubmitSignalChange(res:any) {
     if(res?.status) {
       if(this.currentForm == 'user-form') {
         if(this.userFormData['RoleName']=="" && this.userFormData.RoleId!="") {
@@ -206,6 +207,7 @@ export class InputFieldComponent implements OnInit, OnChanges, OnDestroy {
     this.planFormData.Favoriteshipment.hasFavorite = this.toggles.favourite;
     this.planFormData.Whatstrending = this.toggles.trending;
     this.planFormData.Companyprofile.hasProfile = this.toggles.profile;
+    this.planFormData.UpdateCompanyNamePoint.hasTotheOrder = this.toggles.totheorder;
     this.planFormData.Contactdetails = this.toggles.contact;
     this.planFormData.Addonfacility = this.toggles.facility;
     this.planFormData.Analysis.hasAnalysis = this.toggles.analysis;
@@ -282,13 +284,14 @@ export class InputFieldComponent implements OnInit, OnChanges, OnDestroy {
   }
 
   //on switch toggle button
-  onToggleBtnSwitch = (toggleName) => {
+  onToggleBtnSwitch = (toggleName:string) => {
     this.toggles[toggleName] = !this.toggles[toggleName];
 
     if(!this.toggles[toggleName]) {
-      if(toggleName == "favourite") this.planFormData.Favoriteshipment.favoriteName = "";
-      if(toggleName == "profile") this.planFormData.Companyprofile.profileName = "";
-      if(toggleName == "analysis") {
+      if(toggleName==="favourite") this.planFormData.Favoriteshipment.favoriteName = "";
+      if(toggleName==="profile") this.planFormData.Companyprofile.profileName = "0";
+      if(toggleName==="totheorder") this.planFormData.UpdateCompanyNamePoint.toTheOrderPoint = "0";
+      if(toggleName==="analysis") {
         this.planFormData.Analysis.analysisName = "";
         this.eventService.updateMultiselectDropDownEvent.next({ updateType: "clear", targetFrom: "admin-plan-4" });
       }
@@ -297,7 +300,7 @@ export class InputFieldComponent implements OnInit, OnChanges, OnDestroy {
   }
 
   //select onChange functions
-  onSelectRole(e) {
+  onSelectRole(e:any) {
     this.choosenRole = e.target.value;
     if(this.hasNextClicked) this.validateSpecificField();
   }
@@ -323,7 +326,7 @@ export class InputFieldComponent implements OnInit, OnChanges, OnDestroy {
     this.validateSpecificField();
   }
 
-  setAccessibleRights(id) {
+  setAccessibleRights(id:string) {
     this.userService.getRoleAccess(id).subscribe((res:any) => {
       if(!res.error && res.code == 200) {
         delete res.results[0]["Id"]
@@ -374,7 +377,7 @@ export class InputFieldComponent implements OnInit, OnChanges, OnDestroy {
     }
   }
 
-  getMultiOptions(data:any, type) {
+  getMultiOptions(data:any, type:string) {
     if(type == "CountryAccess") this.planFormData.CountryAccess = data.toString();
     else if(type == "CommodityAccess") this.planFormData.CommodityAccess = data.toString();
     else if(type == "TarrifCodeAccess") this.planFormData.TarrifCodeAccess = data.toString();
@@ -389,7 +392,7 @@ export class InputFieldComponent implements OnInit, OnChanges, OnDestroy {
     tag.classList.toggle('addmore');
     plusTag.classList.toggle('d-none');
   }
-  addPoint(id) {
+  addPoint(id:string) {
     const tag = document.getElementById(id) as HTMLButtonElement;
     tag.nextElementSibling.classList.toggle('addmore');
     tag.classList.toggle('d-none');
@@ -398,7 +401,7 @@ export class InputFieldComponent implements OnInit, OnChanges, OnDestroy {
     this.addMore[id] = 0;
   }
 
-  onClickUnltd(e, key) {
+  onClickUnltd(e:any, key:string) {
     const isChecked = e.target.checked;
 
     if(isChecked) {
@@ -437,6 +440,7 @@ export class InputFieldComponent implements OnInit, OnChanges, OnDestroy {
       favourite: this.planFormData.Favoriteshipment.hasFavorite,
       trending: this.planFormData.Whatstrending,
       profile: this.planFormData.Companyprofile.hasProfile,
+      totheorder: this.planFormData.UpdateCompanyNamePoint.hasTotheOrder,
       contact: this.planFormData.Contactdetails,
       facility: this.planFormData.Addonfacility,
       analysis: this.planFormData.Analysis.hasAnalysis
@@ -449,10 +453,13 @@ export class InputFieldComponent implements OnInit, OnChanges, OnDestroy {
     this.planFormData.Favoriteshipment.favoriteName = conditionCheck.includes(data.Favoriteshipment) ? "" : data.Favoriteshipment;
 
     this.planFormData.Companyprofile.hasProfile = conditionCheck.includes(data.Companyprofile) ? false : true;
-    this.planFormData.Companyprofile.profileName = conditionCheck.includes(data.Companyprofile) ? "" : data.Companyprofile;
+    this.planFormData.Companyprofile.profileName = conditionCheck.includes(data.Companyprofile) ? "0" : data.Companyprofile;
     
     this.planFormData.Analysis.hasAnalysis = conditionCheck.includes(data.Analysis) ? false : true;
     this.planFormData.Analysis.analysisName = conditionCheck.includes(data.Analysis) ? "" : data.Analysis;
+    
+    this.planFormData.UpdateCompanyNamePoint.hasTotheOrder = conditionCheck.includes(data.UpdateCompanyNamePoint) ? false : true;
+    this.planFormData.UpdateCompanyNamePoint.toTheOrderPoint = conditionCheck.includes(data.UpdateCompanyNamePoint) ? "0" : data.UpdateCompanyNamePoint;
   }
 
   //to fill specific toggle options if the value exist then toggle will be true or vice-versa

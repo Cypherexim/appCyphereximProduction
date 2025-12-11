@@ -40,6 +40,9 @@ export class WorkstationComponent implements OnInit, OnChanges, AfterViewInit, O
   isAllSelected:boolean = false;
   hasShownNotice:boolean = false;
 
+  isFavoriteBackBtn:boolean = false;
+  gotoBackFavorites:boolean = false;
+
   workspaceTimeoutId:any;
 
   fileIds:any[] = [];
@@ -228,9 +231,21 @@ export class WorkstationComponent implements OnInit, OnChanges, AfterViewInit, O
     }, 500)
   }
 
+  resetBackBtnTrigger = (title:string) =>  {
+    this.isFavoriteBackBtn = true;
+    this.gotoBackFavorites = false;
+    this.currentDirName = title;
+  }
+
   backToFolders() {
-    this.openWorkSpaceTable = false;
-    this.copyDataArr = [];
+    if(this.type==="favourites") {
+      this.isFavoriteBackBtn = false;
+      this.gotoBackFavorites = true;
+      this.currentDirName = "";
+    } else {
+      this.openWorkSpaceTable = false;
+      this.copyDataArr = [];
+    }
   }
 
 

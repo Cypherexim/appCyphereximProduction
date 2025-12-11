@@ -10,7 +10,7 @@ div.workstation-box{
     position: relative;
 }
 div.workstation-box div.notice {
-    text-align: start;
+    text-align: flex-start;
     font-size: 12px;
     letter-spacing: 0.55px;
     font-family: 'Roboto';
@@ -54,8 +54,8 @@ div.workstation-box div.top-bar button.backbtn{
 }
 div.workstation-box div.top-bar button.refreshbtn{
     position: absolute;
-    right: 55.5%;
-    top: 98%;
+    left: 56%;
+    bottom: -50%;
     background-color: #8a9ea0;
     border-color: #8a9ea0;
     padding: 3px 10px;
@@ -180,7 +180,7 @@ div.table-container.workspace div.folder-container div.folder-grid-container div
     height: auto;
     display: flex;
     flex-wrap: wrap;
-    justify-content: start;
+    justify-content: flex-start;
 }
 div.table-container.workspace div.folder-container div.folder-grid-container div.grid-folder{
     margin-right: 2rem;

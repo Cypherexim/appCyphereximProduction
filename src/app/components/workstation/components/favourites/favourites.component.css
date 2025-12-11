@@ -1,4 +1,72 @@
-div.favourite-container{}
+div.favorite-dir-container{
+    overflow: auto;
+    padding: 0 20px;
+    position: relative;
+}
+
+div.favorite-dir-container div.table-container div.folder-container table thead {
+    color: white;
+    background-color: #8a9ea0;
+}
+div.favorite-dir-container div.table-container div.folder-container table tbody{background-color: #f2f2f2;}
+div.favorite-dir-container div.table-container div.folder-container table thead th,
+div.favorite-dir-container div.table-container div.folder-container table tbody tr td{
+    padding: 5px 0;
+    padding: 0 20px;
+    border: 1px solid #c2c2c2;
+}
+div.favorite-dir-container div.table-container div.folder-container table tbody tr td div.folder span{
+    color: blue;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 400;
+    user-select: none;    
+}
+div.favorite-dir-container div.table-container div.folder-container table tbody tr:hover {background-color: #ffffff;}
+div.favorite-dir-container div.table-container div.folder-container table tbody tr td div.folder:hover i{transform: scale(1.15);}
+div.favorite-dir-container div.table-container div.folder-container table tbody tr td div.folder:hover span{text-decoration: underline;}
+div.favorite-dir-container div.table-container div.folder-container table tbody tr td div.folder span:active{text-decoration: none;}
+div.favorite-dir-container div.table-container div.folder-container table tbody tr td div.folder i{
+    font-size: 18px;
+    margin-top: 2px;
+    transition: all 0.3s ease-in-out;
+    transform-origin: bottom;
+    margin-right: 1%;
+}
+
+
+div.favourite-container div.favorite-table table thead{
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    width: 100%;
+    background-color: #8a9ea0;
+}
+div.favourite-container div.favorite-table table thead th{
+    color: white;
+    font-weight: bold;
+    white-space: nowrap;
+    letter-spacing: 0.5px;
+    font-family: 'Roboto', sans-serif;
+    padding: 5px 0;
+    font-size: 14px;
+}
+div.favourite-container div.favorite-table table tbody tr{background-color: #f2f2f2;}
+div.favourite-container div.favorite-table table tbody tr:hover{background-color: #ffffff;}
+div.favourite-container div.favorite-table table tbody td{
+    padding: 5px 10px;
+    border: 1px solid #c2c2c2;
+    text-align: left;
+    font-family: 'Roboto', sans-serif;
+    white-space: nowrap;
+    font-size: 13px;
+}
+div.favourite-container div.favorite-table table tbody i.fa-circle-info {color: #4cbfa6;}
+div.favourite-container div.favorite-table table tbody i.fa-trash {color: #dc3545;}
+div.favourite-container div.favorite-table table tbody i{font-size: 14px;cursor: pointer;transform-origin: bottom;transition: all 0.3s ease-in-out;}
+div.favourite-container div.favorite-table table tbody i:hover{transform: scale(1.15);}
+
+
 
 div.favourite-container div.row div.no-data{
     font-size: 18px;
@@ -7,9 +75,9 @@ div.favourite-container div.row div.no-data{
     top: 50%;
     transform: translate(-50%, -50%);
 }
-div.favourite-container div.row div.col-3{padding: 10px;}
 
-div.favourite-container div.row div.col-3 div.favourite-card{
+/* div.favourite-container div.row div.col-3{padding: 10px;} */
+/* div.favourite-container div.row div.col-3 div.favourite-card{
     height: 17.5rem;
     width: 95%;
     overflow: hidden;
@@ -48,7 +116,7 @@ div.favourite-container div.row div.col-3 div.favourite-card div.content-box div
 }
 div.favourite-container div.row div.col-3 div.favourite-card div.content-box div.key-points div.point span:first-child{font-weight: 700;margin-right: 10px;}
 div.favourite-container div.row div.col-3 div.favourite-card div.content-box div.key-points div.point span:last-child{font-weight: 500;}
-div.favourite-container div.row div.col-3 div.favourite-card div.content-box div.date{text-align: end;}
+div.favourite-container div.row div.col-3 div.favourite-card div.content-box div.date{text-align: flex-end;}
 
 
 div.favourite-container div.row div.col-3 div.favourite-card div.view-btn{
@@ -67,5 +135,5 @@ div.favourite-container div.row div.col-3 div.favourite-card div.view-btn{
     cursor: pointer;
     transition: all 0.3s ease;
 }
-div.favourite-container div.row div.col-3 div.favourite-card div.view-btn:hover{top: 155%;text-decoration: underline;}
+div.favourite-container div.row div.col-3 div.favourite-card div.view-btn:hover{top: 155%;text-decoration: underline;} */
 

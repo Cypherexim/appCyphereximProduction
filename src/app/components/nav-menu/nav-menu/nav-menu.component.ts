@@ -194,7 +194,7 @@ export class NavMenuComponent implements OnInit, OnDestroy {
   }
 
   getAllUserAPI() {
-    this.apiSubscription2 = this.userService.getAllUser().subscribe({
+    this.apiSubscription2 = this.userService.getAllUserByCols("RoleId,ParentUserId").subscribe({
       next: (res:any) => {
         if(!res?.error) {
           const resultArr = res.results;

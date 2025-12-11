@@ -63,6 +63,7 @@ export class SidefilterComponent implements OnInit, AfterViewInit, OnDestroy, On
       next: (res:any) => {
         this.filterBarVisibility = res; //to set the visibility of filter sidebar -> ON
         this.selectedItemArr = []; //to empty selected checkbox while changing component
+        
       }, error: (err:any) => console.log(err)
     });
 

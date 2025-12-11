@@ -303,12 +303,12 @@ div.content div.data-table table tbody td span.ms-3{
     text-decoration: underline;
 }
 div.content div.data-table table tbody td span i{
-    font-size: 16px;
+    font-size: 14px;
     /* color: #4cbfa6; */
     color: #236efd;
     transition: all 0.4s ease;    
 }
-div.content div.data-table table tbody td span:hover img.google-icon{scale: 1.2;}
+div.content div.data-table table tbody td:hover i{scale: 1.15;}
 
 div.content div.data-table table tbody td span.toTheOrderTd{
     position: relative;
@@ -339,10 +339,11 @@ div.content div.data-table table tbody td:nth-child(1){
     border: none;
     position: sticky;
     left: 0;
+    z-index: 1;
     height: 100%;
     background-color: white;
 }
-div.content div.data-table table tbody td:nth-child(1) div.extra-options{
+div.content div.data-table table tbody td:nth-child(1) div.extra-options {
     display: flex;
     justify-content: space-around;
     align-items: center;
@@ -897,6 +898,10 @@ img.data-waiting{
 }
 
 div.inactive{opacity: 0.5; pointer-events: none;}
+
+
+
+
 
 
 /* virtual scroller style */

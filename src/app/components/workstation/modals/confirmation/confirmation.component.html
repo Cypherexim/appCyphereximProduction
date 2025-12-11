@@ -1,10 +1,7 @@
 <div class="save-container" *ngIf="currentPopUp=='confirmation'">
     <div class="top-header"><img src="assets/images/cross.png" (click)="onDismissModal()" alt=""/></div>
+    
     <h3>{{confirmationMsg}}</h3>
-    <!-- <div class="input-field">
-        <label for="name">Name</label>
-        <input [(ngModel)]="fileName" type="text" name="file-name" id="" />
-    </div> -->
 
     <div class="buttons">
         <button class="save-btn cypher-btn blue-bgColor" (click)="onRemove()">Remove</button>
@@ -15,25 +12,43 @@
 
 
 
-<div class="share-container" *ngIf="currentPopUp=='sharing'">
-    <div class="top-header d-flex w-100"><span class="w-95 text-center">Share Download</span> <img src="assets/images/cross.png" (click)="onDismissModal()" alt=""/></div>
+<div class="share-container" *ngIf="currentPopUp==='sharing'">
+    <!-- <img src="assets/images/cross.png" (click)="onDismissModal()" alt=""/> -->
+    <div class="top-header d-flex align-items-center w-100"><span class="w-95 text-center modalHeader">Share Download</span> <i (click)="onDismissModal()" class="fa-solid fa-xmark"></i></div>
 
     <div class="bottom-container" *ngIf="!hasSubmitted; else loader">
-        <h4>Share your download file to other cypher user</h4>
+        <!-- <h4>Share your download file to other cypher user</h4> -->
         
-        <div class="action-box">
-            <h6>*Please select the user</h6>
-            <div class="select-opt w-100 position-relative" (click)="dropdownVisibility=true">
-                <div class="selected-items">
+        <div class="action-box mt-3 mb-5">
+            <!-- <h6>*Please select the user</h6> -->
+            <div class="select-opt w-100 position-relative">
+                <div class="file-size">Total Files:- {{downloadingIDsList?.length}}</div>
+                <div class="selected-items mb-3 d-flex align-items-center justify-content-between" (click)="dropdownVisibility=true">
+                    <span>{{selectedEmailsPlaceholder?.text}}</span>
+                    <span *ngIf="selectedEmailsPlaceholder?.count?.display">{{selectedEmailsPlaceholder?.count?.value}}</span>
+                </div>
+
+                <!-- <div class="selected-items">
                     <span class="selected-item" *ngFor="let item of selectedEmailArr">{{item}} <a (click)="removeItemVal(item)">🗙</a></span>
                     <input type="text" [(ngModel)]="searchInp" (keyup)="contactFilter()"/>
-                </div>
+                </div> -->
+                <div class="share-types d-flex align-items-center">
+                    <div class="type me-3 d-flex align-items-center"> <input type="checkbox" [(ngModel)]="shareLinkOptions.toPortal" />&nbsp;&nbsp;<span>Portal</span> </div>
+                    <div class="type d-flex align-items-center"> <input type="checkbox" [(ngModel)]="shareLinkOptions.toEmail" />&nbsp;&nbsp;<span>Email</span> </div>
+                </div> 
                 
-                <div tabindex="10" (focusout)="dropdownVisibility=false" class="user-list" *ngIf="dropdownVisibility">
-                    <div class="user" *ngFor="let item of copyAllUsers">
-                        <input type="checkbox" (focusout)="dropdownVisibility=true" id="{{item?.Email}}" (change)="setItemVal($event, item)" [checked]="doesItInclude(item?.Email)" />
-                        <span><img src="assets/images/account.png" alt="" /></span>
-                        {{item?.Email}}
+                <div class="user-list" *ngIf="dropdownVisibility">
+                    <div class="list-box position-relative">
+                        <div class="search-box sticky-top"><input type="text" [(ngModel)]="searchInp" (keyup)="contactFilter()" placeholder="Search here"/></div>
+                        <div class="user" *ngFor="let item of copyAllUsers">
+                            <input type="checkbox" id="{{item?.Email}}" (change)="setItemVal($event, item)" [checked]="doesItInclude(item?.Email)" /> 
+                            <label for="{{item?.Email}}">{{item?.Email}}</label>
+                        </div>
+                    </div>
+                    <div class="submit-box text-center my-2">
+                        <button (click)="selectAllUserMails(!isSelectAll)" class="btn btn-warning me-2">{{isSelectAll ? 'Unselect': 'Select'}} ALL</button>
+                        <button (click)="bindSelectedMails()" class="btn btn-success me-2">Submit</button>
+                        <button (click)="dropdownVisibility=false" class="btn btn-danger">Close</button>
                     </div>
                 </div>
             </div>

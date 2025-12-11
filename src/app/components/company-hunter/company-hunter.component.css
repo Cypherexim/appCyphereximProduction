@@ -374,7 +374,7 @@ div.container div.main-content div.trending-companies {margin-bottom: 30px;}
 div.container div.main-content div.trending-companies h4.trading {
     margin-bottom: 10px;
     margin-right: 5px;
-    text-align-last: end;
+    text-align-last: flex-end;
     font-weight: 500;
     letter-spacing: 0.25px;
     font-size: 14px;
@@ -576,7 +576,7 @@ div.container div.main-content.result {flex-basis: 75%;}
 
 div.container div.main-content.result div.trending-companies h4.trading {
     margin-bottom: 0px;
-    text-align-last: end;
+    text-align-last: flex-end;
     font-weight: 600;
     font-size: 16px;
     letter-spacing: 0.35px;
@@ -601,7 +601,7 @@ div.container div.main-content.result div.trending-companies div.form-box {
 div.container div.main-content.result div.trending-companies div.form-box div.company-info ul li i {
     font-size: 14px;
     width: 3.25%;
-    text-align: start;
+    text-align: flex-start;
 }
 
 div.container div.main-content.result div.trending-companies div.form-box div.company-info {
@@ -640,7 +640,7 @@ div.container div.main-content.result div.trending-companies div.form-box div.co
     font-weight: 400;
     display: flex;
     align-items: center;
-    justify-content: start;
+    justify-content: flex-start;
 }
 
 div.container div.main-content.result div.trending-companies div.form-box div.top-box div.company-form h5.company-name {

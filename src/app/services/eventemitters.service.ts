@@ -1,5 +1,6 @@
 import { Injectable, EventEmitter } from '@angular/core';
 import { BehaviorSubject, Subject } from 'rxjs';
+import { FavoriteShipmentResType } from '../models/api.types';
 
 @Injectable({
   providedIn: 'root'
@@ -47,6 +48,6 @@ export class EventemittersService {
   onChangeDirectionBullet:Subject<any> = new Subject<any>();
 
   passFullSideFilterData:Subject<any> = new BehaviorSubject<any>({});
-  
+  passFavoriteShipmentIds:Subject<FavoriteShipmentResType|null> = new BehaviorSubject<FavoriteShipmentResType|null>(null);
   constructor() { }
 }

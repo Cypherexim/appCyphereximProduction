@@ -15,9 +15,10 @@ export type CompanyFetchBody = {
     companyname: string;
     direction: string;
     date: string;
-    offset: number;
+    // offset: number;
     countryType: string;
     sameCompanyCountry: boolean;
+    page: number;
 }
 
 export type ApiMsgRes = {
@@ -39,5 +40,11 @@ export type PivotType = {
 export type SearchingErrorType = {
     isError: boolean;
     errorMessage: string;
+}
+
+export type FavoriteShipmentResType = {
+    id: number,
+    shipment_ids: string[],
+    to_the_order_ids: string[]
 }
 

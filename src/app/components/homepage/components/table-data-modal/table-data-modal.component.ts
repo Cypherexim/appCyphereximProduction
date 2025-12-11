@@ -15,15 +15,14 @@ export class TableDataModalComponent implements OnInit {
 
   constructor(
     private activeModal: NgbActiveModal,
-    private datePipe: DatePipe,
     private alertService: AlertifyService
   ) { }
 
   ngOnInit(): void {}
 
-  isExist(key):boolean {return this.unwantedCols.includes(key);}
+  isExist(key:string):boolean {return this.unwantedCols.includes(key);}
 
-  getValues(item) {
+  getValues(item:any) {
     if(["DATE", "Date", "date"].includes(item.key)) {
       return this.alertService.dateInFormat(item.value);
     } else return item.value;

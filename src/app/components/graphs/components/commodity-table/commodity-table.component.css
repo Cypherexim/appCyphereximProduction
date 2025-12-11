@@ -38,7 +38,7 @@ div.graph-table-container table tbody td i{font-size: 18px;color: #228d76;}
 div.graph-table-container table tbody td div.line-graph{padding: 5px 0px 6px;}
 
 div.graph-table-container table thead th:nth-child(2),
-div.graph-table-container table tbody td:nth-child(2){text-align: start;}
+div.graph-table-container table tbody td:nth-child(2){text-align: flex-start;}
 
 div.graph-table-container.loading{align-content: center;text-align: center;}
 div.graph-table-container.loading div.loader-img img{height: 4rem;}

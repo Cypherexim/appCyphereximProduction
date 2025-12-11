@@ -5,6 +5,7 @@ import { AuthService } from 'src/app/services/auth.service';
 import { ApiServiceService } from 'src/app/services/api-service.service';
 import { EventemittersService } from 'src/app/services/eventemitters.service';
 import { Subscription } from 'rxjs';
+import { ApiMsgRes } from 'src/app/models/api.types';
 
 @Component({
   selector: 'app-download-model',
@@ -30,6 +31,8 @@ export class DownloadModelComponent implements OnInit, OnDestroy {
 
   customMsg:string = "";
 
+  toTheOrderPoints:{point?: number, isLoaded: boolean} = {isLoaded: true};
+
   apiSubscription1:Subscription = new Subscription();
   apiSubscription2:Subscription = new Subscription();
 
@@ -37,12 +40,24 @@ export class DownloadModelComponent implements OnInit, OnDestroy {
     private activeModal: NgbActiveModal,
     private userService: UserService,
     private apiService: ApiServiceService,
-    private eventService: EventemittersService
+    private eventService: EventemittersService,
+    private authService: AuthService
   ) { }
 
   ngOnInit(): void {
-    setTimeout(() => this.currentTab='phase1', 800);
-    this.getUserPointsUpdated();
+    if(this.modalType!=="updated-buyer-modal") {
+      setTimeout(() => this.currentTab='phase1', 800);
+      this.getUserPointsUpdated();
+    }
+
+    if(this.modalType==="updated-buyer-modal") {
+      this.apiService.getUserTotheOrderPoint(this.authService.getUserId()).subscribe({
+        next: (res:ApiMsgRes) => {
+          this.toTheOrderPoints.point = res?.results[0]?.UpdateCompanyNamePoints;
+          this.toTheOrderPoints.isLoaded = false;
+        }, error: (err:any) => console.log(err)
+      });
+    }
   }
 
   ngOnDestroy(): void {
@@ -148,4 +163,8 @@ export class DownloadModelComponent implements OnInit, OnDestroy {
     this.closeModal();
   }
   
+  onResponseToRevealColumn(response:boolean) {
+    this.callBack.emit(response);
+    this.closeModal();
+  }
 }

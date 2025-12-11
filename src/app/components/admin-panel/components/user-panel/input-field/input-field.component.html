@@ -264,7 +264,7 @@
                         <span class="input-field">
                             <span class="more-field">
                                 <input type="checkbox" class="unlimited-access" (click)="onClickUnltd($event, 'Downloads')" />
-                                <input type="text" (keyup)="validateSpecificField()" [(ngModel)]="planFormData.Downloads" />
+                                <input type="text"  [(ngModel)]="planFormData.Downloads" />
                                 <!-- <span *ngIf="isEditMode" class="img" id="excelPoint" (click)="addMoreFunc('excelPoint')"><img src="assets/images/add-more.png" alt=""></span>
                                 <div *ngIf="isEditMode" class="input">
                                     <input type="text" [(ngModel)]="addMore.excelPoint" />
@@ -391,6 +391,17 @@
                     </div>
                     <div class="text-input"><input type="text" [disabled]="!toggles?.profile" [(ngModel)]="planFormData.Companyprofile.profileName" placeholder="Type Here..." [ngStyle]="{'opacity': toggles?.profile?'1':'0.5'}"></div>
                 </div>
+                <!-- -------------------------------- -->
+                <div class="form-data">
+                    <div class="toggle-input">
+                        <label>to the order</label>
+                        <div class="toggle-btn {{toggles?.totheorder && 'active'}}" appToggle (click)="onToggleBtnSwitch('totheorder')">
+                            <div class="toggler"></div><div class="indicator"></div>
+                        </div>
+                    </div>
+                    <div class="text-input"><input type="text" [disabled]="!toggles?.totheorder" [(ngModel)]="planFormData.UpdateCompanyNamePoint.toTheOrderPoint" [ngStyle]="{'opacity': toggles?.totheorder?'1':'0.5'}"></div>
+                </div>
+                <!-- -------------------------------- -->
                 <div class="form-data">
                     <div class="toggle-input">
                         <label>contact details</label>

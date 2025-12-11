@@ -74,7 +74,7 @@ export class FilterNames {
     Mode:FilterName = {name: 'Mode', key: 'Mode'};
     Quantity:FilterName = {name: 'Quantity', key: 'Quantity'};
     uqc:FilterName = {name: 'UQC', key: 'uqc'};
-    Currency:FilterName = {name: 'Currency', key: 'Currency'};  
+    Currency:FilterName = {name: 'Currency', key: 'Currency'};
     Month:FilterName = {name: 'Month', key: 'Month'};
     Year:FilterName = {name: 'Year', key: 'Year'};
     Imp_Name:FilterName = {name: 'Buyer', key: 'Imp_Name'};

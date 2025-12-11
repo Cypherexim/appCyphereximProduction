@@ -34,7 +34,6 @@ export class CountryHeads {
             ProductDesc: "ITEM DESCRIPTION",
             Exp_Name: "SUPPLIER",
             Imp_Name: "BUYER",
-            ToTheOrder: "Updated",
             CountryofDestination: "COUNTRY",
             uqc: "UQC",
             Mode: "MODE",
@@ -45,7 +44,8 @@ export class CountryHeads {
             ValueInUSD: "EST_VALUE US$",
             Exchange_Rate: "EXCHANGE RATE",
             PortofDestination: "DISCHARGE POINT",
-            PortofOrigin: "LOADING POINT"
+            PortofOrigin: "LOADING POINT",
+            Updated_Imp_Name: "UPDATED BUYER",
         },
         locators: {
             export: getLocatorStatus("both"),
@@ -337,7 +337,8 @@ export class CountryHeads {
     };
 
     fetchCountryHeads(country:string) {
-        if(this.countryLogs.hasOwnProperty(country)) return this.countryLogs[country];
+        const countryName = country[0].toUpperCase() + country.substring(1, country.length).toLowerCase();
+        if(this.countryLogs.hasOwnProperty(countryName)) return this.countryLogs[countryName];
         else return this.countryLogs.ANY;
     }
 }

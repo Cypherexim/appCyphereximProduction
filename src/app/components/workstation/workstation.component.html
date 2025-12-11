@@ -2,9 +2,12 @@
     <div class="notice w-100 py-1 ps-3" *ngIf="type=='download' && !hasShownNotice && downloadDataArr.length>0">Please click refresh button to get your file updated while your downloading file is in progress.</div>
     
     <div class="top-bar d-flex align-items-center position-relative">
-        <button class="backbtn btn btn-danger float-left" *ngIf="openWorkSpaceTable" (click)="backToFolders()">Back</button>
+        <button class="backbtn btn btn-danger float-left" *ngIf="openWorkSpaceTable || isFavoriteBackBtn" (click)="backToFolders()">Back</button>
         <button class="refreshbtn btn btn-danger float-left" *ngIf="type=='download'" (click)="onClickRefresh()" ngbTooltip="Refresh"><i class="fa-solid fa-rotate-right"></i></button>
-        <h4 class="w-100">{{type | uppercase}}&nbsp;&nbsp;{{openWorkSpaceTable ? ('('+currentDirName+')' | titlecase) : ''}}</h4>
+        <h4 class="w-100">
+            <span *ngIf="!isFavoriteBackBtn">{{type | uppercase}}&nbsp;&nbsp;{{openWorkSpaceTable ? ('('+currentDirName+')' | titlecase) : ''}}</span>
+            <span *ngIf="isFavoriteBackBtn">{{currentDirName | uppercase}}</span>
+        </h4>
         <div class="view-type position-absolute d-flex align-items-center" *ngIf="type == 'workspace' && !openWorkSpaceTable">
             <span title="{{item | titlecase}} View" class="list-type" (click)="setViewType(item)" *ngFor="let item of ['fa-list','fa-grid-2']">
                 <!-- <img src="assets/images/{{item}}-view.png" alt="" /> -->
@@ -116,10 +119,10 @@
     </div>
 
     <div class="table-container favourite-table" *ngIf="type == 'favourites'">
-        <app-favourites [favouritesArr]="favouriteDataArr"></app-favourites>
+        <app-favourites [favouritesArr]="favouriteDataArr" [backTrigger]="gotoBackFavorites" (resetTrigger)="resetBackBtnTrigger($event)"></app-favourites>
     </div>
 
-    <div class="table-container favourite-table" *ngIf="false">
+    <!-- <div class="table-container favourite-table" *ngIf="false">
         <table>
             <thead><th class="actions">Action</th><th *ngFor="let head of tableHeads2;">{{head | titlecase}}</th></thead>
             <tbody *ngIf="!isLoading">
@@ -133,7 +136,6 @@
                         <img class="delete" src="assets/images/bin.png" title="delete"
                         (click)="onRemoveItem(item?.RecordID)" />
                     </td>
-                    <!-- <td style="min-width:7rem;">{{item?.Date | date:'yyyy-MM-dd'}}</td> -->
                     <td *ngFor="let key of tableHeads2">
                         <a *ngIf="key=='Exp_Name' || key=='Imp_Name'" target="_blank" [href]="setGoogleLink(getHeadsValue(item, key))">{{getHeadsValue(item, key)}}</a>
                         <span *ngIf="key!='Exp_Name' && key!='Imp_Name'">{{getHeadsValue(item, key)}}</span>
@@ -141,9 +143,9 @@
                 </tr>
             </tbody>  
         </table>
-    </div>
+    </div> -->
 
-    <div id="downloadTable" class="table-container download-table" *ngIf="type == 'download'">
+    <div id="downloadTable" class="table-container download-table" *ngIf="type==='download'">
         <table>
             <thead>
                 <th>Date</th>

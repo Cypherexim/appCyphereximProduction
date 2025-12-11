@@ -1,7 +1,9 @@
 import { Component, OnInit, OnDestroy, AfterViewInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { Subscription, interval } from 'rxjs';
+import { ApiMsgRes } from 'src/app/models/api.types';
 import { SideFilterModel } from 'src/app/models/others';
+import { ApiServiceService } from 'src/app/services/api-service.service';
 import { AuthService } from 'src/app/services/auth.service';
 import { EventemittersService } from 'src/app/services/eventemitters.service';
 
@@ -53,8 +55,8 @@ export class SearchDataComponent implements OnInit, OnDestroy, AfterViewInit{
 
   constructor(
     private eventService: EventemittersService,
-    // private router: Router,
-    // private authService: AuthService
+    private authService: AuthService,
+    private apiService: ApiServiceService,
   ) { }
 
   ngOnInit() {
@@ -96,6 +98,7 @@ export class SearchDataComponent implements OnInit, OnDestroy, AfterViewInit{
   }
 
   ngAfterViewInit(): void {
+    // this.setOldBookmark();
     // if(this.hasCurrentUserLoggedIn()) {
     //   this.eventService.headerClickEvent.emit("trending");
     // }
@@ -105,6 +108,30 @@ export class SearchDataComponent implements OnInit, OnDestroy, AfterViewInit{
     if(this.eventSubscription) this.eventSubscription.unsubscribe();
     this.eventService.stopSearchingEvent.next(false);
     this.intervalVal?.unsubscribe();
+  }
+
+  setOldBookmark() {
+    const localBookmarkData = localStorage.getItem("bookmark");
+
+    if(localBookmarkData) {
+      const apiObj = {userId: this.authService.getUserId(), dataObject: []};
+      const bookmarks = JSON.parse(localBookmarkData)["data"];
+  
+      for(let i=0; i<bookmarks.length; i++) {
+        apiObj["dataObject"].push({
+          country: bookmarks[i]?.country?.toLowerCase(),
+          direction: bookmarks[i]?.Type?.toLowerCase(),
+          recordId: bookmarks[i]?.RecordID,
+          jsonShipment: JSON.stringify(bookmarks[i])
+        });
+      }
+  
+      this.apiService.addOldFavoriteShipmentTemp(apiObj).subscribe({ next: (res:ApiMsgRes) => {
+        if(!res?.error) {
+          localStorage.removeItem("bookmark");
+        }
+      }});
+    }
   }
 
   sidebarToggle() {

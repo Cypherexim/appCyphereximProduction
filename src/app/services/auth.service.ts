@@ -72,8 +72,8 @@ export class AuthService {
     window.localStorage.setItem("currentUser", JSON.stringify(userData));
   }
 
-  getUserId(){
-    const {UserId} = this.getUserDetails();
+  getUserId() {
+    const { UserId } = this.getUserDetails();
     return UserId;
   }
   getUserParentId(){

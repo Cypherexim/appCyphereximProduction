@@ -68,6 +68,12 @@ export class UserService {
   getAllUser() {
     return this.http.get<any>(this.apiPath + "api/getAllUserList");
   }
+
+  getAllUserByCols(cols:string) {
+    const date = new Date().toISOString().split("T")[0];
+    return this.http.get<ApiMsgRes>(`${this.apiPath}api/getAllUserByCols?date=${date}&cols=${cols}`);
+  }
+
 //add -- update
   addPortalUser(data:any, isItDirect:boolean=false) {
     const actionType = data.ActionType;

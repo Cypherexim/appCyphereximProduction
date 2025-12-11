@@ -47,14 +47,19 @@ export class NotificationPasswordComponent implements OnInit{
   showBanner:boolean = true;
   isSubmitClicked:boolean = false;
   notificationType:string = "normal";
-
+  isToggleOn: boolean = false;
+  tableData: any[] = [
+    { title: "sunny", isActive: false },
+    { title: "AAkash", isActive: true },
+    { title: "Rohit", isActive: false },
+  ]
   ngOnInit(): void {
-    this.apiSubscription = this.userService.getAllUser().subscribe((res:any) => {
+    this.apiSubscription = this.userService.getAllUserByCols("Email").subscribe((res:any) => {
       if(!res.error) { 
         const userList = res?.results;
         for(let i=0; i<userList.length; i++) {
           this.allusers.push(userList[i]["Email"]);
-          if(i == userList.length-1) this.copyAllUsers = [...this.allusers];
+          if(i == userList.length-1) this.copyAllUsers = structuredClone(this.allusers);
         }
       }
     });
@@ -71,13 +76,23 @@ export class NotificationPasswordComponent implements OnInit{
     this.copyAllUsers = this.allusers.filter(item => this.searchInp.toLowerCase() == (item.substring(0, txtLen)).toLowerCase());
   }
 
-  onClickTab(elem:HTMLDivElement, elem2:HTMLDivElement) {
-    elem.classList.add("active-tab");
-    elem2.classList.remove("active-tab");
-    
-    if(this.notificationPageType == "alert") this.notificationPageType = "push";
-    else this.notificationPageType = "alert";
-  }
+onClickTab(tabType: string, clickedBtn: HTMLDivElement) {
+    // remove active class from all tab buttons
+    const buttons = document.querySelectorAll('.tab-btn');
+    buttons.forEach(btn => btn.classList.remove('active-tab'));
+
+    // add active to clicked button
+    clickedBtn.classList.add('active-tab');
+
+    // update active page type
+    this.notificationPageType = tabType;
+
+    // optional: trigger API call for "get" tab
+    if (tabType === 'get') {
+      // this.getAllNotifications();
+    }
+  }
+
 
   onTypeEditor(event:any, type:string) {
     if(type == "alert") {
@@ -148,4 +163,11 @@ export class NotificationPasswordComponent implements OnInit{
       error: () => {}
     });
   }
+
+    
+
+
+
+
+  
 }

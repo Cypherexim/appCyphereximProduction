@@ -64,6 +64,7 @@ export class UserPlanModel {
     Addonfacility:boolean=false; 
     Favoriteshipment:{hasFavorite:boolean, favoriteName:string} = {hasFavorite:false, favoriteName:'0'};
     Companyprofile:{hasProfile:boolean, profileName:string} = {hasProfile:false, profileName:'0'};
+    UpdateCompanyNamePoint:{hasTotheOrder:boolean, toTheOrderPoint:string} = {hasTotheOrder:false, toTheOrderPoint:"0"};
     Analysis:{hasAnalysis:boolean, analysisName:string} = {hasAnalysis:false, analysisName:''};
 }
 

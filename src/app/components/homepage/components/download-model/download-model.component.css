@@ -59,7 +59,7 @@ div.download-container section.first-phase div.next-button button{
 
 /********* section second phase ************/
 div.download-container section.second-phase{
-    padding: 0px 3rem;
+    padding: 10px 3rem;
     overflow: auto;
     height: 85%;
 }
@@ -257,6 +257,28 @@ section.second-phase div.result span#remainingResult.active{
     animation:lessNum 0.5s linear infinite;
 }
 
+
+div.updated-buyer-container{align-content: center;}
+div.updated-buyer-box{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+div.updated-buyer-box div.msg p{font-family: 'Roboto';}
+div.updated-buyer-box div.msg p:nth-child(1){
+    font-size: 17px;
+    font-weight: 600;
+}
+div.updated-buyer-box div.buttons button{
+    width: 15%;
+    padding: 2px 0;
+    border-radius: 0;
+    border: 1px solid #c2c2c2;
+}
+
+
+
 @keyframes lessNum {
     0% {transform: translateX(5px);}    
     25% {transform: translateX(-5px);}    
@@ -287,7 +309,7 @@ section.second-phase div.result span#remainingResult.active{
         padding: 3px 0;
         font-size: 16px;
     }
-    div.download-container section.second-phase{padding: 0px 1rem;}
+    div.download-container section.second-phase{padding: 10px 1rem;}
     section.second-phase p{
         font-size: 18px;
         margin-bottom: 15px;

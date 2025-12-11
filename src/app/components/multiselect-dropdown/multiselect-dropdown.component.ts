@@ -27,6 +27,7 @@ export class MultiselectDropdownComponent implements OnInit, OnChanges, OnDestro
   alertCls:string = "";
   hscodeInp:string = "";
   filterInp:string = "";
+  isCountryIndia:boolean = false;
 
   checkedIds:any[] = [];
 
@@ -47,8 +48,12 @@ export class MultiselectDropdownComponent implements OnInit, OnChanges, OnDestro
   ngOnInit(): void {
     this.copiedDropDownList = [...this.dropDownData];
 
+    this.eventService.currentCountry.subscribe({
+      next: (res:any) => this.isCountryIndia = ["", "india"].includes(res?.country?.toLowerCase())
+    });
+
     this.eventSubscription = this.eventService.updateMultiselectDropDownEvent.subscribe(res => {
-      if(this.selectionID == res.targetFrom){
+      if(this.selectionID == res.targetFrom) {
         this.selectedItems = [];
         this.checkedIds = [];
         this.isAllChecked = false;
@@ -60,7 +65,7 @@ export class MultiselectDropdownComponent implements OnInit, OnChanges, OnDestro
             this.dropDownData.forEach(item => {
               this.selectedItems.push(item[this.dropDownOption.value]);
             });
-          } else {            
+          } else {     
             for(let i=0; i<res?.items.length; i++) {
               this.selectedItems.push(res?.items[i]);
 
@@ -88,7 +93,7 @@ export class MultiselectDropdownComponent implements OnInit, OnChanges, OnDestro
     }
   }
 
-  onCheckSingle(e, data) {
+  onCheckSingle(e:any, data) {
     if(e.target.checked) {
       if(this.dropDownOption.enableSelectAll) {
         this.selectedItems.push(data[this.dropDownOption.value]);
@@ -121,7 +126,7 @@ export class MultiselectDropdownComponent implements OnInit, OnChanges, OnDestro
   //   return this.transferSelectedItems;
   // }
 
-  onClickRemove(data) {
+  onClickRemove(data:any) {
     const elemTag = document.getElementById(data["labelId"]) as HTMLSpanElement;
     elemTag.setAttribute('data-selected', 'no');
     
@@ -130,8 +135,6 @@ export class MultiselectDropdownComponent implements OnInit, OnChanges, OnDestro
     const checkboxArr:any = document.querySelectorAll('input[type="checkbox"]:checked');
     for(let elem of checkboxArr) {elem.checked = false;}
     this.isVisible = false;
-
-
   }
 
   onCheckMultiple() {
@@ -149,11 +152,11 @@ export class MultiselectDropdownComponent implements OnInit, OnChanges, OnDestro
     this.onSelectVal.emit(this.isAllChecked ? ['All'] : []);
   }
 
-  onFilterSearch(type) {
-    const value:string = (type=="multi" ? this.filterInp : this.hscodeInp).toLowerCase();
+  onFilterSearch(type:string) {
+    const value:string = (type==="multi" ? this.filterInp : this.hscodeInp).toLowerCase();
     
     if(value.length>0) {
-      this.copiedDropDownList = this.dropDownData.filter(item => value == (type=="hscode" ? item : item[this.dropDownOption.value]).substring(0, value.length).toLowerCase());
+      this.copiedDropDownList = this.dropDownData.filter(item => value == (type==="hscode" ? item : item[this.dropDownOption.value]).substring(0, value.length).toLowerCase());
     } else {
       this.copiedDropDownList = [...this.dropDownData];
     }
@@ -166,7 +169,7 @@ export class MultiselectDropdownComponent implements OnInit, OnChanges, OnDestro
   } 
 
   //only for the time being util we need multiple hscodes (Add Hscode)
-  onClickSingleVal(data, isAccessible=true) {
+  onClickSingleVal(data:string|any, isAccessible=true) {
     if(!isAccessible) return;
 
     this.hscodeInp = "";
@@ -190,8 +193,8 @@ export class MultiselectDropdownComponent implements OnInit, OnChanges, OnDestro
     this.isVisible=false;
   }
   //only for the time being util we need multiple hscodes (Remove Hscode)
-  onClickRemoveVal(data, type) {
-    if(type == "hscode") {
+  onClickRemoveVal(data:any, type:string) {
+    if(type === "hscode") {
       this.selectedItems.splice(this.selectedItems.indexOf(data), 1);
       this.onSelectVal.emit(this.selectedItems);
     } else {
@@ -246,14 +249,16 @@ export class MultiselectDropdownComponent implements OnInit, OnChanges, OnDestro
     }
   }
 
-  hasHsCodeAccess(code):boolean {
+  hasHsCodeAccess(code:string):boolean {
     if([undefined, null].includes(code)) return;
 
     try {
-      if(this.authService.getUserDetails()["TarrifCodeAccess"] == "All") return true;
+      if(this.isCountryIndia && ["88", "93"].includes(code?.substring(0, 2))) return false; //to lock specific HsCodes
+
+      if(this.authService.getUserDetails()["TarrifCodeAccess"] === "All") return true;
       else {
         const hsCodeArr:string[] = (this.authService.getUserDetails()["TarrifCodeAccess"]).split(",");
-        const codePrefix = code.substring(0, 2);
+        const codePrefix = code.substring(0, 2);        
         if(hsCodeArr.includes(codePrefix)) return true;
         else return false;
       }

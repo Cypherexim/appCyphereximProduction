@@ -86,7 +86,7 @@ div.save-container div.input-field input{
 
 div.save-container div.buttons{
     width: 80%;
-    margin: 0 auto;
+    margin: 10px auto;
     display: flex;
     align-items: center;
     justify-content: space-evenly;
@@ -118,7 +118,7 @@ div.table-counter div.top-header img{float: right;}
 
 div.table-counter div.item-list-container{
     overflow: auto;
-    height: 84%;
+    height: 78%;
 }
 div.table-counter div.item-list-container div.item-data{
     cursor: pointer;

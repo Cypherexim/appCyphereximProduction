@@ -180,23 +180,23 @@ export class ApiServiceService {
     return this.http.post(`${this.apiUrl}api/addlog`, apiObj);
   }
 
-  getUserSearchLog() {
-    return this.http.get(`${this.apiUrl}api/getlogs`);
+  getUserSearchLog(page:number) {
+    return this.http.get(`${this.apiUrl}api/getlogs?page=${page}`);
   }
 
   setUserPlanAdditionLog(apiObj:any) {
     return this.http.post(`${this.apiUrl}api/adduseractionlog`, apiObj);
   }
 
-  getUserPlanAdditionLog(logtype:string) {
-    return this.http.get(`${this.apiUrl}api/getuseractionlogs?LogType=${logtype} Creation`);
+  getUserPlanAdditionLog(logtype:string, page:number) {
+    return this.http.get(`${this.apiUrl}api/getuseractionlogs?LogType=${logtype} Creation&page=${page}`);
   }
 
   setUserLoginLog(apiObj:any) {
     return this.http.post(`${this.apiUrl}api/adduseractivitylog`, apiObj);
   }
-  getUserLoginLog() {
-    return this.http.get(`${this.apiUrl}api/getuseractivitylist`);
+  getUserLoginLog(page:number) {
+    return this.http.get(`${this.apiUrl}api/getuseractivitylist?page=${page}`);
   }
   //========================== Notification & Alert ==========================================
   getAllNotifications() {
@@ -255,7 +255,18 @@ export class ApiServiceService {
   getCompanyProfileCounts(body:CompanyFetchBody):Observable<ApiMsgRes> {
     return this.http.post<ApiMsgRes>(`${this.apiUrl}api/getCompanyprofile`, body);
   }
+   getCompanyProfileCountss(body:CompanyFetchBody):Observable<ApiMsgRes> {
+    return this.http.post<ApiMsgRes>(`${this.apiUrl}api/getCompanyprofile/count`, body);
+  }
+  getCompanyProfileCountspivot(body:CompanyFetchBody):Observable<ApiMsgRes> {
+    return this.http.post<ApiMsgRes>(`${this.apiUrl}api/getCompanyprofile/pivot`, body);
+  } 
 
+   getCompanyshipment(body:CompanyFetchBody):Observable<ApiMsgRes> {
+    return this.http.post<ApiMsgRes>(`${this.apiUrl}api/getCompanyprofile/shipment`, body);
+  }
+
+  
   getLinkedInCompanies(companyName:string):Observable<ApiMsgRes> {
     return this.http.post<ApiMsgRes>(`${this.apiUrl}api/getLinkedInCompanies`, {companyName});
   }
@@ -315,6 +326,11 @@ export class ApiServiceService {
     return this.http.get<ApiMsgRes>(`${this.apiUrl}api/getAllCountriesDates`);
   }
 
+  sendDownloadingMail(apiBody:any):Observable<ApiMsgRes> {
+    return this.http.post<ApiMsgRes>(`${this.apiUrl}api/sendDownloadingMail`, apiBody);
+  }
+
+  
   getAllSideFilters(apiBody:any, filterAccess:any, isItFull:boolean=false):Observable<ApiMsgRes>[] {
     try {
       let loopArr = Object.keys(filterAccess);
@@ -337,5 +353,37 @@ export class ApiServiceService {
 
   getAllCountrycodes():Observable<ApiMsgRes> {
     return this.http.get<ApiMsgRes>(`${this.apiUrl}api/getAllCountryCodes`);
+  }  
+  
+  getUpdatedCompanyRevealed(apiBody:any):Observable<ApiMsgRes> {
+    return this.http.post<ApiMsgRes>(`${this.apiUrl}api/getUpdatedCompanyName`, apiBody);
+  }
+
+  addNewFavoriteShipment(apiBody:any):Observable<ApiMsgRes> {
+    return this.http.post<ApiMsgRes>(`${this.apiUrl}api/addNewFavoriteShipment`, apiBody);
+  }
+
+  removeFavoriteShipment(apiBody:any):Observable<ApiMsgRes> {
+    return this.http.post<ApiMsgRes>(`${this.apiUrl}api/removeFavoriteShipment`, apiBody);
+  }
+
+  getUserTotheOrderPoint(userId:number|string):Observable<ApiMsgRes> {
+    return this.http.get<ApiMsgRes>(`${this.apiUrl}api/getUserToTheOrderPoint?userId=${userId}`);
+  }
+
+  getFavoriteShipmentRecords(userId:number|string, viewMode:boolean=false, shipmentIds:string=""):Observable<ApiMsgRes> {
+    const apiName = viewMode ? "getFavoriteShipments": "getFavoriteShipmentIds";
+    
+    return this.http.get<ApiMsgRes>(`${this.apiUrl}api/${apiName}?userId=${userId}&shipmentIds=${shipmentIds}`);
+  }
+
+  getShipmentRecordIds(apiBody:any):Observable<ApiMsgRes> {
+    const { shipmentIdStr, userId, country, direction, isOnlyFavorites } = apiBody;
+    return this.http.get<ApiMsgRes>(`${this.apiUrl}api/getShipmentRecordIds?userId=${userId}&country=${country}&direction=${direction}&isOnlyFavorites=${isOnlyFavorites}&shipmentIds=${shipmentIdStr}`);
+  }
+
+  addOldFavoriteShipmentTemp(apiBody:any):Observable<ApiMsgRes> {
+    return this.http.post<ApiMsgRes>(`${this.apiUrl}api/addOldFavoriteShipmentTemp`, apiBody);
   }
 }
+

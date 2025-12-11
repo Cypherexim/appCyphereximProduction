@@ -83,3 +83,23 @@
     </div>
 </div>
 
+
+<div class="updated-buyer-container w-100 h-100" *ngIf="modalType=='updated-buyer-modal'">
+    <div class="updated-buyer-box" *ngIf="!toTheOrderPoints?.isLoaded">
+        <div class="msg w-75 mb-3">
+            <p>Do you want to open this company name?</p>
+            <p><b>Available Points:</b> {{toTheOrderPoints?.point}}</p>
+            <p><b>Remaining points:</b> {{toTheOrderPoints?.point}} - 1 = {{toTheOrderPoints?.point-1}}</p>
+        </div>
+        <div class="buttons w-100 text-center">
+            <button class="btn btn-success me-1" (click)="onResponseToRevealColumn(true)">Yes</button>
+            <button class="btn btn-danger" (click)="onResponseToRevealColumn(false)">No</button>
+        </div>
+    </div>
+
+    <div class="loader h-100" *ngIf="toTheOrderPoints?.isLoaded">
+      <img src="assets/images/loader.png" alt="" />
+      <span>Please wait...</span>
+    </div> 
+</div>
+

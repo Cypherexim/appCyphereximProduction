@@ -197,7 +197,7 @@
 
       <div class="column-shifter position-absolute" *ngIf="searchResult.length>0 && currentCountry=='India'">
         <!-- <button class="btn btn-warning position-absolute">Alter Table</button> -->
-        <div class="alter-table-btn" (click)="showAlterColList()">
+        <div class="alter-table-btn"  (click)="showAlterColList()">
           <i class="fa-sharp fa-regular fa-table-cells"></i>
           <i class="fa-sharp fa-solid fa-wrench"></i>
         </div>
@@ -250,6 +250,7 @@
         <th *ngFor="let head of tableHeads;let i=index;" id="head-{{i}}">
           {{head==='ToTheOrder' && currentCountry=='India' && direction==='export' ? 'UPDATED BUYER' : getTableHeads(head)}}
         </th>
+        <!-- <th *ngFor="let head of tableHeads;let i=index;" id="head-{{i}}">{{getTableHeads(head)}}</th> -->
       </thead>
       <tbody>
         <tr *ngFor="let data of perPageData;">
@@ -257,7 +258,7 @@
             <div class="extra-options" *ngIf="tableHeads.length>0">
               <input class="mainSearchCheck me-2" type="checkbox" (click)="onClickCheckbox($event,data)" [checked]="data?.isChecked" name="" id="">
               <i class="fa-solid fa-circle-info me-2" (click)="showDetailModal(data)"></i>
-              <i class="fa-{{data?.isBookmarked?'solid':'regular'}} fa-star" (click)="onSetBookmark($event, data)"></i>
+              <i class="fa-{{data?.isBookmarked?'solid':'regular'}} fa-star" [id]="'STAR'+data?.RecordID" (click)="onSetBookmark(data)"></i>
               <!-- <img src="assets/images/info.png" class=" me-1" (click)="showDetailModal(data)" (mouseover)="changeInfo($event,'in')" (mouseout)="changeInfo($event,'out')" alt=""> -->
               <!-- <img src="assets/images/star-{{data?.isBookmarked?'gold':'outline'}}.png" (click)="onSetBookmark($event, data)" /> -->
             </div>
@@ -269,8 +270,9 @@
               <!-- <i class="fa-solid fa-globe"></i> -->
               <a *ngIf="key==filterNames.HsCode.key" [href]="setGoogleLink(key, modifyTableData(key, data[key]))" target="_blank">{{modifyTableData(key, data[key])}}</a>
               <span *ngIf="key==filterNames.Imp_Name.key || key==filterNames.Exp_Name.key">
-                <a [href]="setGoogleLink(key, modifyTableData(key, data[key]))" target="_blank">
-                  <img class="google-icon" src="assets/images/google.png" alt="" />
+                <a class="google-icon" [href]="setGoogleLink(key, modifyTableData(key, data[key]))" target="_blank">
+                  <i class="fa-brands fa-google"></i>
+                  <!-- <img class="google-icon" src="assets/images/google.png" alt="" /> -->
                   <!-- <i class="fa-brands fa-google"></i> -->
                 </a>
                 <span class="ms-3" (click)="openCompanyProfile(key, modifyTableData(key, data[key]))">{{modifyTableData(key, data[key])}}</span>
@@ -280,16 +282,16 @@
 
             <!-- only to the order column -->
             <span *ngIf="key===filterNames.ToTheOrder.key" [id]="'SPAN'+data?.RecordID" class="toTheOrderTd">
-              TO THE ORDER
-              <div class="icon-loader" [id]="'TD'+data?.RecordID">
-                <i class="fa-solid fa-eye-slash" [id]="'ICON'+data?.RecordID" (click)="getToTheOrderRealName(data?.RecordID)"></i>
+              {{data?.isToTheOrder ? data?.Updated_Imp_Name: 'XXXXXXXXXXXX'}}
+              <div class="icon-loader" [id]="'TD'+data?.RecordID" *ngIf="!data?.isToTheOrder">
+                <i class="fa-solid fa-eye-slash" [id]="'ICON'+data?.RecordID" (click)="getToTheOrderRealName(data)"></i>
               </div>
             </span>
 
             <!-- rest of the columns apart from export and import companies -->
             <span *ngIf="key!=filterNames.ToTheOrder.key && key!=filterNames.ProductDesc.key && key!=filterNames.Imp_Name.key && key!=filterNames.Exp_Name.key && key!=filterNames.HsCode.key" 
               [openDelay]="200" placement="bottom" ngbTooltip="{{key==filterNames.ProductDesc.key ? data[key] : ''}}">
-              {{key=='Date' ? (alertService.dateInFormat(data[key])) : modifyTableData(key, data[key])}}
+              {{key=='Date' ? (alertService?.dateInFormat(data[key])) : modifyTableData(key, data[key])}}
             </span>
 
             <span [ngStyle]="{'width':'30rem', 'user-select':'text', 'white-space':'initial'}" *ngIf="key==filterNames.ProductDesc.key" class="product-desc d-block" [innerHTML]="modifyTableData(key, data[key])"></span>
@@ -297,7 +299,7 @@
         </tr>
       </tbody>
     </table>
-    <h4 class="nodatamsg" *ngIf="searchResult.length==0 && !isSearchingData && !isTableLoader">{{searchingError.isError ? searchingError.errorMessage : 'Data Not Found'}}</h4>
+    <h4 class="nodatamsg" *ngIf="searchResult.length==0 && !isSearchingData && !isTableLoader">{{searchingError?.isError ? searchingError?.errorMessage : 'Data Not Found'}}</h4>
     <!-- <div class="loader" *ngIf="isSearchingData"><img src="assets/images/loader.png" alt=""></div> -->
     <!-- <div class="per-page-record-loader" [ngStyle]="{'bottom': lowerPanelObj?.arrowBtnClassName=='up-arrow'?'25%':'35%'}" *ngIf="isTableLoader"><img src="assets/images/tableLoader.gif" alt=""/></div> -->
   </div>

@@ -70,6 +70,7 @@ export class UserPanelComponent implements OnInit, OnChanges, OnDestroy {
 
         tempPlanObj["Favoriteshipment"] = this.filledFormData?.addPlan?.Favoriteshipment?.favoriteName;
         tempPlanObj["Companyprofile"] = this.filledFormData?.addPlan?.Companyprofile?.profileName;
+        tempPlanObj["UpdateCompanyNamePoint"] = this.filledFormData?.addPlan?.UpdateCompanyNamePoint?.toTheOrderPoint;
         tempPlanObj["Analysis"] = this.filledFormData?.addPlan?.Analysis?.analysisName;
     
         // if(!isUpdateMode) delete tempPlanObj["PlanId"];

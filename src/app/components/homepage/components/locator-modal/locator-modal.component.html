@@ -51,12 +51,18 @@
             <div class="apply-btn"><button class="btn btn-danger" (click)="applyLocator()">Apply</button></div>
         </div>
     </div>
-    <div class="loader" *ngIf="copyArr.length==0 && isError && !isApiProcess">
-        <h5>No Data Found</h5>
+    
+    <div class="loader-container" *ngIf="copyArr.length==0 && isError && !isApiProcess">
+        <div class="loader position-relative">
+            <h5>No Company Found</h5>
+            <div class="apply-btn w-100 position-absolute text-end"><button class="btn btn-danger" (click)="applyLocator()">Apply</button></div>
+        </div>
     </div>
-
-    <div class="loader" *ngIf="isApiProcess">
-        <img src="assets/images/loader.png" alt="">
-        <span>Please wait...</span>
+    
+    <div class="loader-container">
+        <div class="loader" *ngIf="isApiProcess">
+            <img src="assets/images/loader.png" alt="">
+            <span>Please wait...</span>
+        </div>        
     </div>
 </div>

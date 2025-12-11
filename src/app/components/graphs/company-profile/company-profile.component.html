@@ -1,4 +1,5 @@
-<div id="profileContainer" class="profile-container position-relative {{(isTableShow || isLoading) && 'overflow-hidden'}}">    
+<div id="profileContainer"
+    class="profile-container position-relative {{(isTableShow || isLoading) && 'overflow-hidden'}}">
     <div class="company-profile-container w-100 pb-1">
         <div class="loader" *ngIf="isLoading">
             <img src="assets/images/loader.png" alt="">
@@ -13,11 +14,11 @@
             </label>
             <div class="ms-2 lbel">Import</div>
         </div> -->
-        
+
         <div class="company-headbar position-relative py-4">
             <div class="switch-box position-absolute">
                 <div class="toggle">
-                    <input type="checkbox" [checked]="currentTab=='import'" (click)="switchTab($event)" />
+                    <input type="checkbox" [checked]="currentSwitchTab==='import'" (click)="switchTab($event)" />
                     <label></label>
                 </div>
             </div>
@@ -32,17 +33,19 @@
             </div> -->
         </div>
 
-        <div class="no-data d-flex align-items-center pt-3 pb-2 mx-auto {{companyAllShipments.length>0?'d-none':''}}">
+        <div class="no-data d-flex align-items-center pt-3 pb-2 mx-auto {{companyAllShipments?.[0]?.total > '0'?'d-none':''}}">
             <i class="fa-solid fa-circle-exclamation fa-bounce"></i>
             <p class="mb-0">No Data Found!</p>
         </div>
 
-        <div class="details-box px-3 ps-5 d-flex align-items-start {{companyAllShipments.length==0?'hide-data':''}}">
+        <div class="details-box px-3 ps-5 d-flex align-items-start {{companyAllShipments?.[0]?.total == '0'?'hide-data':''}}" *ngIf="!isLoading" >
             <div class="left-container me-4 sticky-top" style="top: 1% !important;">
                 <div class="company-title d-flex align-items-center justify-content-start mb-3">
-                    <div class="me-3"><div class="company-avatar">
-                        <img class="w-100 h-100" src="assets/images/building.png" alt="" />
-                    </div></div>
+                    <div class="me-3">
+                        <div class="company-avatar">
+                            <img class="w-100 h-100" src="assets/images/building.png" alt="" />
+                        </div>
+                    </div>
                     <div class="company-name">{{companyName}} <span>({{companyData?.ValueInUSD}} $)</span></div>
                 </div>
 
@@ -52,23 +55,28 @@
                         <p class="mb-0">{{item?.data}}</p>
                     </div>
 
-                    <div class="social-links d-flex align-items-center">                       
-                        <div *ngIf="socialLinks.web.length" class="link"> <a href="{{socialLinks.web}}" target="_blank"><i class="fa-solid fa-globe"></i></a> </div>
-                        <div *ngIf="socialLinks.google.length" class="link"> <a href="{{socialLinks.google}}" target="_blank"><i class="fa-brands fa-google"></i></a> </div>
-                        <div *ngIf="socialLinks.linkedIn.length" class="link"> <a href="{{socialLinks.linkedIn}}" target="_blank"><i class="fa-brands fa-linkedin"></i></a> </div>
+                    <div class="social-links d-flex align-items-center">
+                        <div *ngIf="socialLinks.web.length" class="link"> <a href="{{socialLinks.web}}"
+                                target="_blank"><i class="fa-solid fa-globe"></i></a> </div>
+                        <div *ngIf="socialLinks.google.length" class="link"> <a href="{{socialLinks.google}}"
+                                target="_blank"><i class="fa-brands fa-google"></i></a> </div>
+                        <div *ngIf="socialLinks.linkedIn.length" class="link"> <a href="{{socialLinks.linkedIn}}"
+                                target="_blank"><i class="fa-brands fa-linkedin"></i></a> </div>
                     </div>
                 </div>
             </div>
 
             <div class="right-container">
-                <div class="top-counts d-flex align-items-start mb-5">
+                <div class="top-counts d-flex align-items-start mb-5"> 
                     <div class="side-intro w-25 me-4 d-none">
                         <h3>Company Profile</h3>
                         <p>Following is the overall Statistics of the company that would help you to analyse better!</p>
                     </div>
 
                     <div class="count-container row w-100">
-                        <div (click)="showShipmentTable(item)" class="count-box col-4 d-flex flex-column align-items-center" *ngFor="let item of subHeads2;">
+                        <div (click)="showShipmentTable(item)"
+                            class="count-box col-4 d-flex flex-column align-items-center"
+                            *ngFor="let item of subHeads2;">
                             <div class="count-value">{{getProfileValue(item)}}</div>
                             <div class="count-type">{{item|titlecase}}</div>
                         </div>
@@ -82,9 +90,13 @@
 
                 <div class="grid-box-container w-100 {{!isEmployeeOpen && 'd-none'}}">
                     <div class="position-tabs d-flex align-items-center justify-content-between">
-                        <span (click)="onSelectListTab('all')" class="{{currentListTab=='all' && 'selected-tab'}}">All<span>({{employeeCounting.all}})</span></span> 
-                        <span (click)="onSelectListTab('directors')" class="{{currentListTab=='directors' && 'selected-tab'}}">Decision Makers<span>({{employeeCounting.decisionMakers}})</span></span> 
-                        <span (click)="onSelectListTab('others')" class="{{currentListTab=='others' && 'selected-tab'}}">Others<span>({{employeeCounting.others}})</span></span>
+                        <span (click)="onSelectListTab('all')"
+                            class="{{currentListTab=='all' && 'selected-tab'}}">All<span>({{employeeCounting.all}})</span></span>
+                        <span (click)="onSelectListTab('directors')"
+                            class="{{currentListTab=='directors' && 'selected-tab'}}">Decision
+                            Makers<span>({{employeeCounting.decisionMakers}})</span></span>
+                        <span (click)="onSelectListTab('others')"
+                            class="{{currentListTab=='others' && 'selected-tab'}}">Others<span>({{employeeCounting.others}})</span></span>
                     </div>
 
                     <div class="linkedIn-table">
@@ -93,70 +105,83 @@
                                 <th>Name</th>
                                 <th>Location</th>
                                 <th>Email</th>
-                                <th>Contact</th>                 
+                                <th>Contact</th>
                             </thead>
                             <tbody>
                                 <tr *ngFor="let item of copyLinkedInEmployees;let i=index">
                                     <td>
                                         <div class="contact-persion d-flex flex-column align-items-start">
-                                            <span>{{item?.name | titlecase}}&nbsp;&nbsp;&nbsp;<a target="_blank" href="{{item.url}}"><i class="fa-brands fa-linkedin"></i></a></span>
-                                            <span ngbTooltip="{{item?.designation}}" placement="bottom">{{getEllipsedLink(item?.designation, 30)}}</span>
+                                            <span>{{item?.name | titlecase}}&nbsp;&nbsp;&nbsp;<a target="_blank"
+                                                    href="{{item.url}}"><i class="fa-brands fa-linkedin"></i></a></span>
+                                            <span ngbTooltip="{{item?.designation}}"
+                                                placement="bottom">{{getEllipsedLink(item?.designation, 30)}}</span>
                                         </div>
                                     </td>
                                     <td>{{companyInfoPoints[2]['data']}}</td>
-                                    <td><div class="contact-info position-relative">
-                                        <div class="h-100 w-100" id="email-{{i}}">xxxxxxxxxxxxx@xxxxx.xxx</div>
-                                        <div class="icons h-100 w-100 blurred-info">
-                                            <i class="fa-sharp fa-solid fa-eye" style="color:#30a78d;" (click)="revealInfo($event, item, 'email-'+i)"></i>
-                                            <i *ngIf="currentInfoId=='email-'+i" class="fa-sharp-duotone fa-solid fa-spinner-third fa-spin" style="color:#0d6efd;"></i>
+                                    <td>
+                                        <div class="contact-info position-relative">
+                                            <div class="h-100 w-100" id="email-{{i}}">xxxxxxxxxxxxx@xxxxx.xxx</div>
+                                            <div class="icons h-100 w-100 blurred-info">
+                                                <i class="fa-sharp fa-solid fa-eye" style="color:#30a78d;"
+                                                    (click)="revealInfo($event, item, 'email-'+i)"></i>
+                                                <i *ngIf="currentInfoId=='email-'+i"
+                                                    class="fa-sharp-duotone fa-solid fa-spinner-third fa-spin"
+                                                    style="color:#0d6efd;"></i>
+                                            </div>
                                         </div>
-                                    </div></td>
-                                    <td><div class="contact-info d-flex flex-column align-items-center justify-content-center position-relative">
-                                        <div class="hq mb-2"><span>HQ:</span>&nbsp;<span id="phone-{{i}}">xxxxxxxxxxxxx</span></div>
-                                        <div class="personal d-flex align-items-center justify-content-center w-100">
-                                            <span>Mob:</span>&nbsp;<button class="btn btn-primary" id="request-{{i}}" (click)="onRequest('request-'+i)">
-                                                <span>Request</span>
-                                                <i class="fa-solid fa-spinner-scale fa-spin-pulse d-none"></i>
-                                            </button>
-                                        </div>
+                                    </td>
+                                    <td>
+                                        <div
+                                            class="contact-info d-flex flex-column align-items-center justify-content-center position-relative">
+                                            <div class="hq mb-2"><span>HQ:</span>&nbsp;<span
+                                                    id="phone-{{i}}">xxxxxxxxxxxxx</span></div>
+                                            <div
+                                                class="personal d-flex align-items-center justify-content-center w-100">
+                                                <span>Mob:</span>&nbsp;<button class="btn btn-primary"
+                                                    id="request-{{i}}" (click)="onRequest('request-'+i)">
+                                                    <span>Request</span>
+                                                    <i class="fa-solid fa-spinner-scale fa-spin-pulse d-none"></i>
+                                                </button>
+                                            </div>
 
-                                        <div class="icons h-100 w-100 blurred-info" style="background-color:#f5f5f5;">
-                                            <i class="fa-sharp fa-solid fa-eye" style="color:#30a78d;" (click)="revealInfo($event, item, 'phone-'+i)"></i>
-                                            <i *ngIf="currentInfoId=='phone-'+i" class="fa-sharp-duotone fa-solid fa-spinner-third fa-spin" style="color:#0d6efd;"></i>
+                                            <div class="icons h-100 w-100 blurred-info"
+                                                style="background-color:#f5f5f5;">
+                                                <i class="fa-sharp fa-solid fa-eye" style="color:#30a78d;"
+                                                    (click)="revealInfo($event, item, 'phone-'+i)"></i>
+                                                <i *ngIf="currentInfoId=='phone-'+i"
+                                                    class="fa-sharp-duotone fa-solid fa-spinner-third fa-spin"
+                                                    style="color:#0d6efd;"></i>
+                                            </div>
                                         </div>
-                                    </div></td>
+                                    </td>
                                 </tr>
                             </tbody>
                         </table>
 
-                        <div *ngIf="linkedInEmployees.length==0" class="empty-box w-100 h-100 d-flex flex-column align-items-center justify-content-center">
+                        <div *ngIf="linkedInEmployees.length==0"
+                            class="empty-box w-100 h-100 d-flex flex-column align-items-center justify-content-center">
                             <h5 class="mb-2">No Data Available</h5>
                             <p class="mb-0">Check back later for any updates.</p>
                         </div>
-                    </div> 
-                    
-                    
+                    </div>
 
-                    <ngb-pagination [collectionSize]="collectionSize" [(page)]="page" [pageSize]="5" [boundaryLinks]="true" (pageChange)="onPageChange($event)">
+
+
+                    <ngb-pagination [collectionSize]="collectionSize" [(page)]="page" [pageSize]="5"
+                        [boundaryLinks]="true" (pageChange)="onPageChange($event)">
                         <ng-template ngbPaginationPages let-page let-pages="pages">
                             <li class="ngb-custom-pages-item" *ngIf="pages.length > 0">
                                 <div class="mb-3 d-flex flex-nowrap px-2">
-                                    <label id="paginationInputLabel" for="paginationInput" class="col-form-label me-2 ms-1">Page</label>
-                                    <input
-                                        #i
-                                        type="text"
-                                        inputmode="numeric"
-                                        pattern="[0-9]*"
-                                        class="form-control custom-pages-input"
-                                        id="paginationInput"
-                                        [value]="page"
-                                        (keyup.enter)="selectPage(i.value)"
-                                        (blur)="selectPage(i.value)"
+                                    <label id="paginationInputLabel" for="paginationInput"
+                                        class="col-form-label me-2 ms-1">Page</label>
+                                    <input #i type="text" inputmode="numeric" pattern="[0-9]*"
+                                        class="form-control custom-pages-input" id="paginationInput" [value]="page"
+                                        (keyup.enter)="selectPage(i.value)" (blur)="selectPage(i.value)"
                                         (input)="formatInput($any($event).target)"
                                         aria-labelledby="paginationInputLabel paginationDescription"
-                                        style="width: 2.5rem"
-                                    />
-                                    <span id="paginationDescription" class="col-form-label text-nowrap px-2"> of {{pages.length}}</span>
+                                        style="width: 2.5rem" />
+                                    <span id="paginationDescription" class="col-form-label text-nowrap px-2"> of
+                                        {{pages.length}}</span>
                                 </div>
                             </li>
                         </ng-template>
@@ -184,21 +209,27 @@
                 </tbody>
             </table></div>            
         </div> -->
-    </div>    
+    </div>
 </div>
 
 
 
-<div class="modal-popup position-absolute w-100 h-100 d-flex align-items-center justify-content-center {{isTableShow && 'active'}}">
+<div
+    class="modal-popup position-absolute w-100 h-100 d-flex align-items-center justify-content-center {{isTableShow && 'active'}}">
     <div class="card">
-        <div class="card-header d-flex justify-content-between align-items-center px-4">             
-            <h5 class="w-100 text-center">{{shipmentTableName}}</h5> 
+        <div class="card-header d-flex justify-content-between align-items-center px-4">
+            <h5 class="w-100 text-center">{{shipmentTableName}}</h5>
             <i class="fa-solid fa-xmark" (click)="closePivotTable()"></i>
         </div>
         <div class="card-body h-100">
-            <div class="btns mx-auto d-flex align-items-center justify-content-between {{isAllShipmentShow && 'd-none'}}">
-                <i title="{{!isPivotExpand ? 'Expand':'Collapse'}} All" class="fa-solid {{!isPivotExpand ?'fa-square-minus':'fa-square-plus'}}" (click)="toggleDetailOpen()"></i>
-                <i title="{{!isPivotSorted ? 'In':'De'}}creasing Order" class="fa-solid {{!isPivotSorted ? 'fa-arrow-down-wide-short':'fa-arrow-up-short-wide'}}" (click)="sortDataList()"></i>
+            <div
+                class="btns mx-auto d-flex align-items-center justify-content-between {{isAllShipmentShow && 'd-none'}}">
+                <i title="{{!isPivotExpand ? 'Expand':'Collapse'}} All"
+                    class="fa-solid {{!isPivotExpand ?'fa-square-minus':'fa-square-plus'}}"
+                    (click)="toggleDetailOpen()"></i>
+                <i title="{{!isPivotSorted ? 'In':'De'}}creasing Order"
+                    class="fa-solid {{!isPivotSorted ? 'fa-arrow-down-wide-short':'fa-arrow-up-short-wide'}}"
+                    (click)="sortDataList()"></i>
             </div>
 
             <div class="w-100 overflow-auto">
@@ -208,34 +239,88 @@
                 </div>
 
                 <details class="level1 {{isAllShipmentShow && 'd-none'}}" *ngFor="let key of pivotTableKeys">
-                    <summary class="level1-sum">{{key | uppercase}} <span class="float-right">({{currencyConvertor(pivotTable[key]['value'])}})</span></summary>
-                    
-                    <details class="level2 {{item.key=='value' && 'd-none'}}" *ngFor="let item of pivotTable[key] | keyvalue">
-                        <summary class="level2-sum">{{item.key}} <span class="float-right">({{currencyConvertor(item.value['value'])}})</span></summary>
-                    
-                        <details class="level3 {{item2.key=='value' && 'd-none'}}" *ngFor="let item2 of item.value | keyvalue">
-                            <summary class="level3-sum">{{item2.key}} <span class="float-right">({{currencyConvertor(item2.value)}})</span></summary>
+                    <summary class="level1-sum">{{key | uppercase}} <span
+                            class="float-right">({{currencyConvertor(pivotTable[key]['value'])}})</span></summary>
+
+                    <details class="level2 {{item.key=='value' && 'd-none'}}"
+                        *ngFor="let item of pivotTable[key] | keyvalue">
+                        <summary class="level2-sum">{{item.key}} <span
+                                class="float-right">({{currencyConvertor(item.value['value'])}})</span></summary>
+
+                        <details class="level3 {{item2.key=='value' && 'd-none'}}"
+                            *ngFor="let item2 of item.value | keyvalue">
+                            <summary class="level3-sum">{{item2.key}} <span
+                                    class="float-right">({{currencyConvertor(item2.value)}})</span></summary>
                         </details>
                     </details>
                 </details>
 
 
-                <cdk-virtual-scroll-viewport *ngIf="isAllShipmentShow" [itemSize]="25" class="CustomVirtualScrollStrategy h-100">
-                <table class="w-100 h-100">
-                    <thead>
-                        <th>S.no</th>
-                        <th *ngFor="let head of currentTableHeads">{{getColName(head) | titlecase}}</th>
-                    </thead>
-                    <tbody>
-                        <tr *cdkVirtualFor="let item of currentTableData;let i=index">
-                            <td>{{i+1}}</td>
-                            <td *ngFor="let head of currentTableHeads" class="w-100 h-100">{{item[head]}}</td>
-                        </tr>
-                    </tbody>
-                </table>
-                </cdk-virtual-scroll-viewport>
+                <div *ngIf="isAllShipmentShow" style="max-height: 84%; overflow-y: auto;">
+                    <div class="loader loader-shipment" *ngIf="isLoading" >
+                        <img src="assets/images/loader.png" class="loader-shipment-img" alt=""
+                            >
+                        <span style="margin-top: 10px; font-weight: 500;">Profile is loading, Please wait...</span>
+                    </div>
+                    <table *ngIf="!isLoading" class="table w-100">
+                        <thead>
+                            <tr>
+                                <th>S.No</th>
+                                <th *ngFor="let head of currentTableHeads">
+                                    {{ head | titlecase }}
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr *ngFor="let item of currentTableData; let i = index">
+                                <td>{{ i + 1 }}</td>
+                                <td *ngFor="let head of currentTableHeads">
+                                    {{ item[head] }}
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                </div>
+
+
+
+                <div *ngIf="isAllShipmentShow"
+                    class="modern-pagination d-flex flex-wrap justify-content-between align-items-center">
+
+                    <div class="page-info">
+                        Showing page <strong>{{pageSize}}</strong> of <strong>{{totalPages}}</strong>
+                        (Total <strong>{{companyAllShipmentsTotal}}</strong> records)
+                    </div>
+
+                    <nav class="pagination-controls my-2">
+                        <ul class="pagination mb-0">
+                            <!-- Prev Button -->
+                            <li class="page-item" [ngClass]="{'disabled': pageSize <= 1}">
+                                <button class="page-btn" (click)="getPrev()" [disabled]="pageSize <= 1">
+                                    <i class="fa-solid fa-angle-left"></i>
+                                </button>
+                            </li>
+
+                            <!-- Current Page -->
+                            <li class="page-item active">
+                                <button class="page-btn">{{pageSize}}</button>
+                            </li>
+
+                            <!-- Next Button -->
+                            <li class="page-item" [ngClass]="{'disabled': pageSize >= totalPages}">
+                                <button class="page-btn" (click)="getNext()" [disabled]="pageSize >= totalPages">
+                                    <i class="fa-solid fa-angle-right"></i>
+                                </button>
+                            </li>
+                        </ul>
+                    </nav>
+                </div>
+
+
+
+
             </div>
         </div>
     </div>
 </div>
-  

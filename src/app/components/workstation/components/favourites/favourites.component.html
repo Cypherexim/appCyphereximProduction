@@ -1,28 +1,69 @@
-<div class="favourite-container h-100">
-    <div class="row" *ngIf="!isLoading">
-        <div *ngFor="let item of favouritesArr" class="col-3 justify-content-center align-items-center {{favouritesArr.length==0 ? 'd-none': 'd-flex'}}">
+<div class="favorite-dir-container" *ngIf="favoriteShipmentRes?.isFolderView">
+    <div class="table-container">
+        <div class="folder-container h-100 pt-3">
+            <table class="w-100 text-start">
+                <thead>
+                    <th>Folder Name</th>
+                    <th class="text-center">Size</th>
+                </thead>
+                <tbody>
+                    <tr *ngFor="let item of favoriteShipmentsIds | keyvalue">
+                        <td><div class="folder my-1">
+                            <i class="fa-duotone fa-solid fa-folder-open me-2" style="--fa-primary-color:#4cbfa6; --fa-secondary-color:#4cbfa6;"></i>
+                            <span (click)="openFavoriteFolder(item?.key)">{{(item.key==='favorite' ? 'favorite': 'to the order') | titlecase}} Shipments</span>
+                        </div></td>
+                        <td class="text-center">{{item?.value?.length}}</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+
+
+<div class="favourite-container h-100" *ngIf="!favoriteShipmentRes?.isFolderView">
+    <div class="favorite-table" *ngIf="!favoriteShipmentRes?.isLoading">
+        <table class="w-100">
+            <thead>
+                <th *ngFor="let head of favoriteTableHeads">{{head | titlecase}}</th>
+            </thead>
+            <tbody>
+                <tr *ngFor="let item of favoriteShipmentRes?.favoriteShipmentsList">
+                    <td><i class="fa-solid fa-circle-info" (click)="showDetailModal(item)"></i></td>
+                    <td>{{item?.favorite_shipment?.Type==='IMPORT' ? item?.favorite_shipment?.Exp_Name : item?.favorite_shipment?.Imp_Name}}</td>
+                    <td>{{convertValueInUsd(item?.favorite_shipment?.ValueInUSD)}}</td>
+                    <td>{{item?.favorite_shipment?.HsCode}}</td>
+                    <td>{{item?.favorite_shipment?.Type=='IMPORT' ? item?.favorite_shipment?.CountryofOrigin : item?.favorite_shipment?.CountryofDestination}}</td>
+                    <td>{{item?.favorite_shipment?.Date | date:'dd MMM, yyyy'}}</td>
+                    <td><i class="fa-solid fa-trash" (click)="onRemoveItem(item?.favorite_shipment?.RecordID)"></i></td>
+                </tr>
+            </tbody>
+        </table>
+
+
+        <div *ngFor="let item of favoriteShipmentRes?.favoriteShipmentsList" class="col-3 d-none justify-content-center align-items-center {{favoriteShipmentRes.length===0 ? 'd-none': 'd-flex'}}">
             <div class="favourite-card position-relative">
                 <div class="btn-bar d-flex align-items-center justify-content-end">
-                    <i class="fa-solid fa-trash" (click)="onRemoveItem(item?.RecordID)"></i>
+                    <i class="fa-solid fa-trash" (click)="onRemoveItem(item?.favorite_shipment?.RecordID)"></i>
                 </div>
                 <div class="content-box">
-                    <h2>{{item?.Type=='IMPORT' ? item?.Exp_Name : item?.Imp_Name}}</h2>
+                    <h2>{{item?.favorite_shipment?.Type==='IMPORT' ? item?.favorite_shipment?.Exp_Name : item?.favorite_shipment?.Imp_Name}}</h2>
                     <div class="key-points">
-                        <div class="point"><span>Shipment Date:</span><span>{{item?.Date | date:'dd MMM, yyyy'}}</span></div>
-                        <div class="point"><span>Value($):</span><span>{{convertValueInUsd(item?.ValueInUSD)}}</span></div>
-                        <div class="point"><span>HS Code:</span><span>{{item?.HsCode}}</span></div>
-                        <div class="point"><span>Country:</span><span>{{item?.Type=='IMPORT' ? item?.CountryofOrigin : item?.CountryofDestination}}</span></div>
+                        <div class="point"><span>Shipment Date:</span><span>{{item?.favorite_shipment?.Date | date:'dd MMM, yyyy'}}</span></div>
+                        <div class="point"><span>Value($):</span><span>{{convertValueInUsd(item?.favorite_shipment?.ValueInUSD)}}</span></div>
+                        <div class="point"><span>HS Code:</span><span>{{item?.favorite_shipment?.HsCode}}</span></div>
+                        <div class="point"><span>Country:</span><span>{{item?.favorite_shipment?.Type=='IMPORT' ? item?.favorite_shipment?.CountryofOrigin : item?.favorite_shipment?.CountryofDestination}}</span></div>
                     </div>
-                    <!-- <div class="date"><span>26 June, 2024</span></div> -->
                 </div>
                 <div class="view-btn position-absolute" (click)="showDetailModal(item)">VIEW</div>
             </div>
         </div>
 
-        <div class="{{favouritesArr.length==0 ? 'd-block': 'd-none'}} no-data text-center position-absolute">No Favourites Available</div>
+        <div class="{{favoriteShipmentRes.length===0 ? 'd-block': 'd-none'}} no-data text-center position-absolute">No {{favoriteShipmentRes?.currentShipmentType==='favorite' ? 'Favourites': 'To The Order Shipments'}} Available</div>
     </div>
 
-    <div class="loader" *ngIf="isLoading">
+    <div class="loader" *ngIf="favoriteShipmentRes?.isLoading">
         <img src="assets/images/loader.png" alt="">
         <span>Please wait...</span>
     </div>

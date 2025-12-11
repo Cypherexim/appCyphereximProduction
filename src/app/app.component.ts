@@ -15,8 +15,8 @@ export class AppComponent implements OnDestroy {
   title = 'Cypher';
   idleTime = 0;
   intervalSubscription:Subscription;
-  apiSubscription:Subscription;
-  eventSubscription:Subscription;
+  // apiSubscription:Subscription;
+  // eventSubscription:Subscription;
   whatsTrendingDataObj:any = {
     totalValue: {}
   };
@@ -25,8 +25,8 @@ export class AppComponent implements OnDestroy {
   constructor(
     private modalService: NgbModal,
     private authService: AuthService,
-    private apiService: ApiServiceService, 
-    private eventService: EventemittersService
+    // private apiService: ApiServiceService, 
+    // private eventService: EventemittersService
   ) {
     //to stop printScreen
     document.addEventListener('keyup', (e) => {
@@ -56,7 +56,7 @@ export class AppComponent implements OnDestroy {
 
   ngOnDestroy(): void {
     this.intervalSubscription?.unsubscribe();
-    this.apiSubscription?.unsubscribe();
+    // this.apiSubscription?.unsubscribe();
   }
 
   stopBackButton() {
