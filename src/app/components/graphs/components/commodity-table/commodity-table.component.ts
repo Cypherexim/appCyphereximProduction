@@ -1,6 +1,6 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { DomSanitizer } from '@angular/platform-browser';
-import { Subscription } from 'rxjs';
+import { Subscription, timer } from 'rxjs';
 import { ApiMsgRes } from 'src/app/models/api.types';
 import { ApiServiceService } from 'src/app/services/api-service.service';
 import { EventemittersService } from 'src/app/services/eventemitters.service';
@@ -24,8 +24,9 @@ export class CommodityTableComponent implements OnInit, OnDestroy {
   financialYearValues=[];
   commodities:string[] = [];
 
-  apiSubscription:Subscription;
-  eventSubscription:Subscription;
+  apiSubscription:Subscription = new Subscription();
+  eventSubscription:Subscription = new Subscription();
+  timerSubscription:Subscription = new Subscription();
 
   constructor(
     private apiService: ApiServiceService,
@@ -39,16 +40,17 @@ export class CommodityTableComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
-    this.apiSubscription.unsubscribe();
-    this.eventSubscription.unsubscribe();
+    this.apiSubscription?.unsubscribe();
+    this.eventSubscription?.unsubscribe();
+    this.timerSubscription?.unsubscribe();
   }
 
   whatstrandingEventInit() {
     this.eventSubscription = this.eventService.onChangeDirectionBullet.subscribe({
       next: (res:any) => {
         const {type, value} = res;
-        if(type=="direction") this.direction = value;
-        else this.year = value;
+        if(type==="direction") {this.direction = value;}
+        else {this.year = value;}
 
         this.getCommidityData();
       }, error: (err:any) => console.log(err)
@@ -64,7 +66,7 @@ export class CommodityTableComponent implements OnInit, OnDestroy {
 
     if(environment.apiDataCache.hasOwnProperty(apiCacheKey)) {
       const tempRes = JSON.parse(JSON.stringify(environment.apiDataCache[apiCacheKey]));
-      setTimeout(() => this.transformResponseData(tempRes), 1500);
+      this.timerSubscription = timer(1500).subscribe(() => this.transformResponseData(tempRes));
     } else {
       this.apiSubscription = this.apiService.getWhatstrandingCommodityData(body).subscribe({
         next: (res:ApiMsgRes) => {

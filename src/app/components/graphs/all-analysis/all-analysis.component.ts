@@ -84,7 +84,7 @@ export class AllAnalysisComponent implements OnInit, OnChanges, AfterViewInit, O
 
   apiSubscription:Subscription;
   eventSubscription: Subscription;
-  timerSubscription:Subscription;
+  timerSubscription:{[key: `timerSubscription${number}`]:Subscription} = {};
 
 
   constructor(
@@ -107,7 +107,8 @@ export class AllAnalysisComponent implements OnInit, OnChanges, AfterViewInit, O
 
     if(!isTagAlreadyAvailable) { [1,2,3,4,5,6,7,8].forEach(val => this.canvasIds.push(`${bgKey}-canvas${val}`)); }
 
-    setTimeout(() => this.getCurrentAnalysisData(), 1000);
+    
+    this.timerSubscription["timerSubscription1"] = timer(1000).subscribe(() => this.getCurrentAnalysisData());
   }
 
   getCurrentAnalysisData() {
@@ -119,9 +120,9 @@ export class AllAnalysisComponent implements OnInit, OnChanges, AfterViewInit, O
           return;
         }
 
-        if(this.timerSubscription) this.timerSubscription?.unsubscribe();
+        this.timerSubscription["timerSubscription2"]?.unsubscribe();
 
-        this.timerSubscription = timer(90000).subscribe(() => {
+        this.timerSubscription["timerSubscription2"] = timer(90000).subscribe(() => {
           this.isLoading = false;
           this.apiSubscription?.unsubscribe();
         });
@@ -150,7 +151,7 @@ export class AllAnalysisComponent implements OnInit, OnChanges, AfterViewInit, O
           }
         }
 
-        setTimeout(() => this.initiateAction(res2.results), 1000);
+        this.timerSubscription["timerSubscription3"] = timer(1000).subscribe(() => this.initiateAction(res2.results));
       }, error: (err:any) => {this.isLoading = false;}
     });
   }
@@ -189,7 +190,7 @@ export class AllAnalysisComponent implements OnInit, OnChanges, AfterViewInit, O
   }
   
   unsubscribeEvents() {
-    this.timerSubscription?.unsubscribe();
+    Object.keys(this.timerSubscription).forEach((key:string) => this.timerSubscription?.[key]?.unsubscribe());
     this.eventSubscription?.unsubscribe();
     this.apiSubscription?.unsubscribe();
 
@@ -283,7 +284,7 @@ export class AllAnalysisComponent implements OnInit, OnChanges, AfterViewInit, O
 
       if(i == currentRange-1) {
         this.fillingInitData([...tempCopyArr]);
-        setTimeout(() => this.updateAllChartGraphs(), 1000);
+        this.timerSubscription["timerSubscription4"] = timer(1000).subscribe(() => this.updateAllChartGraphs());
       }
     }
   }

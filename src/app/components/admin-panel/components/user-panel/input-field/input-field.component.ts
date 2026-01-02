@@ -1,7 +1,6 @@
 import { Component, OnInit, OnChanges, Input, Output, SimpleChanges, EventEmitter, OnDestroy } from '@angular/core';
 import {UserModel, UserPlanModel, UserRoleAccess} from 'src/app/models/plan';
-import {Subscription} from 'rxjs';
-import { DatePipe } from '@angular/common';
+import { Subscription, timer} from 'rxjs';
 import { EventemittersService } from 'src/app/services/eventemitters.service';
 import { UserService } from 'src/app/services/user.service';
 import { AuthService } from 'src/app/services/auth.service';
@@ -13,7 +12,7 @@ import { AlertifyService } from 'src/app/services/alertify.service';
   templateUrl: './input-field.component.html',
   styleUrls: ['./input-field.component.css']
 })
-export class InputFieldComponent implements OnInit, OnChanges, OnDestroy {
+export class InputFieldComponent implements OnInit, OnDestroy {
   isPaymentReceived:boolean = false;
   hasNextClicked:boolean = false;
   paymentAmount:number = 0;
@@ -88,7 +87,9 @@ export class InputFieldComponent implements OnInit, OnChanges, OnDestroy {
   addMore = { excelPoint: 0, search: 0, user: 0, workspace: 0, wssLimit: 0 };
   lastDataForUnltd={ excelPoint: 0,search: 0,workspace: 0, wssLimit: 0 };
 
-  subscriptionEvent:Subscription;
+  subscriptionEvent:Subscription = new Subscription();
+  timerSubscription1:Subscription = new Subscription();
+  timerSubscription2:Subscription = new Subscription();
 
   @Input() isEditMode:boolean = false; //wheather the current plan form is in edit mode
   @Input() hasSubmitted:boolean = false;
@@ -100,12 +101,8 @@ export class InputFieldComponent implements OnInit, OnChanges, OnDestroy {
     private eventService: EventemittersService, 
     private userService: UserService,
     private aletService: AlertifyService,
-    private authService: AuthService ,
-    private datePipe: DatePipe
+    private authService: AuthService
   ) {}
-
-  //on click next button on admin panel
-  ngOnChanges(changes: SimpleChanges): void {}
 
   onSubmitSignalChange(res:any) {
     if(res?.status) {
@@ -190,15 +187,14 @@ export class InputFieldComponent implements OnInit, OnChanges, OnDestroy {
 
   ngOnDestroy(): void {
     this.eventService.setFormValues.next({});
-    this.subscriptionEvent.unsubscribe();
+    this.subscriptionEvent?.unsubscribe();
+    this.timerSubscription1?.unsubscribe();
+    this.timerSubscription2?.unsubscribe();
     this.removeMultiSelection();
   }
 
   removeMultiSelection() {
-    this.eventService.updateMultiselectDropDownEvent.next({updateType: "clear", targetFrom: "admin-plan-1"});
-    this.eventService.updateMultiselectDropDownEvent.next({updateType: "clear", targetFrom: "admin-plan-2"});
-    this.eventService.updateMultiselectDropDownEvent.next({updateType: "clear", targetFrom: "admin-plan-3"});
-    this.eventService.updateMultiselectDropDownEvent.next({updateType: "clear", targetFrom: "admin-plan-4"});
+    [1,2,3,4].forEach(num => this.eventService.updateMultiselectDropDownEvent.next({updateType: "clear", targetFrom: `admin-plan-${num}`}));
   }
 
 
@@ -498,12 +494,12 @@ export class InputFieldComponent implements OnInit, OnChanges, OnDestroy {
       } else this.planFormData[key] = res?.data[key];
     });
 
-    setTimeout(() => {
+    this.timerSubscription1 = timer(3000).subscribe(() => {
       if(res?.data.CountryAccess!="") this.eventService.updateMultiselectDropDownEvent.next({targetFrom: 'admin-plan-1', items: res?.data.CountryAccess.split(',')}); //for country selection
       if(res?.data.CommodityAccess!="") this.eventService.updateMultiselectDropDownEvent.next({targetFrom: 'admin-plan-2', items: res?.data.CommodityAccess.split(',')}); //for commodityAccess selection
       if(res?.data.TarrifCodeAccess!="") this.eventService.updateMultiselectDropDownEvent.next({targetFrom: 'admin-plan-3', items: res?.data.TarrifCodeAccess.split(',')}); //for tariffcode selection
       if(res?.data.Analysis!="") this.eventService.updateMultiselectDropDownEvent.next({targetFrom: 'admin-plan-4', items: res?.data.Analysis.split(',')}); //for tariffcode selection
-    }, 3000);
+    });
     this.setTogglesBool();
   }
 
@@ -540,12 +536,12 @@ export class InputFieldComponent implements OnInit, OnChanges, OnDestroy {
     this.setTogglesBool();
     this.removeMultiSelection();
 
-    setTimeout(() => {
-      if(choosenPlan["CountryAccess"]!="") this.eventService.updateMultiselectDropDownEvent.next({targetFrom: 'admin-plan-1', items: choosenPlan["CountryAccess"].split(',')}); //for country selection
-      if(choosenPlan["CommodityAccess"]!="") this.eventService.updateMultiselectDropDownEvent.next({targetFrom: 'admin-plan-2', items: choosenPlan["CommodityAccess"].split(',')}); //for commodityAccess selection
-      if(choosenPlan["TarrifCodeAccess"]!="") this.eventService.updateMultiselectDropDownEvent.next({targetFrom: 'admin-plan-3', items: choosenPlan["TarrifCodeAccess"].split(',')}); //for tariffcode selection
-      if(choosenPlan["Analysis"]!="") this.eventService.updateMultiselectDropDownEvent.next({targetFrom: 'admin-plan-4', items: choosenPlan["Analysis"].split(',')}); //for analysis selection
-    }, 3000);
+    this.timerSubscription2 = timer(3000).subscribe(() => {
+      if(choosenPlan["CountryAccess"]!=="") this.eventService.updateMultiselectDropDownEvent.next({targetFrom: 'admin-plan-1', items: choosenPlan["CountryAccess"].split(',')}); //for country selection
+      if(choosenPlan["CommodityAccess"]!=="") this.eventService.updateMultiselectDropDownEvent.next({targetFrom: 'admin-plan-2', items: choosenPlan["CommodityAccess"].split(',')}); //for commodityAccess selection
+      if(choosenPlan["TarrifCodeAccess"]!=="") this.eventService.updateMultiselectDropDownEvent.next({targetFrom: 'admin-plan-3', items: choosenPlan["TarrifCodeAccess"].split(',')}); //for tariffcode selection
+      if(choosenPlan["Analysis"]!=="") this.eventService.updateMultiselectDropDownEvent.next({targetFrom: 'admin-plan-4', items: choosenPlan["Analysis"].split(',')}); //for analysis selection
+    });
   }
 }
 

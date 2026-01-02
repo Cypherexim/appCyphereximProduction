@@ -1,4 +1,4 @@
-import { Component, OnInit, AfterViewInit, OnChanges, SimpleChanges, Input } from '@angular/core';
+import { Component, OnInit, AfterViewInit, OnChanges, SimpleChanges, Input, OnDestroy } from '@angular/core';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { DownloadModelComponent } from 'src/app/components/homepage/components/download-model/download-model.component';
 import { SideFilterAccessModel } from 'src/app/models/others';
@@ -7,13 +7,14 @@ import { ApiServiceService } from 'src/app/services/api-service.service';
 import { UserService } from 'src/app/services/user.service';
 import { EditModalComponent } from './components/edit-modal/edit-modal.component';
 import { environment } from 'src/environments/environment';
+import { Subscription, timer } from 'rxjs';
 
 @Component({
   selector: 'app-other-list',
   templateUrl: './other-list.component.html',
   styleUrls: ['./other-list.component.css']
 })
-export class OtherListComponent implements OnInit, OnChanges, AfterViewInit { 
+export class OtherListComponent implements OnInit, OnChanges, OnDestroy { 
   @Input() pageHeadName:string = "country";
   allSideFilterList:any[] = [];
   sideAccessKeys:string[] = ["HsCode", "ProductDesc", "Exp_Name", "Imp_Name", "CountryofDestination", "CountryofOrigin", "PortofOrigin", "PortofDestination", "Mode", "uqc", "Quantity", "Currency", "Month", "Year", "LoadingPort", "NotifyPartyName"];
@@ -23,7 +24,6 @@ export class OtherListComponent implements OnInit, OnChanges, AfterViewInit {
   dropdownCountries:any[] = [];
   updateBtn:string = "UPDATE";
   errorMsg:string = "";
-  errorTimeout:any;
   countryType:string = "CUSTOM";
   tableHeads = {
     country: ["country", "direction", "active", "action"],
@@ -46,6 +46,9 @@ export class OtherListComponent implements OnInit, OnChanges, AfterViewInit {
   }
 
   sideFilterAccess:SideFilterAccessModel = new SideFilterAccessModel();
+
+  timerSubscription1:Subscription = new Subscription();
+  timerSubscription2:Subscription = new Subscription();
   
   constructor(
     private userService: UserService,
@@ -60,7 +63,10 @@ export class OtherListComponent implements OnInit, OnChanges, AfterViewInit {
     if(this.pageHeadName==="country") this.getCountryList();
   }
 
-  ngAfterViewInit(): void {}
+  ngOnDestroy(): void {
+    this.timerSubscription1?.unsubscribe();
+    this.timerSubscription2?.unsubscribe();
+  }
 
   onClickCountryType(type:string) {
     if(type==="type" && this.countryDateObj.countryType !== "") {
@@ -100,20 +106,23 @@ export class OtherListComponent implements OnInit, OnChanges, AfterViewInit {
     
     if(environment.apiDataCache.hasOwnProperty(cacheKey)) {
       this.allSideFilterList = environment.apiDataCache[cacheKey];
-      setTimeout(() => this.isLoading = false, 1000);
+      this.timerSubscription1 = timer(1000).subscribe({next: () => { this.isLoading = false }});      
     } else {
-      this.apiService.getAllSideFilterAccess(this.countryType).subscribe((res:any) => {
-        if(!res?.error && res?.results.length>0) {
-          this.allSideFilterList = res?.results;
-          environment.apiDataCache[cacheKey] = this.allSideFilterList;
-          setTimeout(() => this.isLoading = false, 1000);
-        } else {
-          this.allSideFilterList = [];
-          this.isLoading = false;
+      this.apiService.getAllSideFilterAccess(this.countryType).subscribe({
+        next: (res:any) => {
+          if(!res?.error && res?.results.length>0) {
+            this.allSideFilterList = res?.results;
+            environment.apiDataCache[cacheKey] = this.allSideFilterList;
+            this.timerSubscription1 = timer(1000).subscribe({next: () => { this.isLoading = false }});
+          } else {
+            this.allSideFilterList = [];
+            this.isLoading = false;
+          }
         }
       });
-    }
+    }    
   }
+
 
   getCountryList() {
     this.isLoading = true;
@@ -156,9 +165,8 @@ export class OtherListComponent implements OnInit, OnChanges, AfterViewInit {
     if([countryName, direction, latestDate, countryType, countryCode].includes("")) {
       this.errorMsg = "Please fill all the required fields";
       
-      if(this.errorTimeout) clearTimeout(this.errorTimeout);
-      this.errorTimeout = setTimeout(() => this.errorMsg = "", 2000);
-      
+      this.timerSubscription2?.unsubscribe();
+      this.timerSubscription2 = timer(2000).subscribe({next: () => {this.errorMsg = "";}});      
       return;
     }
     

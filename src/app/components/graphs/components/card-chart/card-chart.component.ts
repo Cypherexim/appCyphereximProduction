@@ -1,5 +1,6 @@
 import { Component, OnInit, Input, AfterViewInit, OnDestroy } from '@angular/core';
 import { Chart, registerables } from 'chart.js';
+import { interval, Subscription } from 'rxjs';
 import { EventemittersService } from 'src/app/services/eventemitters.service';
 
 @Component({
@@ -15,7 +16,7 @@ export class CardChartComponent implements OnInit, AfterViewInit, OnDestroy {
   @Input() chartOption:any = {}; 
   @Input() radioId:any = ''; 
   chartLabels:string[] = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August']; 
-  intervalVar:any;
+  intervalSubscription:Subscription = new Subscription()
   choosenYear:number = 2022;
   yearList:number[] = [2022, 2023]
 
@@ -28,7 +29,7 @@ export class CardChartComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
-    clearInterval(this.intervalVar);
+    this.intervalSubscription?.unsubscribe();
   }
 
   ngAfterViewInit(): void {
@@ -95,11 +96,11 @@ export class CardChartComponent implements OnInit, AfterViewInit, OnDestroy {
       }
     });
 
-    this.intervalVar = setInterval(() => this.chartUpdate(), 2000);
+    this.intervalSubscription = interval(2000).subscribe(() => this.chartUpdate());
   }
 
   onHoverChart() {
-    clearInterval(this.intervalVar);
+    this.intervalSubscription?.unsubscribe();
   }
 
   chartUpdate() {

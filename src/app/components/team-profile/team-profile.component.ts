@@ -1,4 +1,5 @@
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { Component, EventEmitter, Input, OnDestroy, OnInit, Output } from '@angular/core';
+import { Subscription, timer } from 'rxjs';
 import { ApiServiceService } from 'src/app/services/api-service.service';
 import { AuthService } from 'src/app/services/auth.service';
 import { UserService } from 'src/app/services/user.service';
@@ -8,7 +9,7 @@ import { UserService } from 'src/app/services/user.service';
   templateUrl: './team-profile.component.html',
   styleUrls: ['./team-profile.component.css']
 })
-export class TeamProfileComponent implements OnInit {
+export class TeamProfileComponent implements OnInit, OnDestroy {
 
   tableHeads:string[] = ['Executive Name', 'Downloads', 'Search', 'Designation', 'User Name', 'Edit'];
   currentScale:string = 'maximize';
@@ -19,6 +20,8 @@ export class TeamProfileComponent implements OnInit {
   userDetails:any = {};  
   numOfUsers:number = 0;
   subUserList:any[] = [];
+  timerSubscription:Subscription = new Subscription();
+
   @Input() boxHeight:string = '75vh';
   @Output() onClickZoom:EventEmitter<string> = new EventEmitter();
 
@@ -31,6 +34,10 @@ export class TeamProfileComponent implements OnInit {
   ngOnInit(): void {
     this.userDetails = this.authService.getUserDetails();
     this.teamApiInit();    
+  }
+
+  ngOnDestroy(): void {
+    this.timerSubscription?.unsubscribe();
   }
 
   teamApiInit() {
@@ -84,7 +91,7 @@ export class TeamProfileComponent implements OnInit {
             btnError.innerText = res?.message;
             btnError.style.visibility = "visible";
   
-            setTimeout(() => btnError.style.visibility = "hidden", 3000);
+            this.timerSubscription = timer(3000).subscribe(() => {btnError.style.visibility = "hidden"});
           }
         }, error: (err:any) => { btnTag.innerText = "Submit"; }
       });

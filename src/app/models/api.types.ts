@@ -42,9 +42,16 @@ export type SearchingErrorType = {
     errorMessage: string;
 }
 
-export type FavoriteShipmentResType = {
-    id: number,
-    shipment_ids: string[],
-    to_the_order_ids: string[]
+// export type FavoriteShipmentResType = {
+//     id: number;
+//     shipment_ids: string[];
+//     to_the_order_ids: string[];
+// }
+
+export type bookmarkConfirmation = {
+    recordId: string|number;
+    shipmentId?: string|number;
+    bookmarkType: string;
+    actionFlag: boolean;
 }
 

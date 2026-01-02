@@ -2,7 +2,7 @@ import { DatePipe } from '@angular/common';
 import { AfterViewInit, Component, OnDestroy, OnInit } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
-import { Subscription } from 'rxjs';
+import { Subscription, timer } from 'rxjs';
 import { Utility } from 'src/app/models/others';
 import { Login } from 'src/app/models/user';
 import { AlertifyService } from 'src/app/services/alertify.service';
@@ -22,7 +22,7 @@ export class UserLoginComponent implements OnInit, AfterViewInit, OnDestroy {
   currentPassIcon:string = "tab-show";
   buttonLabel = {login: 'Sign In', register: 'Sign Up'};
   isBtnClicked:boolean = false;
-  timeoutVar:any = {newUser: undefined, already: undefined};
+  // timeoutVar:any = {newUser: undefined, already: undefined};
   isUserAgree:boolean = false;
   
   countrylist:any[] = new Utility().countries;
@@ -31,7 +31,9 @@ export class UserLoginComponent implements OnInit, AfterViewInit, OnDestroy {
     password: "It seems that your password is wrong, try to recheck your password for login!",
     disableUser: "Your account is temporarily disabled, please contact to the service provider."
   }
+
   apiSubscription:Subscription = new Subscription();
+  timerSubscription:Subscription = new Subscription();
 
   constructor(
     private authService: AuthService,
@@ -49,9 +51,7 @@ export class UserLoginComponent implements OnInit, AfterViewInit, OnDestroy {
   container:any;
   ngAfterViewInit(): void {
     this.container = document.getElementById('container');
-    setTimeout(() => {
-      this.container.classList.add('sign-in')
-    }, 200)
+    this.timerSubscription = timer(200).subscribe(() => this.container.classList.add('sign-in'));
   }
   toggle = () => {
     this.container.classList.toggle('sign-in')
@@ -71,11 +71,11 @@ export class UserLoginComponent implements OnInit, AfterViewInit, OnDestroy {
       mobilenumber: new FormControl(null, [Validators.required]),
       country: new FormControl("", [Validators.required])
     });
-    // this.getCountryList();
   }
 
   ngOnDestroy(): void {
-    this.apiSubscription.unsubscribe();
+    this.apiSubscription?.unsubscribe();
+    this.timerSubscription?.unsubscribe();
   }
 
   onClickEnter(e:any) {
@@ -195,21 +195,21 @@ export class UserLoginComponent implements OnInit, AfterViewInit, OnDestroy {
     this.currentPassIcon = this.currentPassIcon == "tab-show" ? "tab-hide" : "tab-show";
   }
 
-  linkClick(type:any) {
-    if(this.timeoutVar[type]) clearTimeout(this.timeoutVar[type]);
+  // linkClick(type:any) {
+  //   if(this.timeoutVar[type]) clearTimeout(this.timeoutVar[type]);
 
-    let imgTag:any;
-    if(type == "already") {
-      imgTag = document.querySelector("div.arrow-container img.right") as HTMLImageElement;
-    } else {
-      imgTag = document.querySelector("div.arrow-container img.left") as HTMLImageElement;
-    }
+  //   let imgTag:any;
+  //   if(type == "already") {
+  //     imgTag = document.querySelector("div.arrow-container img.right") as HTMLImageElement;
+  //   } else {
+  //     imgTag = document.querySelector("div.arrow-container img.left") as HTMLImageElement;
+  //   }
 
-    imgTag.classList.add("active");
-    this.timeoutVar[type] = setTimeout(() => {
-      imgTag.classList.remove("active");
-    },1200);
-  }
+  //   imgTag.classList.add("active");
+  //   this.timeoutVar[type] = setTimeout(() => {
+  //     imgTag.classList.remove("active");
+  //   },1200);
+  // }
 
   async setUserLoginLog(userId:any, userEmail:string) {
     const response1 = await fetch("https://api.ipify.org/?format=json");

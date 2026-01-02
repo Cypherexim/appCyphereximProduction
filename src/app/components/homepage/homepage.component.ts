@@ -1,7 +1,7 @@
 import { Component, Input, OnInit, AfterViewInit, OnDestroy, OnChanges, Output, EventEmitter, ChangeDetectionStrategy } from '@angular/core';
 import { UserService } from 'src/app/services/user.service';
 import { EventemittersService } from 'src/app/services/eventemitters.service';
-import { Subscription, forkJoin, Subject, timeout, of, catchError, map, debounceTime, retry } from 'rxjs';
+import { Subscription, forkJoin, Subject, timeout, of, catchError, map, debounceTime, retry, timer, firstValueFrom, take } from 'rxjs';
 import { SearchService } from 'src/app/services/search.service';
 import { CounterTabsModel, SideFilterModel, FilterNames, SideFilterAccessModel, toTheOrder } from 'src/app/models/others';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
@@ -19,7 +19,7 @@ import { environment } from 'src/environments/environment';
 import { AllRightsService } from 'src/app/services/all-rights.service';
 import { SplitHsCodePipe } from 'src/app/common/Pipes/split-hs-code.pipe';
 import { NotifyAlertMsgComponent } from '../workstation/modals/notify-alert-msg/notify-alert-msg.component';
-import { ApiMsgRes, SearchingErrorType } from 'src/app/models/api.types';
+import { ApiMsgRes, bookmarkConfirmation, SearchingErrorType } from 'src/app/models/api.types';
 const ALLOWED_RECORDS = 10000;
 declare const $:any;
 
@@ -37,30 +37,12 @@ export class HomepageComponent implements OnInit, OnChanges, AfterViewInit, OnDe
   
   eventSubscription: { [key: `eventSubscription${number}`]: Subscription } = {};
   apiSubscription: { [key: `apiSubscription${number}`]: Subscription } = {};
+  timerSubscription: { [key: `timerSubscription${number}`]: Subscription } = {};
 
-  // eventSubscription: Subscription;
-  // eventSubscription2: Subscription;
-  // eventSubscription3: Subscription;
-  // eventSubscription4: Subscription;
-  // eventSubscription5: Subscription;
-  // eventSubscription6: Subscription;
-  // eventSubscription7: Subscription;
-  // eventSubscription8: Subscription;
-  // eventSubscription9: Subscription;
-  // eventSubscription10: Subscription;
-  // eventSubscription11: Subscription;
-  // apiSubscription: Subscription;
-  // apiSubscription2: Subscription;
-  // apiSubscription3: Subscription;
-  // apiSubscription4: Subscription;
-  // apiSubscription5: Subscription;
-  // apiSubscription6: Subscription;
-  // apiSubscription7: Subscription;
   analysisApiSubscription:Subscription[] = [];
 
   destory$: Subject<any> = new Subject<any>();
 
-  // timerSubscription: Subscription;
   isDownloadingFile: boolean = false;
   isAnalysisTabActive: boolean = false;
   tableHeads: string[] = [];
@@ -247,7 +229,7 @@ export class HomepageComponent implements OnInit, OnChanges, AfterViewInit, OnDe
     this.getHsCodeData();
     this.getDownloadNames();
     this.getCountryList();
-    this.getUserFavoriteShipmentIDs();
+    (async() => {await this.getUserFavoriteShipmentIDs()})();
 
     //to set the boolean variable if the current user plan is Demo or Trial
     this.eventService.userDetailsStore.subscribe({
@@ -270,7 +252,7 @@ export class HomepageComponent implements OnInit, OnChanges, AfterViewInit, OnDe
         this.disableLocatorBar(res); //to enabled or disabled the locator box
 
         //just unsubscribe before we subscribe another api hit
-        this.apiSubscription["apiSubscription2"]?.unsubscribe();
+        // this.apiSubscription?.apiSubscription2?.unsubscribe();
 
         // to set the input fields according to choosen country and its direction
         if (res.hasOwnProperty("country") && this.authService.getUserCountry() != res?.country && res.direction) {
@@ -304,7 +286,7 @@ export class HomepageComponent implements OnInit, OnChanges, AfterViewInit, OnDe
       next: (res:any) => {
         if (Object.keys(res).length > 0) {
           this.currentSearchingMode = "filter";
-          setTimeout(() => this.getLastSavedData(res), 500);
+          this.timerSubscription["timerSubscription"] = timer(500).subscribe({next: () => this.getLastSavedData(res)});
         }
       }, error: (err:any) => console.log("Error:", err)
     });
@@ -442,8 +424,8 @@ export class HomepageComponent implements OnInit, OnChanges, AfterViewInit, OnDe
     this.dropdownList = [];
 
     if (environment.apiDataCache.hasOwnProperty(cacheKey)) { //fetching data from cache
-      this.dropdownList = environment.apiDataCache[cacheKey];
-      setTimeout(() => this.isSearchingHsCode = false, 300);
+      this.dropdownList = environment.apiDataCache[cacheKey];      
+      this.timerSubscription["timerSubscription2"] = timer(300).subscribe({next: () => {this.isSearchingHsCode = false}});
     } else {
       const twoDigitKey = `${environment.apiurl}api/gethscode?digit=2`;
       const fourDigitKey = `${environment.apiurl}api/gethscode?digit=4`;
@@ -463,7 +445,7 @@ export class HomepageComponent implements OnInit, OnChanges, AfterViewInit, OnDe
           this.dropdownList = hsCodeNum==2 ? environment.apiDataCache[twoDigitKey] 
           : hsCodeNum==4 ? environment.apiDataCache[fourDigitKey] : environment.apiDataCache[eightDigitKey];
           
-          setTimeout(() => this.isSearchingHsCode = false, 1000);
+          this.timerSubscription["timerSubscription3"] = timer(1000).subscribe({next: () => {this.isSearchingHsCode = false}});
         }, error: (err:any) => {console.log(err);}
       });
     }
@@ -474,7 +456,8 @@ export class HomepageComponent implements OnInit, OnChanges, AfterViewInit, OnDe
     if (res?.code == undefined || res?.direction == undefined) return;
 
     //to get all side filter access as per current country
-    this.apiSubscription["apiSubscription2"] = this.searchService.getSideFilterAccess(res?.code, res?.direction, res?.type).subscribe({
+    //this.apiSubscription["apiSubscription2"] = 
+    this.searchService.getSideFilterAccess(res?.code, res?.direction, res?.type).pipe(take(1)).subscribe({
       next: (res2: any) => {
         if (!res2?.error && res2?.results.length > 0) {
           const tempObj = { ...res2?.results[0] };
@@ -516,10 +499,10 @@ export class HomepageComponent implements OnInit, OnChanges, AfterViewInit, OnDe
     /////////to update lowerpanel visibility especially for the overflow/////////
     this.lowerPanelStyle.height = this.showLowerPanel ? '30%' : '12%';
     this.lowerPanelStyle.overflow = this.showLowerPanel ? 'hidden' : 'visible';
-    setTimeout(() => {
+    this.timerSubscription["timerSubscription4"] = timer(500).subscribe({next: () => {
       this.lowerPanelStyle.height = this.showLowerPanel ? '30%' : '12%';
       this.lowerPanelStyle.overflow = 'visible';
-    }, 500);
+    }});
   }
 
   getRoleWiseId(): string|number {
@@ -549,9 +532,17 @@ export class HomepageComponent implements OnInit, OnChanges, AfterViewInit, OnDe
 
   inItSearchClickProcess(callBy:string) {
     return new Promise((resolve, reject) => {
-      if (callBy != "workspace") this.savedStatus = { isAlreadySaved: false, savedFileName: '', savedFileId: '', saveFolder: '' };
+      if (callBy!=="workspace") this.savedStatus = { isAlreadySaved: false, savedFileName: '', savedFileId: '', saveFolder: '' };
 
       //********************* unsubscribing running sidefilters & analysis ****************//
+      [...(Object.keys(this.timerSubscription)), ...$(Object.keys(this.apiSubscription))].forEach((key:string) => {
+        this.timerSubscription?.[key]?.unsubscribe();
+        this.apiSubscription?.[key]?.unsubscribe();
+      });
+      this.timerSubscription = {};
+      this.apiSubscription = {};
+      
+      
       this.eventSubscription["eventSubscription10"]?.unsubscribe();
       this.eventSubscription["eventSubscription11"]?.unsubscribe();
       if(this.analysisApiSubscription.length>0) {
@@ -576,6 +567,11 @@ export class HomepageComponent implements OnInit, OnChanges, AfterViewInit, OnDe
       
       //only to export_india (to the order)
       this.getShipmentBookmarkIds(false); //to get bookmark record Ids
+
+      //start to litsen bookmark event to perform actions
+      this.eventSubscription?.eventSubscription12?.unsubscribe();
+      this.onListenBookmarkActionFromFavorites();
+
       if(this.currentCountry==="India" && this.direction==="export") this.getShipmentBookmarkIds(); //to get ToTheOrder record Ids
 
       this.apiBodyObj.base = {
@@ -773,10 +769,10 @@ export class HomepageComponent implements OnInit, OnChanges, AfterViewInit, OnDe
 
   onFetchingSearchedDataFromCache(promise:any, responseArr:any, apiData:any, callBy:string) {
     return new Promise((resolve) => {
-      setTimeout(() => {
+      this.timerSubscription["timerSubscription5"] = timer(2000).subscribe({next: () => {
         const promiseRes = this.afterFetchingOnSearchDataInternalProcess(promise, responseArr, apiData, callBy);
         resolve(promiseRes);
-      }, 2000);
+      }});
     });
   }
 
@@ -789,7 +785,7 @@ export class HomepageComponent implements OnInit, OnChanges, AfterViewInit, OnDe
         this.counterObj[counterObjKeys[index]] = Number(tempCounters[key]);
       });
 
-      setTimeout(() => this.setCounterValues(), 200);              
+      this.timerSubscription["timerSubscription6"] = timer(200).subscribe({next: () => this.setCounterValues()});
 
       if (this.counterObj.total > 500000 && callBy=="self") {
         this.eventService.filterSidebarEvent.emit(false);
@@ -810,8 +806,8 @@ export class HomepageComponent implements OnInit, OnChanges, AfterViewInit, OnDe
         if (results.length > 0 && ["filter", "self", "workspace"].includes(callBy)) this.tableHeads = this.getUserGenHeads(Object.keys(results[0]));
       } else {
         // India has different heads  
-        this.arrangeTableHeads(); //setting 
-        setTimeout(() => this.backToPrevState(), 1000);          
+        this.arrangeTableHeads(); //setting
+        this.timerSubscription["timerSubscription7"] = timer(1000).subscribe({next: () => this.backToPrevState()});
       }
 
       this.searchResult = results;
@@ -894,7 +890,7 @@ export class HomepageComponent implements OnInit, OnChanges, AfterViewInit, OnDe
                 this.counterValData = res.results;
   
                 if (callBy == "workspace") {
-                  setTimeout(() => {
+                  this.timerSubscription["timerSubscription8"] = timer(500).subscribe({next: () => {
                     if (Object.keys(this.selectedFilterCache).length > 0) this.eventService.filterCacheMoveEvent.emit(this.selectedFilterCache);
                     const singleFilterLength = res.results[Object.keys(res.results)[0]];
                     if (singleFilterLength.length > 0) {
@@ -903,7 +899,7 @@ export class HomepageComponent implements OnInit, OnChanges, AfterViewInit, OnDe
                         this.sideFilterOptions2[givenFilterHeads[i]] = res?.results[givenFilterHeads[i]];
                       }
                     }
-                  }, 500);
+                  }});
                 }
               } else {
                 this.counterValData = res.results; //now this variable is only responsible to update sidefilter or vice versa
@@ -1074,7 +1070,7 @@ export class HomepageComponent implements OnInit, OnChanges, AfterViewInit, OnDe
       filterCache: this.selectedFilterCache
     }); //to pass data to HsCode tree
 
-    setTimeout(() => { this.onShareFilterData.emit(this.sideFilterOptions); }, 2500);
+    this.timerSubscription["timerSubscription9"] = timer(2500).subscribe({next: () => this.onShareFilterData.emit(this.sideFilterOptions)});
   }
 
   //set others side filter values array coz we don't need to count their record
@@ -1139,7 +1135,7 @@ export class HomepageComponent implements OnInit, OnChanges, AfterViewInit, OnDe
       direction: this.direction, 
       countryType: this.currentCountryData?.type
     };
-    this.apiService.getCountryLatestDate(dataObj).subscribe({
+    this.apiService.getCountryLatestDate(dataObj).pipe(take(1)).subscribe({
       next: (res: any) => {
         if (!res.error && res.results.length > 0) {
           const rawDate = res?.results[0]["LatestDate"];
@@ -1233,8 +1229,10 @@ export class HomepageComponent implements OnInit, OnChanges, AfterViewInit, OnDe
     if(environment.apiDataCache.hasOwnProperty(apiCacheKey)) {
       this.eventService.locatorDataMove.next(environment.apiDataCache[apiCacheKey]);
     } else {
-      // this.apiSubscription7?.unsubscribe();
-      this.apiSubscription["apiSubscription7"] = this.apiService.getGlobeImpExpLocator(body).subscribe({
+      // console.log(body?.locatorType);
+      // const apiSubscriptionKey = `apiSubscription${body?.locatorType==="Buyer" ? '6': '7'}`;
+      // this.apiSubscription[apiSubscriptionKey] = 
+      this.apiService.getGlobeImpExpLocator(body).pipe(take(1)).subscribe({
         next: async(res:any) => {
           if (!res?.error) {
             if(direction == "import") {this.locatorData["Imp_Name"] = await this.alertService.getModifiedObj(res?.results, "Imp_Name");}
@@ -1356,8 +1354,8 @@ export class HomepageComponent implements OnInit, OnChanges, AfterViewInit, OnDe
       }
 
       if (Number(this.cpyCurrentPageNum) > this.totalPages) {
-        alertMsg.classList.add('active');
-        setTimeout(() => alertMsg.classList.remove('active'), 3000);
+        alertMsg?.classList?.add('active');
+        this.timerSubscription["timerSubscription10"] = timer(3000).subscribe({next: () => alertMsg?.classList?.remove('active')});
         return;
       }
 
@@ -1437,12 +1435,12 @@ export class HomepageComponent implements OnInit, OnChanges, AfterViewInit, OnDe
     this.apiBodyObj[currentObj]["body"]["page"] = this.currentPageNum + 1;
     this.apiBodyObj[currentObj]["body"]["itemperpage"] = this.pagePerView;
 
-    setTimeout(async () => {
+    this.timerSubscription["timerSubscription11"] = timer(1000).subscribe({next: async() => {
       this.isTableLoader = true;
       this.eventService.filterSidebarEvent.emit(false); //to display OFF to sidefilter options
 
       await this.getSearchData(this.apiBodyObj[currentObj], "pagination-perpage");
-    }, 1000);
+    }});
   }
 
   scrollToTop() {
@@ -1478,7 +1476,7 @@ export class HomepageComponent implements OnInit, OnChanges, AfterViewInit, OnDe
   //onClick bookmark icon to bookmark and to show if it is bookmarked---RecordID
   onSetBookmark = (data:any, isBookmarkNormal:boolean=true) => {
     const startIconTag = document.getElementById("STAR"+data?.RecordID) as HTMLElement;
-    const apiBody = { 
+    const apiBody = {
       userId: this.authService.getUserId(),
       recordId: data?.RecordID,
       direction: this.direction,
@@ -1486,7 +1484,7 @@ export class HomepageComponent implements OnInit, OnChanges, AfterViewInit, OnDe
     };
 
     // if (!this.userService.getDataExistence(data['RecordID'])) {
-    if (!data?.isBookmarked) {      
+    if (!data?.isBookmarked) {
       if(Number(this.authService.getUserSingleDetail("Favoriteshipment"))<1) {
         this.alertService.showPackageAlert("Oops!, It seems that you have used your all favorite shipment point. Please recharge your favorite shipment points.");
         return;
@@ -1497,15 +1495,14 @@ export class HomepageComponent implements OnInit, OnChanges, AfterViewInit, OnDe
       // const bookmarkObj = {country: this.currentCountry, ...data};
       
       // this.userService.setBookmarks(bookmarkObj);
+      this.setBookmarkIconVisibility(data?.RecordID, true);
       if(isBookmarkNormal) {
         this.apiService.addNewFavoriteShipment({
           shipmentJson: JSON.stringify(data),
           ...apiBody
         }).subscribe({
-          next: (res:ApiMsgRes) => {
-            console.log(res?.message)
-            this.getUserFavoriteShipmentIDs();
-          }, error: (err:any) => console.log(err)
+          next: async (res:ApiMsgRes) => { await this.getUserFavoriteShipmentIDs(); }, 
+          error: (err:any) => console.log(err)
         });
       }
 
@@ -1514,20 +1511,43 @@ export class HomepageComponent implements OnInit, OnChanges, AfterViewInit, OnDe
       this.updateFavoriteShipment();
     } else {
       // this.userService.removeBookmarkData(data['RecordID']);
+      this.setBookmarkIconVisibility(data?.RecordID, false);
       startIconTag.classList.remove("fa-solid");
       startIconTag.classList.add("fa-regular");
       
       this.apiService.removeFavoriteShipment(apiBody).subscribe({
-        next: (res:ApiMsgRes) => {
-          console.log(res?.message);
-          this.getUserFavoriteShipmentIDs();
-        }
+        next: (res:ApiMsgRes) => console.log(res?.message)
       });
     }
   };
+  setBookmarkIconVisibility(recordId:string|number, flag:boolean) {
+    for(let i=0; i<=this.perPageData.length; i++) {
+      if(this.perPageData[i]?.RecordID === recordId) {
+        this.perPageData[i].isBookmarked = flag;
+      }
+    }
+  }
+  onListenBookmarkActionFromFavorites() {
+    this.eventSubscription["eventSubscription12"] = this.eventService.bookmarkActionEvent.subscribe({
+      next: async(res:bookmarkConfirmation) => {
+        // console.log("BOOKMARK ACTION", res, this.perPageData.length);
+        if(this.perPageData.length>0 && res?.actionFlag) {
+          // const favShipmentType = res.bookmarkType==="favorite" ? "favoriteBookmark":"toTheOrder";
+          this.favoriteShipments.favoriteBookmark.mapIds = this.favoriteShipments?.favoriteBookmark?.mapIds?.filter((id:any) => id !== res?.shipmentId);
+          this.favoriteShipments.favoriteBookmark.ids = this.favoriteShipments?.favoriteBookmark?.ids?.filter((id:any) => id !== res?.recordId);
+          
+          // await this.getUserFavoriteShipmentIDs();
+          const bindBookmarkRes = await this.onBindBookmark();
+          this.perPageData = bindBookmarkRes;
+        }
+      }
+    });
+  }
+
+
 
   //binding all bookmarked item to table
-  onBindBookmark() {
+  onBindBookmark():Promise<any[]> {
     return new Promise((resolve, reject) => {
       const updatedArr = structuredClone(this.perPageData);
       // const bookmarkedArr = this.userService.getBookmarks();
@@ -1556,7 +1576,6 @@ export class HomepageComponent implements OnInit, OnChanges, AfterViewInit, OnDe
       //set the condition for the select all checkbox as per new page
       if (this.allSelectCheckedArr.includes(mainKey)) this.isMainChecked = true;
       else this.isMainChecked = false;
-console.log(updatedArr);
 
       resolve(updatedArr);
     });
@@ -1802,14 +1821,14 @@ console.log(updatedArr);
             next: (res: any) => {
               if (res != null && !res?.error) {
                 //---------------------------to stop loader--------------------------------//
-                setTimeout(() => {
+                this.timerSubscription["timerSubscription12"] = timer(2000).subscribe({next: () => {
                   //download success popup
                   const modalRef2 = this.modalService.open(DownloadModelComponent, { backdrop: "static", keyboard: false, windowClass: 'downloadModalClass', centered: true });
                   (<DownloadModelComponent>modalRef2.componentInstance).modalType = 'download-msg';
                   this.eventService.userStatusEvent.emit('update');
                   this.eventService.downloadListUpdate.next({ action: "add", status: "done", filename: this.ellipsePipe.transform(dataObj?.filename, 22) });
                   //----------------------------------------------------------------------//
-                }, 2000);
+                }});
               }
             }, error: (err:any) => {
               console.log(err);
@@ -1963,9 +1982,8 @@ console.log(updatedArr);
     this.selectedCountries = this.selectedCountries.filter(item => id!=item?.id);
   }
 
-  hideProductTimeout: any;
   onChooseOption(item:any, type:string) {
-    if(this.hideProductTimeout) clearTimeout(this.hideProductTimeout);
+    this.timerSubscription?.timerSubscription13?.unsubscribe();
     
     if(type == 'product') this.product = [(item["Product"]).toUpperCase()];
     else {
@@ -1986,10 +2004,10 @@ console.log(updatedArr);
     this.countriesList.copy = this.countriesList.base;
   }
   hideProductBar = () => {
-    this.hideProductTimeout = setTimeout(() => {
+    this.timerSubscription["timerSubscription13"] = timer(500).subscribe({next: async () => {
       this.isWordDropdown = false;
       this.isCountryDropdown = false;
-    }, 500);
+    }});
   }
 
   //calling this function to fetch full list of side filters
@@ -2013,11 +2031,11 @@ console.log(updatedArr);
       const fullSideFiltersObj = environment.apiDataCache[apiKey];
       this.eventService.passFullSideFilterData.next(fullSideFiltersObj);
       this.getAnalysisData(apiData);
-      setTimeout(() => this.isFilteringData = false, 2000);
+      this.timerSubscription["timerSubscription14"] = timer(2000).subscribe({next: () => {this.isFilteringData = false}});
     } else {
       this.eventSubscription["eventSubscription10"] = forkJoin(tempUrlArr).subscribe({
         next: (responses:any[]) => {
-          setTimeout(() => {
+          this.timerSubscription["timerSubscription15"] = timer(2000).subscribe({next: () => {
             const fullSideFiltersObj = {};
             for(let i=0; i<responses.length; i++) {
               const keyArr = Object.keys(responses[i]?.results[0]);
@@ -2026,12 +2044,12 @@ console.log(updatedArr);
             }
     
             fullSideFiltersObj["HsCode"] = this.sideFilterOptions["HsCode"];
-
+  
             environment.apiDataCache[apiKey] = fullSideFiltersObj;
             this.eventService.passFullSideFilterData.next(fullSideFiltersObj);
             this.isFilteringData = false;
             this.getAnalysisData(apiData); //right now it has to be called at the very end coz it takes time where it is not required in the first place
-          }, 2000);
+          }});
         }, error: (err:any) => console.log(err)
       });
     }
@@ -2144,9 +2162,7 @@ console.log(updatedArr);
     };
 
     analysisTab.click();
-    setTimeout(() => {
-      this.eventService.companyProfileEvent.next(eventObj);
-    }, 500);
+    this.timerSubscription["timerSubscription16"] = timer(500).subscribe({next: () => this.eventService.companyProfileEvent.next(eventObj)});
   }
 
   setGoogleLink(key:string, value:string): string {
@@ -2167,14 +2183,13 @@ console.log(updatedArr);
           const currentDateVal = new Date().valueOf();
 
           if(status && show_popup && startDateVal<currentDateVal && currentDateVal<endDateVal) {
-            setTimeout(() => {
+            this.timerSubscription["timerSubscription17"] = timer(2000).subscribe({next: () => {
               const modalRef = this.modalService.open(NotifyAlertMsgComponent, { backdrop: "static", keyboard: false, windowClass: 'saveFileModalClass alertModalClass', centered: true });
               (<NotifyAlertMsgComponent>modalRef.componentInstance).alertMsg = (JSON.parse(txt_msg))["popup"];
               const callBackRef = (<NotifyAlertMsgComponent>modalRef.componentInstance).saveCallBack.subscribe({
-                next: (res: any) => callBackRef?.unsubscribe(),
-                error: (err: any) => { }
+                next: (res: any) => callBackRef?.unsubscribe()
               });
-            }, 2000);
+            }});
           }
         }
       },
@@ -2183,7 +2198,7 @@ console.log(updatedArr);
   }
 
   activeCountryDropDown(inpElem:HTMLInputElement) {
-    setTimeout(() => inpElem.focus(), 250);
+    this.timerSubscription["timerSubscription18"] = timer(250).subscribe({next: () => inpElem.focus()});
     this.isCountryDropdown=true;
   }
 
@@ -2204,15 +2219,22 @@ console.log(updatedArr);
     }
   }
 
-  getUserFavoriteShipmentIDs() {
-    this.apiSubscription["apiSubscription12"] = this.apiService.getFavoriteShipmentRecords(this.authService.getUserId()).subscribe({
-      next: (res:ApiMsgRes) => {
-        const result = res?.results[0];
-        this.favoriteShipments.toTheOrder.mapIds = result["to_the_order_ids"];
-        this.favoriteShipments.favoriteBookmark.mapIds = result["shipment_ids"]?.concat(result["to_the_order_ids"])?.filter((val:string|number) => val != null);
-        this.eventService.passFavoriteShipmentIds.next(result);
-      }, error: (err:any) => console.log(err)
-    });
+  async getUserFavoriteShipmentIDs() {
+    const res:ApiMsgRes = await firstValueFrom(this.apiService.getAllowedBookmarkIDs(this.authService.getUserId()));
+    const result = res?.results;
+    console.log("FAVORITES =====>>>>",result);
+    
+    this.favoriteShipments.toTheOrder.mapIds = result?.length>0 ? result[0]?.["to_the_order_ids"] : [];
+    this.favoriteShipments.favoriteBookmark.mapIds = result?.length>0 ? result[0]?.["shipment_ids"]?.filter((val:string|number) => val != null) : [];
+
+    // this.apiSubscription["apiSubscription12"] = this.apiService.getFavoriteShipmentRecords(this.authService.getUserId()).subscribe({
+    //   next: (res:ApiMsgRes) => {
+    //     const result = res?.results[0];
+    //     this.favoriteShipments.toTheOrder.mapIds = result?.["to_the_order_ids"];
+    //     this.favoriteShipments.favoriteBookmark.mapIds = result?.["shipment_ids"]?.concat(result?.["to_the_order_ids"])?.filter((val:string|number) => val != null);
+    //     // this.eventService.passFavoriteShipmentIds.next(result);
+    //   }, error: (err:any) => console.log(err)
+    // });
   }
 
   async getUserCurrentIP() {
@@ -2220,7 +2242,7 @@ console.log(updatedArr);
       const response2 = await fetch("https://geolocation-db.com/json");
       const geoLocationRes = await response2.json();
       this.userNetworkDetails["Location"] = (<string>geoLocationRes["country_name"]).toUpperCase().substring(0,3);
-    } catch (error) {console.log(error);}
+    } catch (error) {console.error(error);}
   
     const response1 = await fetch("https://api.ipify.org/?format=json");
     const ipRes = await response1.json();
@@ -2231,11 +2253,7 @@ console.log(updatedArr);
 
   onSetUserSearchLog(jsonData:string) {
     this.userNetworkDetails["Searchhistory"] = jsonData;
-    this.apiService.setUserSearchLog(this.userNetworkDetails).subscribe({
-      next: (res:any) => {
-        if(!res.error) {console.log(res);}
-      }, error: (err:any) => console.log(err)
-    });
+    this.apiService.setUserSearchLog(this.userNetworkDetails).subscribe();
   }
 
   updateFavoriteShipment() {
@@ -2290,7 +2308,7 @@ console.log(updatedArr);
       next: (res:ApiMsgRes) => {
         if(!res.error) {
           this.authService.updateUserDetails("userPreference", jsonPrefs);
-          setTimeout(() => this.arrangeTableHeads(), 1000);
+          this.timerSubscription["timerSubscription19"] = timer(1000).subscribe({next: () => this.arrangeTableHeads()});
         }
       }, error: (err:any) => {console.log(err)}
     });
@@ -2367,14 +2385,14 @@ console.log(updatedArr);
           userId: this.authService.getUserId(),
           givenCompanyName: data?.Imp_Name
         }).subscribe({
-          next: (result:ApiMsgRes) => {
+          next: async(result:ApiMsgRes) => {
             if(!result.error) {
               const tdTag = document.getElementById("TD"+data?.RecordID) as HTMLDivElement;
               const spanTag = document.getElementById("SPAN"+data?.RecordID) as HTMLSpanElement;
               spanTag.innerText = result.results[0]["Updated_Imp_Name"];
               tdTag.classList.add("reveal");
               this.onSetBookmark(data, false);
-              this.getUserFavoriteShipmentIDs(); //to update user's bookmarks shipment
+              await this.getUserFavoriteShipmentIDs(); //to update user's bookmarks shipment
               this.authService.updateUserDetails("UpdateCompanyNamePoints", (this.authService.getUserSingleDetail("UpdateCompanyNamePoints")-1));
               callBackSubscribe.unsubscribe();
             }

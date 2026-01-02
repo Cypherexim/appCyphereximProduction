@@ -6,6 +6,7 @@ import { DownloadModelComponent } from '../components/homepage/components/downlo
 import { UserAlertModalComponent } from '../components/homepage/components/user-alert-modal/user-alert-modal.component';
 import { ApiMsgRes } from '../models/api.types';
 import { Utility } from '../models/others';
+import { take, timer } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
@@ -13,10 +14,7 @@ import { Utility } from '../models/others';
 export class AlertifyService {
   staticAlertMsg: string = "Sorry, Your package doesn't seem to have this facility. To fully enjoy, please upgrade your package!";
 
-  constructor(
-    private modalService: NgbModal,
-    private datePipe: DatePipe
-  ) { }
+  constructor(private modalService: NgbModal) { }
 
   success(message: string) {
     alertify.success(message);
@@ -76,7 +74,6 @@ export class AlertifyService {
 
     return `${year}-${fitZero(month)}-${fitZero(day)}`;
   }
-
 
   //to get calender dates
   getCalenderDates(range: number, latestDate) {
@@ -324,7 +321,7 @@ export class AlertifyService {
 
   delayer(delayTimeInSec: number): Promise<any> {
     return new Promise((resolve) => {
-      setTimeout(() => { resolve(true); }, delayTimeInSec);
+      timer(delayTimeInSec).subscribe(() => resolve(true));
     });
   }
 }

@@ -1,6 +1,6 @@
 import { Injectable, EventEmitter } from '@angular/core';
 import { BehaviorSubject, Subject } from 'rxjs';
-import { FavoriteShipmentResType } from '../models/api.types';
+import { bookmarkConfirmation } from '../models/api.types';
 
 @Injectable({
   providedIn: 'root'
@@ -14,8 +14,7 @@ export class EventemittersService {
   filterModalDataEvent:EventEmitter<any> = new EventEmitter();
   saveModalEvent:EventEmitter<any> = new EventEmitter();//on click button of save model
   currentCountry:Subject<any> = new BehaviorSubject({}); //to pass choosen global country data
-  savedWorkspaceEvent:Subject<any> = new BehaviorSubject({});//to pass lastSavedData to home component to start function getLastSavedData()
-  confirmationEvent:Subject<boolean> = new BehaviorSubject(false); //----->>>>temporary event that will be removed soon
+  savedWorkspaceEvent:Subject<any> = new BehaviorSubject({});//to pass lastSavedData to home component to start function getLastSavedData()  
   setFormValues:Subject<any> = new BehaviorSubject({}); //to fill form variables
   dataTabChngEvent:Subject<boolean> = new BehaviorSubject(false);//to change the tab section of Table and Analysis
   applyFilterEvent:EventEmitter<any> = new EventEmitter();//onclick apply button to pass filter value to home component
@@ -48,6 +47,9 @@ export class EventemittersService {
   onChangeDirectionBullet:Subject<any> = new Subject<any>();
 
   passFullSideFilterData:Subject<any> = new BehaviorSubject<any>({});
-  passFavoriteShipmentIds:Subject<FavoriteShipmentResType|null> = new BehaviorSubject<FavoriteShipmentResType|null>(null);
+  // passFavoriteShipmentIds:Subject<FavoriteShipmentResType|null> = new BehaviorSubject<FavoriteShipmentResType|null>(null);
+
+  bookmarkActionEvent:Subject<bookmarkConfirmation> = new Subject<bookmarkConfirmation>();
+
   constructor() { }
 }

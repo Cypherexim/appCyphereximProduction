@@ -1,7 +1,7 @@
 import { Component, OnInit, Input, OnChanges, OnDestroy, AfterViewInit } from '@angular/core';
 import { DatePipe } from '@angular/common';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
-import { Subject, Subscription, takeUntil, interval } from 'rxjs';
+import { Subject, Subscription, takeUntil, timer } from 'rxjs';
 import { ApiServiceService } from 'src/app/services/api-service.service';
 import { EventemittersService } from 'src/app/services/eventemitters.service';
 import { UserService } from 'src/app/services/user.service';
@@ -13,6 +13,7 @@ import { AuthService } from 'src/app/services/auth.service';
 import { environment } from 'src/environments/environment';
 import { UserRoleAccess } from 'src/app/models/plan';
 import { CountryHeads } from 'src/app/models/country';
+// import { bookmarkConfirmation } from 'src/app/models/api.types';
 
 @Component({
   selector: 'app-workstation',
@@ -45,7 +46,7 @@ export class WorkstationComponent implements OnInit, OnChanges, AfterViewInit, O
 
   workspaceTimeoutId:any;
 
-  fileIds:any[] = [];
+  fileIds:(string|number)[] = [];
 
   allCountries: any[] = []; //temporary
 
@@ -62,13 +63,13 @@ export class WorkstationComponent implements OnInit, OnChanges, AfterViewInit, O
 
   workspaceFolders: string[] = [];
 
-  apiSubscription1:Subscription;
-  apiSubscription2:Subscription;
+  apiSubscription1:Subscription = new Subscription();
+  apiSubscription2:Subscription = new Subscription();
 
-  eventSubscription: Subscription;
-  eventSubscription2: Subscription;
-  eventSubscription3: Subscription;
-  intervalSubscription: Subscription;
+  eventSubscription: Subscription = new Subscription();
+  eventSubscription2: Subscription = new Subscription();
+  eventSubscription3: Subscription = new Subscription();
+  timerSubscription:{[key: `timerSubscription${number}`]:Subscription} = {};
   destroy$: Subject<any> = new Subject<any>();
   ellipsePipe: EllipsisPipe = new EllipsisPipe();
   // workspaceThCss = (head):any => { return {width: head=='buyer'||head=='vender'||head=='name'?'10%': head=='country'?'6%':'auto'}}
@@ -89,20 +90,20 @@ export class WorkstationComponent implements OnInit, OnChanges, AfterViewInit, O
     this.workspaceFolders = [];
     this.favouritePoints = Number(this.authService.getUserSingleDetail("Favoriteshipment"));
 
-    if (this.type == 'favourites') {
-      const bookmarkedData = this.userService.getBookmarks();
-      this.favouriteDataArr = bookmarkedData.data;
-      console.log(this.favouriteDataArr)
-      this.isLoading = false;
-    } else if (this.type == 'workspace') this.onWorkspaceInIt();
-    else if (this.type == 'download') this.onDownloadListInIt();
+    // if (this.type == 'favourites') {
+    //   const bookmarkedData = this.userService.getBookmarks();
+    //   this.favouriteDataArr = bookmarkedData.data;
+    //   console.log(this.favouriteDataArr)
+    //   this.isLoading = false;
+    // } else 
+    if (this.type === 'workspace') this.onWorkspaceInIt();
+    else if (this.type === 'download') this.onDownloadListInIt();
 
     this.onDownloadListInIt(); 
   }
 
   removeDownloadingNotice() {
-    this.intervalSubscription = interval(10000)
-    .subscribe(() => { this.hasShownNotice = true; });
+    this.timerSubscription["timerSubscription2"] = timer(10000).subscribe(() => { this.hasShownNotice = true; });
   }
 
   onClickRefresh() {
@@ -177,13 +178,6 @@ export class WorkstationComponent implements OnInit, OnChanges, AfterViewInit, O
   ngOnInit(): void {
     // this.folderViewType = this.userService.getSingleUserPref('folderView');
 
-    this.eventSubscription = this.eventService.confirmationEvent.subscribe(res => {
-      if (res) {
-        const bookmarkedData = this.userService.getBookmarks();
-        this.favouriteDataArr = bookmarkedData.data;
-      }
-    });
-
     //temporary
     this.userService.getCountrylist().subscribe((res: any) => {
       if (res != null) {
@@ -221,14 +215,14 @@ export class WorkstationComponent implements OnInit, OnChanges, AfterViewInit, O
   }
 
   openWorkSpaceFolder(foldername: string) {
-    if(this.workspaceTimeoutId) clearTimeout(this.workspaceTimeoutId);
+    this.timerSubscription?.["timerSubscription3"]?.unsubscribe();
 
-    this.workspaceTimeoutId = setTimeout(() => {
+    this.timerSubscription["timerSubscription3"] = timer(500).subscribe(() => {
       const currentFolderData = this.workspaceFolders.find(item => item["folder"] == foldername)["data"];
       this.copyDataArr = this.getSortedArray(currentFolderData, "transaction");
       this.openWorkSpaceTable = true;
       this.currentDirName = foldername;
-    }, 500)
+    })
   }
 
   resetBackBtnTrigger = (title:string) =>  {
@@ -255,10 +249,10 @@ export class WorkstationComponent implements OnInit, OnChanges, AfterViewInit, O
       const selectedTr = document.querySelector(selector) as HTMLTableRowElement;
       if (selectedTr) {
         selectedTr.classList.add("blinkData");
-        setTimeout(() => selectedTr.classList.remove("blinkData"), 3000);
+        this.timerSubscription["timerSubscription4"] = timer(3000).subscribe(() => selectedTr.classList.remove("blinkData"));
         this.eventService.downloadListUpdate.next({});
       } else {
-        setTimeout(() => this.onDownloadUpdateEvent(res), 1500);
+        this.timerSubscription["timerSubscription5"] = timer(1500).subscribe(() => this.onDownloadUpdateEvent(res));
       }
     }
   }
@@ -266,18 +260,18 @@ export class WorkstationComponent implements OnInit, OnChanges, AfterViewInit, O
   ngAfterViewInit(): void { }
 
   ngOnDestroy(): void {
-    if(this.apiSubscription1) {this.apiSubscription1.unsubscribe();}
-    if(this.apiSubscription2) {this.apiSubscription2.unsubscribe();}
-    this.eventSubscription.unsubscribe();
-    this.eventSubscription2.unsubscribe();
-    this.eventSubscription3.unsubscribe();
-    this.destroy$.next(true);
-    this.destroy$.unsubscribe();
-    if (this.intervalSubscription) this.intervalSubscription.unsubscribe();
+    if(this.apiSubscription1) {this.apiSubscription1?.unsubscribe();}
+    if(this.apiSubscription2) {this.apiSubscription2?.unsubscribe();}
+    this.eventSubscription?.unsubscribe();
+    this.eventSubscription2?.unsubscribe();
+    this.eventSubscription3?.unsubscribe();
+    this.destroy$?.next(true);
+    this.destroy$?.unsubscribe();
+    Object.keys(this.timerSubscription).forEach((key:string) => this.timerSubscription?.[key]?.unsubscribe());
   }
 
   getHeadsValue(data:any, key:string): string {
-    if (key == "Date") return this.datePipe.transform(data[key], "yyyy-MM-dd");
+    if (key==="Date") return this.datePipe.transform(data[key], "yyyy-MM-dd");
     else {
       if (data[key]) return data[key];
       else return "N/A";
@@ -416,13 +410,17 @@ export class WorkstationComponent implements OnInit, OnChanges, AfterViewInit, O
     (<ConfirmationComponent>modalRef.componentInstance).downloadingIDsList = this.fileIds;
     (<ConfirmationComponent>modalRef.componentInstance).currentPopUp = "sharing";
     const callBackEvent = (<ConfirmationComponent>modalRef.componentInstance).callBack.subscribe(res => {
-      callBackEvent.unsubscribe();
+      this.fileIds = [];
+      const selectedInpArr:NodeListOf<HTMLInputElement> = document.querySelectorAll<HTMLInputElement>("input[type=checkbox].download-checkbox:checked");
+      selectedInpArr.forEach((tag:HTMLInputElement) => tag.checked = false);
+      this.timerSubscription["timerSubscription1"] = timer(1000).subscribe(() => callBackEvent.unsubscribe());
     });
   }
 
-  selectOneByOne(id:string) {
-    if(this.fileIds.includes(id)) this.fileIds.splice(this.fileIds.indexOf(id), 1);
-    else this.fileIds.push(Number(id)); 
+  selectOneByOne(id:string|number) {
+    if(this.fileIds.includes(Number(id))) {
+      this.fileIds = this.fileIds.filter((fileId:string|number) => Number(id) !== fileId);
+    } else this.fileIds.push(Number(id)); 
     
     // if(this.intervalSubscription) this.intervalSubscription.unsubscribe();
   }

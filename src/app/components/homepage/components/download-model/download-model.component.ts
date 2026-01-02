@@ -4,7 +4,7 @@ import { UserService } from 'src/app/services/user.service';
 import { AuthService } from 'src/app/services/auth.service';
 import { ApiServiceService } from 'src/app/services/api-service.service';
 import { EventemittersService } from 'src/app/services/eventemitters.service';
-import { Subscription } from 'rxjs';
+import { Subscription, timer } from 'rxjs';
 import { ApiMsgRes } from 'src/app/models/api.types';
 
 @Component({
@@ -35,6 +35,8 @@ export class DownloadModelComponent implements OnInit, OnDestroy {
 
   apiSubscription1:Subscription = new Subscription();
   apiSubscription2:Subscription = new Subscription();
+  timerSubscription1:Subscription = new Subscription();
+  timerSubscription2:Subscription = new Subscription();
 
   constructor(
     private activeModal: NgbActiveModal,
@@ -46,7 +48,7 @@ export class DownloadModelComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     if(this.modalType!=="updated-buyer-modal") {
-      setTimeout(() => this.currentTab='phase1', 800);
+      this.timerSubscription2 = timer(800).subscribe(() => this.currentTab='phase1');
       this.getUserPointsUpdated();
     }
 
@@ -63,6 +65,8 @@ export class DownloadModelComponent implements OnInit, OnDestroy {
   ngOnDestroy(): void {
     this.apiSubscription1?.unsubscribe();
     this.apiSubscription2?.unsubscribe();
+    this.timerSubscription1?.unsubscribe();
+    this.timerSubscription2?.unsubscribe();
   }
 
   onClickNext() {
@@ -88,12 +92,12 @@ export class DownloadModelComponent implements OnInit, OnDestroy {
     this.isError = false;
 
     //if remaining points are less than the required points
-    setTimeout(() => {
+    this.timerSubscription1 = timer(300).subscribe(() => {
       if(this.remainingPoints < 0) {
         const resultSpanTag = document.getElementById("remainingResult") as HTMLSpanElement;
         resultSpanTag.classList.add("active");
       }
-    }, 300);
+    });
   }
 
   getUserPointsUpdated() {

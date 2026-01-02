@@ -1,6 +1,6 @@
-import { Component, OnInit, Input, AfterViewInit, OnDestroy, OnChanges, SimpleChanges } from '@angular/core';
-import { Chart,ChartType, ChartData } from 'chart.js';
-import { Subscription } from 'rxjs';
+import { Component, OnInit, Input, AfterViewInit, OnDestroy } from '@angular/core';
+import { Chart,ChartType } from 'chart.js';
+import { interval, Subscription, timer } from 'rxjs';
 import { AlertifyService } from 'src/app/services/alertify.service';
 import { ApiServiceService } from 'src/app/services/api-service.service';
 import { EventemittersService } from 'src/app/services/eventemitters.service';
@@ -19,13 +19,14 @@ export class CardMdChartComponent implements OnInit, AfterViewInit, OnDestroy {
   directionType:string = "Import";
   chartObj:Chart;
   isLeftSide:boolean = true;
-  intervalVar:any;
+  intervalSubscription:Subscription = new Subscription();
   isMultiSelectOn:boolean = false;
   isAPIinProcess:boolean = false;
 
   apiSubscription1:Subscription = new Subscription();
-  apiSubscription2:Subscription = new Subscription();
-
+  timerSubscription1:Subscription = new Subscription();
+  timerSubscription2:Subscription = new Subscription();
+  timerSubscription3:Subscription = new Subscription();
   
   getTitle = (type:string, key:string) => {
     const chartTitles = {
@@ -82,9 +83,11 @@ export class CardMdChartComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
-    clearInterval(this.intervalVar);
-    // this.apiSubscription1.unsubscribe();
-    // this.apiSubscription2.unsubscribe();
+    this.intervalSubscription?.unsubscribe();
+    this.apiSubscription1?.unsubscribe();
+    this.timerSubscription1?.unsubscribe();
+    this.timerSubscription2?.unsubscribe();
+    this.timerSubscription3?.unsubscribe();
   }
 
   resetCurrentGraphs() {
@@ -215,8 +218,8 @@ export class CardMdChartComponent implements OnInit, AfterViewInit, OnDestroy {
       this.chartObj.options.plugins.tooltip.callbacks.label = this.type=="pie" ? this.pieCallBackTooltip : (context) => `${context.formattedValue} Bn $`;
       
       if(this.type == "line") {
-        if(this.intervalVar) {clearInterval(this.intervalVar);}
-        this.intervalVar = setInterval(() => this.chartUpdate(), 3000); 
+        this.intervalSubscription?.unsubscribe();
+        this.intervalSubscription = interval(3000).subscribe(() => this.chartUpdate());
       }
     } else if(this.type=="radar") {
       this.chartObj.options.plugins.tooltip.callbacks.label = (context) => `${context.formattedValue}%`;
@@ -231,7 +234,8 @@ export class CardMdChartComponent implements OnInit, AfterViewInit, OnDestroy {
     this.chartObj.options.plugins.tooltip.callbacks.label = (context) => {      
       return `${context.formattedValue} Bn $ \n (${context.dataset["hscode"][context.dataIndex]})`;
     }
-    setTimeout(() => this.chartObj.update(), 500);
+    
+    this.timerSubscription1 = timer(500).subscribe(() => this.chartObj.update());
   }
 
   getEachAnalysisGraphData(tableType:string) {
@@ -245,8 +249,8 @@ export class CardMdChartComponent implements OnInit, AfterViewInit, OnDestroy {
       direction: this.directionType
     };
 
-    if(environment.apiDataCache.hasOwnProperty(apiCacheKey)) {
-      setTimeout(() => {
+    if(environment?.apiDataCache?.hasOwnProperty(apiCacheKey)) {
+      this.timerSubscription2 = timer(1000).subscribe(() => {
         //fetching values from cache
         if(["radar", "line"].includes(this.type)) {
           this.lineRadarDataValues = {...environment.apiDataCache[apiCacheKey]};
@@ -258,11 +262,11 @@ export class CardMdChartComponent implements OnInit, AfterViewInit, OnDestroy {
         else if(this.type=="pie") this.setGraphInterval(10);
         else this.setGraphInterval(12);
         this.isAPIinProcess = false;
-      }, 1000);
+      });
     } else {
-      if(this.apiSubscription2) this.apiSubscription2.unsubscribe();
-      setTimeout(() => {
-        this.apiSubscription2 = this.apiService.getWhatstrandingGraphData(apiObj).subscribe({
+      this.apiSubscription1?.unsubscribe();
+      this.timerSubscription3 = timer(2000).subscribe(() => {
+        this.apiSubscription1 = this.apiService.getWhatstrandingGraphData(apiObj).subscribe({
           next: (res:any) => {
             if(!res.error) {
               this.lineRadarDataValues = {months: [], percentages: [], values: []};
@@ -331,7 +335,7 @@ export class CardMdChartComponent implements OnInit, AfterViewInit, OnDestroy {
             }
           }, error: (err:any) => {}
         });
-      }, 2000);
+      });
     }
   }
 

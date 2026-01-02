@@ -1,5 +1,5 @@
 import { Component, Input, OnInit, Output, EventEmitter, OnChanges, OnDestroy, ViewChild, ElementRef } from '@angular/core';
-import { Subscription } from 'rxjs';
+import { Subscription, timer } from 'rxjs';
 import { AuthService } from 'src/app/services/auth.service';
 import { EventemittersService } from 'src/app/services/eventemitters.service';
 
@@ -33,11 +33,12 @@ export class MultiselectDropdownComponent implements OnInit, OnChanges, OnDestro
 
   defaultPlaceHolder:string = '';
 
-  eventSubscription:Subscription;
+  eventSubscription:Subscription = new Subscription();
+  timerSubscription:Subscription = new Subscription();
 
   constructor(
     private authService: AuthService,
-    private eventService:EventemittersService
+    private eventService: EventemittersService
   ) { }
 
   ngOnChanges() {
@@ -73,7 +74,6 @@ export class MultiselectDropdownComponent implements OnInit, OnChanges, OnDestro
               if(checkedItem.length>0 && checkedItem[0][this.dropDownOption.key]) {
                 this.checkedIds.push(checkedItem[0][this.dropDownOption.key]);
               }
-              // if(i==res?.items.length-1) console.log(this.selectedItems,this.checkedIds);
             }
           }
         }
@@ -82,7 +82,8 @@ export class MultiselectDropdownComponent implements OnInit, OnChanges, OnDestro
   }
 
   ngOnDestroy(): void {
-    this.eventSubscription.unsubscribe();
+    this.eventSubscription?.unsubscribe();
+    this.timerSubscription?.unsubscribe();
   }
 
   hideBelowOptions() {
@@ -186,7 +187,7 @@ export class MultiselectDropdownComponent implements OnInit, OnChanges, OnDestro
         this.cdkTable.nativeElement.children[0].scrollTop = 0;
       } else {
         this.alertCls = "showAlert";
-        setTimeout(() => {this.alertCls = ""}, 1500);
+        this.timerSubscription = timer(1500).subscribe(() => {this.alertCls = "";});
       }
     }
 

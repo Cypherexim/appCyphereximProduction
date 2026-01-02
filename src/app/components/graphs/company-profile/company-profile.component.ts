@@ -1,4 +1,4 @@
-import { Subscription } from 'rxjs';
+import { Subscription, timer } from 'rxjs';
 import { Component, ElementRef, OnDestroy, OnInit, Renderer2 } from '@angular/core';
 import { ApiServiceService } from 'src/app/services/api-service.service';
 import { EventemittersService } from 'src/app/services/eventemitters.service';
@@ -74,6 +74,7 @@ export class CompanyProfileComponent implements OnInit, OnDestroy {
   pageSize: number = 1;
   apiSubscription1: Subscription;
   eventSubscription1: Subscription;
+  timerSubscription:{[key: `timerSubscription${number}`]:Subscription} = {};
   companyAllShipmentsTotal: number = 0;
   companyData: CompanyProfileObject = new CompanyProfileObject();
   totalPages: number = 1;
@@ -96,13 +97,14 @@ export class CompanyProfileComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
-    this.eventSubscription1.unsubscribe();
-    this.apiSubscription1.unsubscribe();
+    this.eventSubscription1?.unsubscribe();
+    this.apiSubscription1?.unsubscribe();
     this.mapHighcharts.destroy();
     this.mapHighcharts = undefined;
+    Object.keys(this.timerSubscription).forEach((key:string) => this.timerSubscription?.[key].unsubscribe());
   }
 
-  getEllipsedLink(link: string, limit: number): string {
+  getEllipsedLink(link:string, limit:number):string {
     return this.ellipsePipe.transform(link, limit);
   }
 
@@ -429,10 +431,10 @@ export class CompanyProfileComponent implements OnInit, OnDestroy {
   showShipmentTable(keyType: string) {
     if (keyType == "contacts" && this.linkedInEmployees.length > 0) {
       this.isEmployeeOpen = true;
-      setTimeout(() => {
+      this.timerSubscription["timerSubscription1"] = timer(250).subscribe(() => {
         const containerTag = document.getElementById("profileContainer") as HTMLDivElement;
         containerTag.scrollTo(0, containerTag.clientHeight);
-      }, 250);
+      });
       return;
     }
 
@@ -441,12 +443,9 @@ export class CompanyProfileComponent implements OnInit, OnDestroy {
     if (!["buyers", "suppliers", "hs codes", "countries", "shipments"].includes(keyType)) return;
     this.isTableShow = true;
     this.pivotLoading = true;
-    const companyName = this.companyName.toUpperCase()
+    const companyName = this.companyName.toUpperCase();
 
-
-
-
-    setTimeout(async () => {
+    this.timerSubscription["timerSubscription2"] = timer(1000).subscribe(async() => {
       if (keyType != "shipments") {
 
         // this.currentKey = keyType;
@@ -491,7 +490,7 @@ export class CompanyProfileComponent implements OnInit, OnDestroy {
         this.isAllShipmentShow = true;
         this.pivotLoading = false;
       }
-    }, 1000);
+    });
   }
 
   toggleDetailOpen(): void {
@@ -572,11 +571,11 @@ export class CompanyProfileComponent implements OnInit, OnDestroy {
       ? this.infoGenerator({ key: "email", value: item?.name })
       : this.infoGenerator({ key: "phone", value: this.companyInfoPoints[0]["data"] });
 
-    setTimeout(() => {
+    this.timerSubscription["timerSubscription3"] = timer(2500).subscribe(() => {
       this.renderer.setProperty(infoTag, "innerHTML", generatedInfo);
       iconTag.parentElement.classList.add("d-none");
       this.currentInfoId = "";
-    }, 2500);
+    });
   }
 
   onRequest(id: string) {
@@ -587,13 +586,13 @@ export class CompanyProfileComponent implements OnInit, OnDestroy {
     buttonTag.children[0].classList.add("d-none");
     buttonTag.children[1].classList.remove("d-none");
 
-    setTimeout(() => {
+    this.timerSubscription["timerSubscription4"] = timer(1500).subscribe(() => {
       buttonTag.children[1].classList.add("d-none");
       buttonTag.children[0].innerHTML = "Request Sent";
       buttonTag.children[0].classList.remove("d-none");
       buttonTag.classList.add("updated");
       console.log("request sent!");
-    }, 1500);
+    });
   }
 
   onSelectListTab(tabName: string) {
@@ -638,12 +637,12 @@ export class CompanyProfileComponent implements OnInit, OnDestroy {
       const data = environment.apiDataCache[apiKey];
       this.companyAllShipmentspivot = data;
 
-      setTimeout(() => {
+      this.timerSubscription["timerSubscription5"] = timer(500).subscribe(() => {
         this.alertService.prepareMapData(this.companyAllShipmentspivot, this.currentTab).then((res: any[]) => {
           this.countryData = res;
           this.worldMapInit();
         }).catch((err: any) => console.log(err));
-      }, 500);
+      });
       return;
     }
 
@@ -653,13 +652,13 @@ export class CompanyProfileComponent implements OnInit, OnDestroy {
 
         this.companyAllShipmentspivot = res?.results || [];
         environment.apiDataCache[apiKey] = this.companyAllShipmentspivot;
-        setTimeout(() => {
+        this.timerSubscription["timerSubscription6"] = timer(500).subscribe(() => {
           this.alertService.prepareMapData(this.companyAllShipmentspivot, this.currentTab).then((res: any[]) => {
             this.countryData = res;
 
             this.worldMapInit();
           }).catch((err: any) => console.log(err));
-        }, 500);
+        });
 
       }, error: (err: any) => console.log(err)
     });
@@ -678,7 +677,7 @@ export class CompanyProfileComponent implements OnInit, OnDestroy {
         if (this.isAllShipmentShow) {
           this.currentTableData = JSON.parse(JSON.stringify(this.companyAllShipmentswithPage));
         }
-        setTimeout(() => this.worldMapInit(), 100);
+        this.timerSubscription["timerSubscription7"] = timer(100).subscribe(() => this.worldMapInit());
         this.isLoading = false;
       },
       error: (err: any) => {
@@ -764,7 +763,7 @@ export class CompanyProfileComponent implements OnInit, OnDestroy {
     this.eventService.sidebarToggleEvent.subscribe({
       next: (res: any) => {
         this.mapHighcharts.destroy();
-        setTimeout(() => this.worldMapInit(), 250);
+        this.timerSubscription["timerSubscription8"] = timer(250).subscribe(() => this.worldMapInit());
       },
       error: (err: any) => console.log(err)
     });

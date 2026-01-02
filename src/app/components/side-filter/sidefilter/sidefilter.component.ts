@@ -1,6 +1,6 @@
 import { AfterViewInit, Component, EventEmitter, OnInit, Output, Input, OnDestroy, OnChanges} from '@angular/core';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
-import { Subscription } from 'rxjs';
+import { Subscription, timer } from 'rxjs';
 import { SideFilterAccessModel, SideFilterModel, FilterNames } from 'src/app/models/others';
 import { AlertifyService } from 'src/app/services/alertify.service';
 import { ApiServiceService } from 'src/app/services/api-service.service';
@@ -37,10 +37,10 @@ export class SidefilterComponent implements OnInit, AfterViewInit, OnDestroy, On
   sideFilterAccess:SideFilterAccessModel = new SideFilterAccessModel();
   sideFilterNaming:FilterNames = new FilterNames();
   
-  eventSubscription1:Subscription;
-  eventSubscription2:Subscription;
-  // eventSubscription3:Subscription;
-  eventSubscription4:Subscription;
+  eventSubscription1:Subscription = new Subscription();
+  eventSubscription2:Subscription = new Subscription();
+  eventSubscription3:Subscription = new Subscription();
+  timerSubscription:Subscription = new Subscription();
   filterBarVisibility:boolean = false;
   allowFilterPages:string[] = ["home", "analysisNav"];
 
@@ -82,7 +82,7 @@ export class SidefilterComponent implements OnInit, AfterViewInit, OnDestroy, On
       });
     });
 
-    this.eventSubscription4 = this.eventService.userDetailsStore.subscribe({
+    this.eventSubscription3 = this.eventService.userDetailsStore.subscribe({
       next: (res:any) => {
         if(Object.keys(res).length > 0) {
           this.btnAccessibility = Number(res["remainingdays"])<=0;
@@ -104,10 +104,10 @@ export class SidefilterComponent implements OnInit, AfterViewInit, OnDestroy, On
   }
 
   ngOnDestroy(): void {
-    this.eventSubscription1.unsubscribe();
-    this.eventSubscription2.unsubscribe();
-    // this.eventSubscription3.unsubscribe();
-    this.eventSubscription4.unsubscribe();
+    this.eventSubscription1?.unsubscribe();
+    this.eventSubscription2?.unsubscribe();
+    this.eventSubscription3?.unsubscribe();
+    this.timerSubscription?.unsubscribe();
     this.filterOptions = new SideFilterModel();
   }
 
@@ -198,8 +198,9 @@ export class SidefilterComponent implements OnInit, AfterViewInit, OnDestroy, On
       this.word = "";
       this.eventService.hightlightDescBySidebar.next(this.productDescSearch[0]);
     } else {
-      if(!bool) setTimeout(() => this.isDropVisible = bool, 500);
-      else this.isDropVisible = bool;
+      if(!bool) {
+        this.timerSubscription = timer(500).subscribe(() => {this.isDropVisible = bool;});
+      } else this.isDropVisible = bool;
     }
   }
 

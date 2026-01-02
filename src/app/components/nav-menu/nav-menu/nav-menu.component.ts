@@ -1,14 +1,13 @@
-import { Component, OnInit, OnDestroy, AfterViewInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { AuthService } from 'src/app/services/auth.service';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { CountryListComponent } from '../../admin-panel/country-list/country-list.component';
 import { EventemittersService } from 'src/app/services/eventemitters.service';
-import { Subscription, forkJoin, interval } from 'rxjs';
+import { Subscription, forkJoin, interval, timer } from 'rxjs';
 import { UserService } from 'src/app/services/user.service';
 import { AlertifyService } from 'src/app/services/alertify.service';
 import { UserRoleAccess } from 'src/app/models/plan';
 import { environment } from 'src/environments/environment';
-import { SaveFileComponent } from '../../side-filter/modals/save-file/save-file.component';
 import { ApiServiceService } from 'src/app/services/api-service.service';
 import { ApiMsgRes } from 'src/app/models/api.types';
 
@@ -40,17 +39,19 @@ export class NavMenuComponent implements OnInit, OnDestroy {
 
   isDownloadingFile:boolean = false;
   isLoggedIn:boolean = false;
-  loginSubscription:Subscription;
-  apiSubscription:Subscription;
-  apiSubscription2:Subscription;
-  timeSubscription:Subscription;
-  eventSubscription:Subscription;
-  eventSubscription2:Subscription;
-  eventSubscription3:Subscription;
-  eventSubscription4:Subscription;
-  eventSubscription5:Subscription;
+  loaderTimeout:Subscription = new Subscription();
+  apiSubscription:Subscription = new Subscription();
+  apiSubscription2:Subscription = new Subscription();
+  timeSubscription:Subscription = new Subscription();
+  eventSubscription:Subscription = new Subscription();
+  loginSubscription:Subscription = new Subscription();
+  eventSubscription2:Subscription = new Subscription();
+  eventSubscription3:Subscription = new Subscription();
+  eventSubscription4:Subscription = new Subscription();
+  eventSubscription5:Subscription = new Subscription();
+  timerSubscription1:Subscription = new Subscription();
+  timerSubscription2:Subscription = new Subscription();
   isPageLoading:boolean = false;
-  loaderTimeout:Subscription;
 
   unlimited = {download: environment.unlimitedDownload, search: environment.unlimitedSearch};
 
@@ -227,14 +228,16 @@ export class NavMenuComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy() { 
-    this.loginSubscription.unsubscribe(); 
-    this.eventSubscription.unsubscribe();
-    this.eventSubscription2.unsubscribe();
-    this.eventSubscription3.unsubscribe();
-    this.eventSubscription4.unsubscribe();
-    this.eventSubscription5.unsubscribe();
-    this.apiSubscription.unsubscribe();
-    this.apiSubscription2.unsubscribe();
+    this.loginSubscription?.unsubscribe(); 
+    this.eventSubscription?.unsubscribe();
+    this.eventSubscription2?.unsubscribe();
+    this.eventSubscription3?.unsubscribe();
+    this.eventSubscription4?.unsubscribe();
+    this.eventSubscription5?.unsubscribe();
+    this.apiSubscription?.unsubscribe();
+    this.apiSubscription2?.unsubscribe();
+    this.timerSubscription1?.unsubscribe();
+    this.timerSubscription2?.unsubscribe();
   }
 
   //to show mendatory alert marquee
@@ -302,11 +305,11 @@ export class NavMenuComponent implements OnInit, OnDestroy {
   onClickHeaderOption(type:string, fileName:string="") {
     this.eventService.headerClickEvent.emit(type);
     const settingTag = document.querySelector("div.setting-container>a") as HTMLDivElement;
-    setTimeout(() => this.setDropClass(settingTag, 'cut'), 100);
+    this.timerSubscription1 = timer(100).subscribe(() => this.setDropClass(settingTag, 'cut'));
 
     if(type == "download") {
       this.isDownloadingPanelHidden = true; //in case of download 'open_file' click
-      setTimeout(() => this.eventService.downloadListUpdate.next({action: "highlight", filename: fileName}), 1500)
+      this.timerSubscription2 = timer(1500).subscribe(() => this.eventService.downloadListUpdate.next({action: "highlight", filename: fileName}));
     }
   }
 
@@ -359,12 +362,14 @@ export class NavMenuComponent implements OnInit, OnDestroy {
 
 
   getNotifications() {
+    this.apiSubscription2?.unsubscribe();
+    
     this.apiSubscription2 = this.apiService.getAllNotifications().subscribe({
       next: async(res:any) => {
         if(!res.error) {
           this.eventService.sendNotifications.next(res.results);
 
-          const userPrefs = JSON.parse(this.authService?.getUserDetails()?.userPreference);
+          const userPrefs = JSON.parse(this.authService?.getUserDetails()?.userPreference) || {};
           if(!userPrefs.hasOwnProperty("notification")) {userPrefs["notification"] = [];}
           const seenIDs = userPrefs!=null ? userPrefs["notification"] : [];
 

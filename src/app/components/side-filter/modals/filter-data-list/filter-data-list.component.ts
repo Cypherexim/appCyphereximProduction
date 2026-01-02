@@ -1,7 +1,7 @@
 import { Component, OnInit, OnDestroy, AfterViewInit, Output, EventEmitter } from '@angular/core';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import { EventemittersService } from 'src/app/services/eventemitters.service';
-import {Subscription} from 'rxjs';
+import {Subscription, timer} from 'rxjs';
 import { AlertifyService } from 'src/app/services/alertify.service';
 
 
@@ -21,8 +21,9 @@ export class FilterDataListComponent implements OnInit, AfterViewInit, OnDestroy
   copiedDataArr:any[] = [];
   alreadySelectedItems:any[] = [];
   hasDataReceived:boolean = false;
-  eventSubscription:Subscription;
-  eventSubscription1:Subscription;
+  eventSubscription:Subscription = new Subscription();
+  eventSubscription1:Subscription = new Subscription();
+  timerSubscription:Subscription = new Subscription();
   currentCountry:string = "";
   listTotal:number = 0;
   exceptionalSideFilter:string[] = ["Exporter", "Importer", "Country"];
@@ -47,7 +48,7 @@ export class FilterDataListComponent implements OnInit, AfterViewInit, OnDestroy
   }
 
   ngAfterViewInit(): void {
-    setTimeout(() => {
+    this.timerSubscription = timer(800).subscribe(() => {
       for(let item of this.alreadySelectedItems) {
         const splittedArr = (item["id"]).split("_");
         splittedArr.shift();
@@ -57,11 +58,11 @@ export class FilterDataListComponent implements OnInit, AfterViewInit, OnDestroy
         this.selectedIds.push(newId);
         this.selectedDataArr.push(item);
       }
-    }, 800);
+    });
   }
 
   ngOnDestroy(): void {
-    // this.eventSubscription.unsubscribe();
+    this.timerSubscription?.unsubscribe();
   }
 
   getAllFullSideFiltersData() {

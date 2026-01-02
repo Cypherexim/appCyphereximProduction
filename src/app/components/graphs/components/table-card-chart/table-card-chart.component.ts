@@ -1,6 +1,6 @@
 import { Component, OnInit, Input, AfterViewInit, OnDestroy } from '@angular/core';
 import {Chart} from 'chart.js';
-import { Subscription } from 'rxjs';
+import { interval, Subscription, timer } from 'rxjs';
 import { EventemittersService } from 'src/app/services/eventemitters.service';
 
 @Component({
@@ -21,17 +21,19 @@ export class TableCardChartComponent implements OnInit, AfterViewInit, OnDestroy
   };
 
   chartLabels:string[] = []; 
-  intervalVar:any;
+  intervalSubscription:Subscription = new Subscription()
 
   eventSubscription:Subscription = new Subscription();
+  timerSubscription:Subscription = new Subscription();
 
   constructor(
     private eventService: EventemittersService
   ) { }
 
   ngOnDestroy(): void {
-    clearInterval(this.intervalVar);
-    this.eventSubscription.unsubscribe();
+    this.intervalSubscription?.unsubscribe();
+    this.eventSubscription?.unsubscribe();
+    this.timerSubscription?.unsubscribe();
   }
 
   ngOnInit(): void {this.onChangeYear();}
@@ -46,16 +48,13 @@ export class TableCardChartComponent implements OnInit, AfterViewInit, OnDestroy
   onChangeYear() {
     this.eventSubscription = this.eventService.onChangeDirectionBullet.subscribe({
       next: (res:any) => {
-        setTimeout(() => {          
+        this.timerSubscription = timer(1500).subscribe(() => {          
           this.chartOption.id = this.chartId;
           this.chartOption.data = this.getCommodityDataInArray(JSON.parse(JSON.stringify(this.data)));
-          if(this.chartId=="TEXTILE_INDUSTRY") {
-            console.log(this.data);
-          }
           this.lineChart.data.labels = this.chartLabels;
           this.lineChart.data.datasets[0].data = this.chartOption.data;
           this.lineChart.update();
-        }, 1500);
+        });
       },error: (err:any) => console.log(err)
     });
   }
@@ -111,7 +110,7 @@ export class TableCardChartComponent implements OnInit, AfterViewInit, OnDestroy
       }
     });
   
-    this.intervalVar = setInterval(() => this.chartUpdate2(), 3000);
+    this.intervalSubscription = interval(3000).subscribe(() => this.chartUpdate2());
   }
 
   chartUpdate2() {

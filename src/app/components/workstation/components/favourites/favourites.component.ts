@@ -1,13 +1,13 @@
-import { Component, Input, OnInit, Output, EventEmitter, OnChanges, SimpleChanges } from '@angular/core';
+import { Component, Input, OnInit, Output, EventEmitter, OnChanges, SimpleChanges, OnDestroy } from '@angular/core';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { ConfirmationComponent } from '../../modals/confirmation/confirmation.component';
 import { TableDataModalComponent } from 'src/app/components/homepage/components/table-data-modal/table-data-modal.component';
 import { AlertifyService } from 'src/app/services/alertify.service';
 import { CountryHeads } from 'src/app/models/country';
 import { EventemittersService } from 'src/app/services/eventemitters.service';
-import { ApiMsgRes, FavoriteShipmentResType } from 'src/app/models/api.types';
+import { ApiMsgRes } from 'src/app/models/api.types';
 import { ApiServiceService } from 'src/app/services/api-service.service';
-import { Subscription } from 'rxjs';
+import { timer, Subscription, take } from 'rxjs';
 import { AuthService } from 'src/app/services/auth.service';
 
 @Component({
@@ -15,7 +15,7 @@ import { AuthService } from 'src/app/services/auth.service';
   templateUrl: './favourites.component.html',
   styleUrls: ['./favourites.component.css']
 })
-export class FavouritesComponent implements OnInit, OnChanges{
+export class FavouritesComponent implements OnInit, OnChanges, OnDestroy{
   constructor(
     private modalService: NgbModal,
     private alertService: AlertifyService,
@@ -31,6 +31,7 @@ export class FavouritesComponent implements OnInit, OnChanges{
 
   eventSubscription:Subscription = new Subscription();
   apiSubscription:Subscription = new Subscription();
+  timerSubscription:Subscription = new Subscription();
 
   isLoading:boolean = false;
   favoriteTableHeads:string[] = ["", "company", "value", "hs code", "country", "date", "remove"];
@@ -52,13 +53,33 @@ export class FavouritesComponent implements OnInit, OnChanges{
   }
 
   ngOnInit(): void {
-    this.eventSubscription = this.eventService.passFavoriteShipmentIds.subscribe({
-      next: (value: FavoriteShipmentResType) => {
-        this.favoriteShipmentsIds = {
-          favorite: { shipments: value?.shipment_ids || [], length: value?.shipment_ids?.length || 0 },
-          toTheOrder: { shipments: value?.to_the_order_ids || [], length: value?.to_the_order_ids?.length || 0 }
-        }
-      }, error: (err:any) => console.error(err)
+    this.onGettingFavoritesIds();
+  }
+
+  ngOnDestroy(): void {
+    this.eventSubscription?.unsubscribe();
+    this.apiSubscription?.unsubscribe();
+    this.timerSubscription?.unsubscribe();
+  }
+
+  onGettingFavoritesIds() {
+    this.apiService.getFavoriteShipmentRecords(this.authService.getUserId()).subscribe({
+      next: (res:ApiMsgRes) => {
+        const result = res?.results[0];
+
+        this.apiService.getFavoriteShipmentCount({
+          userId: this.authService.getUserId(),
+          toTheOrder: result?.to_the_order_ids,
+          favorite: result?.shipment_ids
+        }).subscribe({
+          next: (res:ApiMsgRes) => {                  
+            this.favoriteShipmentsIds = {
+              favorite: { shipments: result?.shipment_ids || [], length: res?.results[0]?.favoriteCount || 0 },
+              toTheOrder: { shipments: result?.to_the_order_ids || [], length: res?.results[0]?.toTheOrderCount || 0 }
+            }
+          }
+        });
+      }
     });
   }
 
@@ -100,9 +121,26 @@ export class FavouritesComponent implements OnInit, OnChanges{
     }
   }
 
-  onRemoveItem(dataId:any) {
+  onRemoveItem(shipmentId:string|number, recordId?:string|number) {
     const modalRef = this.modalService.open(ConfirmationComponent, { windowClass: 'confirmModalClass', centered: true });
-    (<ConfirmationComponent>modalRef.componentInstance).dataId = dataId;
+    (<ConfirmationComponent>modalRef.componentInstance).callBack.subscribe((flag:boolean) => {
+      if(flag) {
+        this.favoriteShipmentsIds[this.favoriteShipmentRes.currentShipmentType].shipments = this.favoriteShipmentsIds[this.favoriteShipmentRes?.currentShipmentType]?.shipments?.filter((id:string|number) => id !== shipmentId);
+        this.favoriteShipmentsIds[this.favoriteShipmentRes.currentShipmentType].length = this.favoriteShipmentsIds[this.favoriteShipmentRes?.currentShipmentType]?.shipments?.length;
+        this.getFavoriteShipmentList(this.favoriteShipmentRes.currentShipmentType);
+        this.deleteBookmarkRecords(shipmentId);
+        this.timerSubscription = timer(1000).subscribe({next: () => {
+          this.eventService.bookmarkActionEvent.next({ recordId, shipmentId, actionFlag: true, bookmarkType: this.favoriteShipmentRes.currentShipmentType});
+        }});
+      }
+    });
+  }
+
+  deleteBookmarkRecords(shipmentId:string|number) {
+    this.apiService.removeFavoriteShipment({
+      userId: this.authService.getUserId(),
+      favoriteId: shipmentId
+    }).pipe(take(1)).subscribe();
   }
 
   getDateInNum():number {

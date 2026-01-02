@@ -34,15 +34,15 @@
                     <td>{{item?.favorite_shipment?.Type==='IMPORT' ? item?.favorite_shipment?.Exp_Name : item?.favorite_shipment?.Imp_Name}}</td>
                     <td>{{convertValueInUsd(item?.favorite_shipment?.ValueInUSD)}}</td>
                     <td>{{item?.favorite_shipment?.HsCode}}</td>
-                    <td>{{item?.favorite_shipment?.Type=='IMPORT' ? item?.favorite_shipment?.CountryofOrigin : item?.favorite_shipment?.CountryofDestination}}</td>
+                    <td>{{item?.favorite_shipment?.Type==='IMPORT' ? item?.favorite_shipment?.CountryofOrigin : item?.favorite_shipment?.CountryofDestination}}</td>
                     <td>{{item?.favorite_shipment?.Date | date:'dd MMM, yyyy'}}</td>
-                    <td><i class="fa-solid fa-trash" (click)="onRemoveItem(item?.favorite_shipment?.RecordID)"></i></td>
+                    <td><i class="fa-solid fa-trash" (click)="onRemoveItem(item?.shipment_id, item?.favorite_shipment?.RecordID)"></i></td>
                 </tr>
             </tbody>
         </table>
 
 
-        <div *ngFor="let item of favoriteShipmentRes?.favoriteShipmentsList" class="col-3 d-none justify-content-center align-items-center {{favoriteShipmentRes.length===0 ? 'd-none': 'd-flex'}}">
+        <!-- <div *ngFor="let item of favoriteShipmentRes?.favoriteShipmentsList" class="col-3 d-none justify-content-center align-items-center {{favoriteShipmentRes.length===0 ? 'd-none': 'd-flex'}}">
             <div class="favourite-card position-relative">
                 <div class="btn-bar d-flex align-items-center justify-content-end">
                     <i class="fa-solid fa-trash" (click)="onRemoveItem(item?.favorite_shipment?.RecordID)"></i>
@@ -58,7 +58,7 @@
                 </div>
                 <div class="view-btn position-absolute" (click)="showDetailModal(item)">VIEW</div>
             </div>
-        </div>
+        </div> -->
 
         <div class="{{favoriteShipmentRes.length===0 ? 'd-block': 'd-none'}} no-data text-center position-absolute">No {{favoriteShipmentRes?.currentShipmentType==='favorite' ? 'Favourites': 'To The Order Shipments'}} Available</div>
     </div>

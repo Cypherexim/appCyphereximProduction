@@ -1,6 +1,6 @@
 import { AfterViewInit, Component, EventEmitter, OnDestroy, OnInit, Output } from '@angular/core';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
-import { Subscription } from 'rxjs';
+import { Subscription, timer } from 'rxjs';
 import { AlertifyService } from 'src/app/services/alertify.service';
 import { ApiServiceService } from 'src/app/services/api-service.service';
 import { EventemittersService } from 'src/app/services/eventemitters.service';
@@ -18,7 +18,6 @@ export class SaveFileComponent implements OnInit, OnDestroy, AfterViewInit {
   fileName:string = "";
   foldername:string = "default";
   folderArr:string[] = ["default"];
-  timeoutVar:any;
   targetBy:string = "";
   isAddFolderClick:boolean = false;
   saveTitle:string = "Save your changes to this file?";
@@ -36,9 +35,10 @@ export class SaveFileComponent implements OnInit, OnDestroy, AfterViewInit {
 
   @Output() saveCallBack:EventEmitter<any> = new EventEmitter();
 
-  apiSubscription:Subscription;
-  eventSubscription:Subscription;
-  eventSubscription1:Subscription;
+  apiSubscription:Subscription = new Subscription();
+  eventSubscription:Subscription = new Subscription();
+  eventSubscription1:Subscription = new Subscription();
+  timerSubscription:Subscription = new Subscription();
 
   constructor(
     public activeModal: NgbActiveModal,
@@ -61,6 +61,7 @@ export class SaveFileComponent implements OnInit, OnDestroy, AfterViewInit {
   ngOnDestroy(): void {
     this.apiSubscription?.unsubscribe();
     this.eventSubscription?.unsubscribe();
+    this.timerSubscription?.unsubscribe();
   }
 
   getExistFileName():string {
@@ -137,8 +138,8 @@ export class SaveFileComponent implements OnInit, OnDestroy, AfterViewInit {
         const inputTag = document.getElementById("folderInput") as HTMLInputElement;
         inputTag.style.borderColor = "red";
 
-        if(this.timeoutVar) clearTimeout(this.timeoutVar);
-        this.timeoutVar = setTimeout(() => inputTag.style.borderColor = "#c2c2c2", 2000);
+        this.timerSubscription?.unsubscribe();
+        this.timerSubscription = timer(2000).subscribe(() => {inputTag.style.borderColor = "#c2c2c2";});
       } else {
         this.folderArr.push(this.foldername);
         this.isAddFolderClick = false;

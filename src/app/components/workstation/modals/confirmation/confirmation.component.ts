@@ -1,6 +1,6 @@
-import { Component, OnInit, Output, EventEmitter } from '@angular/core';
+import { Component, OnInit, Output, EventEmitter, OnDestroy } from '@angular/core';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
-import { Subscription } from 'rxjs';
+import { Subscription, timer } from 'rxjs';
 import { EllipsisPipe } from 'src/app/common/Pipes/ellipsis.pipe';
 import { ApiMsgRes } from 'src/app/models/api.types';
 import { AlertifyService } from 'src/app/services/alertify.service';
@@ -14,18 +14,18 @@ import { UserService } from 'src/app/services/user.service';
   templateUrl: './confirmation.component.html',
   styleUrls: ['./confirmation.component.css']
 })
-export class ConfirmationComponent implements OnInit {
+export class ConfirmationComponent implements OnInit, OnDestroy {
 
   @Output() callBack:EventEmitter<boolean> = new EventEmitter<boolean>();
 
   confirmationMsg:string = 'Are you sure to delete this data?';
-  dataId:string = '';
+  dataId:string|number = '';
   deleteType:string = 'favourite';
   currentPopUp:string = "confirmation";
 
   allUsers:any[] = [];
   copyAllUsers:any[] = [];
-  downloadingIDsList:string[] = [];
+  downloadingIDsList:(string|number)[] = [];
   downloadWorkspaceId:any[] = [];
   selectedUserId:any[] = [];
   hasSubmitted:boolean = false;
@@ -40,7 +40,8 @@ export class ConfirmationComponent implements OnInit {
 
   timeoutVar:any;
 
-  apiSubscription:Subscription;
+  apiSubscription:Subscription = new Subscription();
+  timerSubscription:Subscription = new Subscription();
   
   constructor(
     public activeModal: NgbActiveModal, 
@@ -64,18 +65,24 @@ export class ConfirmationComponent implements OnInit {
       });
     }
   }
+
+  ngOnDestroy(): void {
+    this.timerSubscription?.unsubscribe();
+  }
   
   onDismissModal = () => this.activeModal.dismiss('Cross click');
 
   onRemove() {
-    if(this.deleteType == "favourite") {
-      this.userService.removeBookmarkData(this.dataId);
-      this.eventService.confirmationEvent.next(true);
-    } else if(this.deleteType == "delete") {
+    if(this.deleteType === "favourite") {
+      this.callBack.emit(true);
+      this.alertService.success("Favorite is deleted successfully!");
+      // this.userService.removeBookmarkData(this.dataId);
+      // this.eventService.confirmationEvent.next(true);'
+    } else if(this.deleteType === "delete") {
       this.apiService.deleteWorkspace(this.dataId).subscribe({
         next: (res:any) => {
           if(!res.error) {
-            this.alertService.success("Workspace deleted successfully!");
+            this.alertService.success("Workspace is deleted successfully!");
             this.callBack.emit(true);
           }
         }, error: err => {
@@ -118,7 +125,7 @@ export class ConfirmationComponent implements OnInit {
     // console.log("PRINT ==>",this.shareLinkOptions, this.downloadingLinksList, this.selectedEmailArr);
     if(this.shareLinkOptions.toPortal) this.shareDownloadingLinkOnPortal();
     if(this.shareLinkOptions.toEmail) this.shareDownloadingLinkOnEmail();
-    setTimeout(() => this.onDismissModal(), 2000);
+    this.timerSubscription = timer(1000).subscribe(() => this.onDismissModal());
   }
 
   shareDownloadingLinkOnEmail() {
@@ -126,7 +133,10 @@ export class ConfirmationComponent implements OnInit {
       downloadingLinkIDs: this.downloadingIDsList, 
       userEmails: this.selectedEmailArr
     }).subscribe({
-      next: (res:any) => {if(!res?.error) this.alertService.success("Downloading Links has been successfully sent on the user Email IDs");},
+      next: (res:any) => {if(!res?.error) {
+        this.alertService.success("Downloading Links has been successfully sent on the user Email IDs");
+        this.callBack.emit(true);
+      }},
       error: (err:any) => console.log(err)
     });
   }

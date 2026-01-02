@@ -1,6 +1,6 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Chart } from 'chart.js';
-import { Subscription } from 'rxjs';
+import { Subscription, timer } from 'rxjs';
 import * as uuid from 'uuid';
 import { EventemittersService } from 'src/app/services/eventemitters.service';
 import { AlertifyService } from 'src/app/services/alertify.service';
@@ -29,6 +29,10 @@ export class CustomAnalysisComponent implements OnInit, OnDestroy {
 
   convertor:Function = this.alertService.valueInBillion;
   eventSubscription:Subscription = new Subscription();
+  timerSubscription1:Subscription = new Subscription();
+  timerSubscription2:Subscription = new Subscription();
+  timerSubscription3:Subscription = new Subscription();
+  timerSubscription4:Subscription = new Subscription();
 
   tableSearchedData:any = {};
   errorFlags:number[] = [0, 0, 0, 0, 0, 0, 0, 0];
@@ -88,6 +92,10 @@ export class CustomAnalysisComponent implements OnInit, OnDestroy {
 
   ngOnDestroy(): void {
     this.destroyAllCharts();
+    this.timerSubscription1?.unsubscribe();
+    this.timerSubscription2?.unsubscribe();
+    this.timerSubscription3?.unsubscribe();
+    this.timerSubscription4?.unsubscribe();
   }
 
   openPellet(isNewChart:boolean=true, editChartData:any={}, indexNum:number=0) {
@@ -161,7 +169,7 @@ export class CustomAnalysisComponent implements OnInit, OnDestroy {
           this.dbSavedCustomGraph = JSON.parse(res.graphs); 
           
           this.allCustomGraph = JSON.parse(JSON.stringify(this.dbSavedCustomGraph));
-          setTimeout(() => { this.startAttachingAllGraphs(); }, 1500);
+          this.timerSubscription1 = timer(1500).subscribe(() => { this.startAttachingAllGraphs(); });
         }
         // else {
         //   if(sessionGraphs!=null && sessionGraphs.length>0) {
@@ -215,18 +223,18 @@ export class CustomAnalysisComponent implements OnInit, OnDestroy {
     
         this.destroyAllCharts();
     
-        setTimeout(() => {
+        this.timerSubscription2 = timer(1500).subscribe(() => {
           if(isSaved) { this.saveCharts(true); }
           this.startAttachingAllGraphs();
-        }, 1500);
+        });
       } else { 
         this.isPreviewOpen = true;
         this.isPreviewLoading = true;
         if(this.previewChartVar) {this.previewChartVar.destroy();}
-        setTimeout(() => {
+        this.timerSubscription3 = timer(1500).subscribe(() => {
           this.isImgPrevExist = false;
           this.showChartPreview(chartObj);
-        }, 1500);
+        });
       }    
     }
   }
@@ -642,7 +650,7 @@ export class CustomAnalysisComponent implements OnInit, OnDestroy {
         this.saveCharts(true);
         this.isLoading = this.dbSavedCustomGraph.length>0;
         this.updateGraphOnEvent(this.dbSavedCustomGraph);
-        setTimeout(() => { this.startAttachingAllGraphs(); }, 1500);
+        this.timerSubscription4 = timer(1500).subscribe(() => { this.startAttachingAllGraphs(); });
       }
     });
   }

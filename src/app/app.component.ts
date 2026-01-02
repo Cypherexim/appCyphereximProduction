@@ -14,7 +14,7 @@ import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 export class AppComponent implements OnDestroy {
   title = 'Cypher';
   idleTime = 0;
-  intervalSubscription:Subscription;
+  intervalSubscription:Subscription = new Subscription();
   // apiSubscription:Subscription;
   // eventSubscription:Subscription;
   whatsTrendingDataObj:any = {

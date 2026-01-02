@@ -1,6 +1,6 @@
-import { Component, OnInit, Input, OnChanges, SimpleChanges, AfterViewInit } from '@angular/core';
+import { Component, OnInit, Input, OnChanges, SimpleChanges, AfterViewInit, OnDestroy } from '@angular/core';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
-import { Subscription } from 'rxjs';
+import { Subscription, timer } from 'rxjs';
 import { AlertifyService } from 'src/app/services/alertify.service';
 import { AuthService } from 'src/app/services/auth.service';
 import { EventemittersService } from 'src/app/services/eventemitters.service';
@@ -13,7 +13,7 @@ import { environment } from 'src/environments/environment';
   templateUrl: './user-profile.component.html',
   styleUrls: ['./user-profile.component.css']
 })
-export class UserProfileComponent implements OnInit, OnChanges, AfterViewInit {
+export class UserProfileComponent implements OnInit, OnChanges, AfterViewInit, OnDestroy {
   isSidebarDisable:boolean = false;
   currentTab:string = '';
   isCurrentTabCls:boolean = false;
@@ -63,8 +63,8 @@ export class UserProfileComponent implements OnInit, OnChanges, AfterViewInit {
   downloadPoints:number = 0;
   remainingdays:number = 0;
 
-  eventSubscription:Subscription;
-  eventSubscription2:Subscription;
+  eventSubscription:Subscription = new Subscription();
+  timerSubscription:Subscription = new Subscription();
 
   unlimited = {download: environment.unlimitedDownload, search: environment.unlimitedSearch};
 
@@ -91,22 +91,14 @@ export class UserProfileComponent implements OnInit, OnChanges, AfterViewInit {
   ngOnInit(): void {
     this.eventSubscription = this.eventService.userDetailsStore.subscribe(res => {
       this.userPlanDetails = res;
-      // this.userPlanDetails["Analysis"] = "exporter analysis,importer analysis";
     });
 
     this.userDetails = this.authService.getUserDetails();
+  }
 
-    // this.eventSubscription2 = this.eventService.userStatusEvent.subscribe((res:any) => {
-    //   if(res == 'update') {
-    //     this.userService.updateUserPoints().subscribe((data:any) => {
-    //       if(data.message == 'Ok' && data.results.length>0) {
-    //         this.searchPoints = data.results[0].Searches;
-    //         this.downloadPoints = data.results[0].Downloads;
-    //         this.remainingdays = data.results[0].remainingdays;
-    //       }
-    //     });
-    //   }
-    // });
+  ngOnDestroy(): void {
+    this.timerSubscription?.unsubscribe();
+    this.eventSubscription?.unsubscribe();
   }
 
   onClickSingOut = () => this.authService.logout();
@@ -122,16 +114,14 @@ export class UserProfileComponent implements OnInit, OnChanges, AfterViewInit {
     this.profileBoxCls = this.profileBoxCls === 'profile-container'
       ? 'profile-container collapsed-time' : 'profile-container';
       this.hideSidebar(true);
-    if(this.isSidebarDisable){
-      setTimeout(() => {
+    if(this.isSidebarDisable) {
+      this.timerSubscription = timer(201).subscribe(() => {
         this.currentTab = this.isSidebarDisable ? '' : tabName;
         this.isSidebarDisable = !this.isSidebarDisable;
-      }, 201);
-      // this.hideSidebar(true);
+      });
     } else {
       this.currentTab = this.isSidebarDisable ? '' : tabName;
       this.isSidebarDisable = !this.isSidebarDisable;
-      // this.hideSidebar();
     }
   }
 

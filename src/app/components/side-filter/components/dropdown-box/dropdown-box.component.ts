@@ -1,6 +1,6 @@
 import { Component, OnInit, Input, Output, EventEmitter, OnChanges, SimpleChanges, OnDestroy } from '@angular/core';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
-import { Subscription } from 'rxjs';
+import { Subscription, timer } from 'rxjs';
 import { EventemittersService } from 'src/app/services/eventemitters.service';
 import { FilterDataListComponent } from '../../modals/filter-data-list/filter-data-list.component';
 import { SaveFileComponent } from '../../modals/save-file/save-file.component';
@@ -24,9 +24,11 @@ export class DropdownBoxComponent implements OnInit, OnChanges, OnDestroy {
   exceptionalSideFilter:string[] = ["Supplier", "Buyer", "Country"];
   copyFilterOptions:any[] = [];
   selectedItem:any[] = [];
-  eventSubscription:Subscription;
-  eventSubscription2:Subscription;
-  eventSubscription3:Subscription;
+  eventSubscription:Subscription = new Subscription();
+  eventSubscription2:Subscription = new Subscription();
+  eventSubscription3:Subscription = new Subscription();
+  timerSubscription1:Subscription = new Subscription();
+  timerSubscription2:Subscription = new Subscription();
   currentCountry:string = "";
   @Input() filterOptions:any[] = [];
   @Input() filterName:any = {};
@@ -80,8 +82,10 @@ export class DropdownBoxComponent implements OnInit, OnChanges, OnDestroy {
   }
 
   ngOnDestroy() {
-    this.eventSubscription2.unsubscribe();
-    this.eventSubscription3.unsubscribe();
+    this.eventSubscription2?.unsubscribe();
+    this.eventSubscription3?.unsubscribe();
+    this.timerSubscription1?.unsubscribe();
+    this.timerSubscription2?.unsubscribe();
   }
 
   getCurrentCountry() {
@@ -265,11 +269,11 @@ export class DropdownBoxComponent implements OnInit, OnChanges, OnDestroy {
             const isValAlreadyExist = this.selectedItem.some(item => item["value"][res.actualKey]==modifyItem["value"][res.actualKey]);
             if(!isValAlreadyExist) {
               this.selectedItem.push(modifyItem);
-              setTimeout(() => this.onFilterApply(), 500);
+              this.timerSubscription1 = timer(500).subscribe(() => this.onFilterApply());
             }
           } else {
             this.selectedItem.push(modifyItem);
-            setTimeout(() => this.onFilterApply(), 500);
+            this.timerSubscription2 = timer(500).subscribe(() => this.onFilterApply());
           }
         }
       }, error: (err:any) => {console.log(err)}

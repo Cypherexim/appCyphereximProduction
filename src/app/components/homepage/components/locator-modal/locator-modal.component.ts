@@ -1,7 +1,7 @@
 import { Component, OnInit, AfterViewInit, Output, EventEmitter, OnDestroy } from '@angular/core';
 import { FormControl } from '@angular/forms';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
-import { Subscription, debounceTime } from 'rxjs';
+import { Subscription, debounceTime, timer } from 'rxjs';
 import { AlertifyService } from 'src/app/services/alertify.service';
 import { ApiServiceService } from 'src/app/services/api-service.service';
 import { EventemittersService } from 'src/app/services/eventemitters.service';
@@ -36,9 +36,10 @@ export class LocatorModalComponent implements OnInit, AfterViewInit, OnDestroy {
   alphabets:string[] = ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z", "All"];
   @Output() callBack:EventEmitter<string[]> = new EventEmitter();
 
-  eventSubscription:Subscription;
-  apiSubscription:Subscription;
-  apiSubscription2:Subscription;
+  eventSubscription:Subscription = new Subscription();
+  apiSubscription:Subscription = new Subscription();
+  apiSubscription2:Subscription = new Subscription();
+  timerSubscription:Subscription = new Subscription();
 
   constructor(
     public activeModal: NgbActiveModal, 
@@ -74,10 +75,10 @@ export class LocatorModalComponent implements OnInit, AfterViewInit, OnDestroy {
             this.backupLocatorData = [...data];
             this.setLocatorsArr([...data]);
           } else {
-            setTimeout(() => {
+            this.timerSubscription = timer(1000).subscribe(() => {
               this.isError = true;
               this.isApiProcess = false;
-            }, 1000);
+            });
           }
         }
       }, error: (err:any) => {
@@ -116,16 +117,17 @@ export class LocatorModalComponent implements OnInit, AfterViewInit, OnDestroy {
     this.eventSubscription?.unsubscribe();
     this.apiSubscription?.unsubscribe();
     this.apiSubscription2?.unsubscribe();
+    this.timerSubscription?.unsubscribe();
   }
 
-  getData() {
+  getData(): void {
     if(this.listArr.length == 0) {
       this.isError = true;
       this.isApiProcess = false;
     } else this.isError = false;
   }
 
-  searchingMoreLocator() {
+  searchingMoreLocator():void {
     const { country, type, fromDate, toDate, countryType } = this.locatorObj;
     
     if(this.searchVal.length > 2) {
@@ -166,7 +168,7 @@ export class LocatorModalComponent implements OnInit, AfterViewInit, OnDestroy {
       });
     } 
     
-    if(this.searchVal.length == 0) {
+    if(this.searchVal.length === 0) {
       this.currentPageNum = 0;
       this.copyArr = [...this.listArr];
       this.perPageLocators = [...this.copyArr].splice(0, 100);

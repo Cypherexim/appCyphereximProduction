@@ -83,10 +83,10 @@ export class ClientsComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
-    if(this.apiSubscription1) this.apiSubscription1.unsubscribe();
-    if(this.apiSubscription2) this.apiSubscription2.unsubscribe();
-    if(this.apiSubscription3) this.apiSubscription3.unsubscribe();
-    if(this.apiSubscription4) this.apiSubscription4.unsubscribe();
+    this.apiSubscription1?.unsubscribe();
+    this.apiSubscription2?.unsubscribe();
+    this.apiSubscription3?.unsubscribe();
+    this.apiSubscription4?.unsubscribe();
   }
 
   arrangeClientLists(res:any) {
@@ -159,16 +159,17 @@ export class ClientsComponent implements OnInit, OnDestroy {
     });
   }
 
-  userActiveToggle(e, data) {
+  userActiveToggle(e:any, data:any, isSubUser=false) {
     const isChecked = e.target.checked;
     const dataObj = {
       enable: isChecked,
-      UserId: data["UserId"]
+      UserId: !isSubUser ? data?.UserId: data?.subUsers[0]?.UserId
     };
 
     this.apiSubscription4 = this.userService.userEnableDisable(dataObj).subscribe((res:any) => {
       if(!res?.error && res?.message == "Ok") {
-        this.alertService.success(`${data["FullName"]} is ${isChecked ? "Enabled" : "Disabled"}`);
+        const clientName = !isSubUser ? data?.FullName: data?.subUsers[0]?.FullName;
+        this.alertService.success(`${clientName} is ${isChecked ? "Enabled" : "Disabled"}`);
       }
     });
   }
@@ -222,7 +223,6 @@ export class ClientsComponent implements OnInit, OnDestroy {
     const keys = { company: "CompanyName",email: "Email",plan: "PlanName",user: "FullName" }; 
 
     this.copyTableData = this.copyTableData2.filter(item => filterWord == ((item[keys[searchType]]).substring(0, wordLen)).toLowerCase());
-    setTimeout(() => console.log("Filtered", this.copyTableData), 1000);
   }
 
 

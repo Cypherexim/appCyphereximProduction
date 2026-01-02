@@ -1,6 +1,6 @@
 import { Component, Output, Input, EventEmitter, OnInit, OnDestroy } from '@angular/core';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
-import { Subscription } from 'rxjs';
+import { Subscription, timer } from 'rxjs';
 import { ApiMsgRes } from 'src/app/models/api.types';
 import { AlertifyService } from 'src/app/services/alertify.service';
 import { ApiServiceService } from 'src/app/services/api-service.service';
@@ -16,8 +16,6 @@ export class EditModalComponent implements OnInit, OnDestroy {
   currentCountryObj:any = {};
   @Output() callback:EventEmitter<boolean> = new EventEmitter<boolean>();
   
-
-  timeoutVal:any;
   direction:string = "";
   sideFilterData:any;
   filterHeads:string[] = ["HsCode", "ProductDesc", "Exp_Name", "Imp_Name", "CountryofDestination", "CountryofOrigin", "PortofOrigin", "PortofDestination", "Mode", "uqc", "Quantity", "Currency", "Month", "Year", "LoadingPort", "NotifyPartyName"];
@@ -37,6 +35,7 @@ export class EditModalComponent implements OnInit, OnDestroy {
   apiSubscription:Subscription = new Subscription();
   apiSubscription2:Subscription = new Subscription();
   apiSubscription3:Subscription = new Subscription();
+  timerSubscription:Subscription = new Subscription();
 
   constructor(
     private activeModal: NgbActiveModal,
@@ -72,6 +71,7 @@ export class EditModalComponent implements OnInit, OnDestroy {
     this.apiSubscription?.unsubscribe();
     this.apiSubscription2?.unsubscribe();
     this.apiSubscription3?.unsubscribe();
+    this.timerSubscription?.unsubscribe();
   }
 
   getAllAvailableCountries() {
@@ -122,9 +122,8 @@ export class EditModalComponent implements OnInit, OnDestroy {
     if(this.countryName == "") {
       this.isError = {flag: true, type: "required"};
 
-      if(this.timeoutVal) clearTimeout(this.timeoutVal);
-      this.timeoutVal = setTimeout(() => this.isError = {flag: true, type: "required"}, 2500);
-
+      this.timerSubscription?.unsubscribe();
+      this.timerSubscription = timer(2500).subscribe({next: () => { this.isError = {flag: true, type: "required"}; }});
       return;
     }
 

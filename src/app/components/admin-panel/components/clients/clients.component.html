@@ -89,7 +89,7 @@
                                 <div class="word-break tdEllipses" style="width: 10%;" ngbTooltip="{{item?.FullName}}">{{item?.FullName}}</div>
                                 <div class="text-center" style="width: 10%;">
                                     <div class="d-flex justify-content-center align-items-center w-100">
-                                        <input [checked]="item?.Enable" (click)="userActiveToggle($event, item)" type="checkbox" id="switch-{{i}}"/><label class="toggle-switch" for="switch-{{i}}">Toggle</label>
+                                        <input [checked]="item?.Enable" (click)="userActiveToggle($event, item)" type="checkbox" id="mainUserSwitch-{{i}}"/><label class="toggle-switch" for="mainUserSwitch-{{i}}">Toggle</label>
                                     </div>
                                 </div>
                                 <div class="text-center bg-white" style="width: 10%;position: sticky;right: 0;"><span class="edit-btn d-block w-100" (click)="showMore(item)">Manage</span></div>
@@ -107,7 +107,7 @@
                                     <div class="word-break" style="width: 10.7%;margin-left:1.45%;">{{item2?.FullName}}</div>
                                     <div class="text-center" style="width: 6.5%;">
                                         <div class="d-flex justify-content-center align-items-center w-100">
-                                            <input [checked]="item?.Enable" (click)="userActiveToggle($event, item)" type="checkbox" id="switch-{{i}}"/><label class="toggle-switch" for="switch-{{i}}">Toggle</label>
+                                            <input [checked]="item?.Enable" (click)="userActiveToggle($event, item, true)" type="checkbox" id="subUserSwitch-{{i}}"/><label class="toggle-switch" for="subUserSwitch-{{i}}">Toggle</label>
                                         </div>
                                     </div>
                                     <!-- <div class="text-center bg-white" style="width: 10%;position: sticky;right: 0;"><span class="edit-btn" (click)="showMore(item)">Manage</span></div> -->

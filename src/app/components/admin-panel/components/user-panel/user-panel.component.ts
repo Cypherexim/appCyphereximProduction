@@ -1,11 +1,11 @@
 import { Component, OnInit, OnChanges, OnDestroy, SimpleChanges, Input, Output, EventEmitter } from '@angular/core';
-import { UserModel, UserPlanModel } from 'src/app/models/plan';
-import { NgbActiveModal, NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { AlertifyService } from 'src/app/services/alertify.service';
 import { UserService } from 'src/app/services/user.service';
 import { PreviewComponent } from './preview/preview.component';
 import { EventemittersService } from 'src/app/services/eventemitters.service';
 import { AuthService } from 'src/app/services/auth.service';
+import { Subscription, timer } from 'rxjs';
 
 @Component({
   selector: 'app-user-panel',
@@ -24,6 +24,8 @@ export class UserPanelComponent implements OnInit, OnChanges, OnDestroy {
 
   hasSubmitted:boolean = false;
   isUserAdmin:boolean = true;
+
+  timerSubscription:Subscription = new Subscription();
 
   @Input() currentTab:string = 'user-form';
   @Input() isOnlyForPlan:boolean = false;
@@ -50,6 +52,7 @@ export class UserPanelComponent implements OnInit, OnChanges, OnDestroy {
 
   ngOnDestroy(): void {
     this.isOnlyForPlan = false;
+    this.timerSubscription?.unsubscribe();
   }
 
   onSubmit = () => {
@@ -112,7 +115,7 @@ export class UserPanelComponent implements OnInit, OnChanges, OnDestroy {
       }
     }
 
-    setTimeout(() => this.hasSubmitted = false, 800); //to change the value so as to use it again
+    this.timerSubscription = timer(800).subscribe({next: () => {this.hasSubmitted = false;} }); //to change the value so as to use it again
     if(e.submitFlag && !this.isOnlyForPlan && this.currentFormType!='plan-form' && this.isUserAdmin) this.moveIndicator();
     else {
       if(!this.isUserAdmin && e.submitFlag) console.log("Sub-User is gonna be saved soon");

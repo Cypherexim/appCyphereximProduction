@@ -1,5 +1,5 @@
 import { Component, OnInit, Input, Output, OnChanges, OnDestroy } from '@angular/core';
-import { Subscription } from 'rxjs';
+import { Subscription, timer } from 'rxjs';
 import { SortHsCodePipe } from 'src/app/common/Pipes/sort-hs-code.pipe';
 import { FilterNames } from 'src/app/models/others';
 import { AlertifyService } from 'src/app/services/alertify.service';
@@ -23,9 +23,10 @@ export class HsCodeTreeComponent implements OnInit, OnDestroy {
   selectedHsCodes:string[] = [];
   filterCache:any = {};
   currentCountry:string = "";
-  eventSubscription:Subscription;
-  eventSubscription2:Subscription;
-  eventSubscription3:Subscription;
+  eventSubscription:Subscription = new Subscription();
+  eventSubscription2:Subscription = new Subscription();
+  eventSubscription3:Subscription = new Subscription();
+  timerSubscription:Subscription = new Subscription();
   sortHsCodePipe:SortHsCodePipe = new SortHsCodePipe();
   convertor:Function = this.alertService.valueInBillion;
 
@@ -47,8 +48,10 @@ export class HsCodeTreeComponent implements OnInit, OnDestroy {
 
   ngOnDestroy(): void {
     this.eventService.passFilterDataEvent.next({});
-    this.eventSubscription.unsubscribe();
-    this.eventSubscription3.unsubscribe();
+    this.eventSubscription?.unsubscribe();
+    // this.eventSubscription2?.unsubscribe();
+    this.eventSubscription3?.unsubscribe();
+    this.timerSubscription?.unsubscribe();
   }
 
   onClickCheckbox(e:any, type:string) {
@@ -131,7 +134,7 @@ export class HsCodeTreeComponent implements OnInit, OnDestroy {
 
           if(this.selectedHsCodes.indexOf(modifyItem.value)==-1) {
             this.selectedHsCodes.push(modifyItem.value);
-            setTimeout(() => this.onClickApply("apply"), 500);
+            this.timerSubscription = timer(500).subscribe(() => this.onClickApply("apply"));
           }
         }
       }, error: (err:any) => {console.log(err)}

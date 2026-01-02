@@ -1,6 +1,6 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
-import { forkJoin } from 'rxjs';
+import { forkJoin, Subscription, timer } from 'rxjs';
 import { ApiMsgRes } from 'src/app/models/api.types';
 import { ApiServiceService } from 'src/app/services/api-service.service';
 import { AuthService } from 'src/app/services/auth.service';
@@ -12,7 +12,7 @@ import { environment } from 'src/environments/environment';
   templateUrl: './country-list.component.html',
   styleUrls: ['./country-list.component.css']
 })
-export class CountryListComponent implements OnInit {
+export class CountryListComponent implements OnInit, OnDestroy {
 
   constructor(
     private apiService:ApiServiceService,
@@ -28,6 +28,7 @@ export class CountryListComponent implements OnInit {
   lastTabTagId:string = "globeTab1";
   copiedCountryList:any[] = [];
   currentSelectedTab:string = "CUSTOM";
+  timerSubscription:Subscription = new Subscription();
   availableColumns = {
     CUSTOM: "Date, Importer, Supplier, Hs Code, Product Description, Quantity, Unit, Value, Currency, Trade Partner Countries, Ports and many more",
     MIRROR: "Date, Importer, Supplier, Hs Code, Product Description, Quantity, Unit, Value, Currency, Trade Partner Countries, Ports",
@@ -56,9 +57,11 @@ export class CountryListComponent implements OnInit {
 
   ngOnInit(): void {
     this.userDetails = this.authService.getUserDetails();
-    this.cachingGlobalCountriesAPI();
-    console.log(this.userDetails?.CountryCode);
-    
+    this.cachingGlobalCountriesAPI(); 
+  }
+
+  ngOnDestroy(): void {
+    this.timerSubscription?.unsubscribe();
   }
 
   cachingGlobalCountriesAPI() {
@@ -112,7 +115,7 @@ export class CountryListComponent implements OnInit {
     const {key:id, dbType} = tabItem;
     this.currentSelectedTab = dbType;
 
-    if(id == this.lastTabTagId) {
+    if(id === this.lastTabTagId) {
       this.isApiInProcess = false;
       return;
     }
@@ -120,8 +123,8 @@ export class CountryListComponent implements OnInit {
     if(this.lastTabTagId == "") {this.lastTabTagId = id;} 
     else {this.lastTabTagId = id;}
     
-    this.copiedCountryList = JSON.parse(JSON.stringify(this.availableCoutriesTypes[id]));
-    setTimeout(() => this.isApiInProcess = false, 1000);
+    this.copiedCountryList = JSON.parse(JSON.stringify(this.availableCoutriesTypes[id]));    
+    this.timerSubscription = timer(1000).subscribe(() => {this.isApiInProcess = false});
   }
 
 

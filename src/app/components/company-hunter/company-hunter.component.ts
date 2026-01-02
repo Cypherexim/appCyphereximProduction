@@ -1,7 +1,7 @@
 import { DatePipe } from '@angular/common';
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormControl } from '@angular/forms';
-import { debounceTime, Subscription } from 'rxjs';
+import { debounceTime, Subscription, timer } from 'rxjs';
 import { ApiMsgRes, FeedbackBody, NewCompanyObj } from 'src/app/models/api.types';
 import { AlertifyService } from 'src/app/services/alertify.service';
 import { ApiServiceService } from 'src/app/services/api-service.service';
@@ -54,13 +54,9 @@ export class CompanyHunterComponent implements OnInit, OnDestroy{
   isPadLockClicked:boolean = false;
   hasAppliedForNewCompany:boolean = false;
 
-  apiSubscription1:Subscription = new Subscription();
-  apiSubscription2:Subscription = new Subscription();
-  apiSubscription3:Subscription = new Subscription();
-  apiSubscription4:Subscription = new Subscription();
-  apiSubscription5:Subscription = new Subscription();
-  apiSubscription6:Subscription = new Subscription();
-  apiSubscription7:Subscription = new Subscription();
+  apiSubscription:{ [key: `apiSubscription${number}`]: Subscription } = {};
+  timerSubscription1:Subscription = new Subscription();
+  timerSubscription2:Subscription = new Subscription();
 
   companyInfoPoints:any[] = [
     {icon: "key", key: "companyId"},
@@ -79,13 +75,9 @@ export class CompanyHunterComponent implements OnInit, OnDestroy{
   }
 
   ngOnDestroy(): void {
-    this.apiSubscription1.unsubscribe();
-    this.apiSubscription2.unsubscribe();
-    this.apiSubscription3.unsubscribe();
-    this.apiSubscription4.unsubscribe();
-    this.apiSubscription5.unsubscribe();
-    this.apiSubscription6.unsubscribe();
-    this.apiSubscription7.unsubscribe();
+    Object.keys(this.apiSubscription).forEach((key:string) => this.apiSubscription?.[key]?.unsubscribe());
+    this.timerSubscription1?.unsubscribe();
+    this.timerSubscription2?.unsubscribe();
   }
 
   resetAllValues() {
@@ -116,7 +108,7 @@ export class CompanyHunterComponent implements OnInit, OnDestroy{
       time: new Date().toString()
     };
 
-    this.apiSubscription7 = this.apiService.sendNewFeedback(apiBody).subscribe({
+    this.apiSubscription["apiSubscription7"] = this.apiService.sendNewFeedback(apiBody).subscribe({
       next: (res:ApiMsgRes) => {
         this.alertService.success(res.message);
         element.value = "";
@@ -149,7 +141,7 @@ export class CompanyHunterComponent implements OnInit, OnDestroy{
     this.resetAllValues();
 
     if(this.typedTxt.length > 2) {
-      this.apiSubscription1 = this.apiService.getCompanyListByKeyword(this.typedTxt).subscribe({
+      this.apiSubscription["apiSubscription1"] = this.apiService.getCompanyListByKeyword(this.typedTxt).subscribe({
         next: (res:ApiMsgRes) => {
           this.companyList = res.results;
           // if(this.timeout) {clearTimeout(this.timeout);}
@@ -180,12 +172,12 @@ export class CompanyHunterComponent implements OnInit, OnDestroy{
     
     this.isLoading = true;
 
-    this.apiSubscription2 = this.apiService.getCompanyInfoDetails(this.typedTxt).subscribe({
+    this.apiSubscription["apiSubscription2"] = this.apiService.getCompanyInfoDetails(this.typedTxt).subscribe({
       next: (res:ApiMsgRes) => {
         if(res.results.length>0) {
           const {id, iec, company_name, person_name, contact, email, location, address} = res.results[0];
           
-          setTimeout(() => {
+          this.timerSubscription1 = timer(1000).subscribe(() => {
             const response = {
               recordId: id || "N/A",
               companyId: iec || "N/A",
@@ -202,7 +194,7 @@ export class CompanyHunterComponent implements OnInit, OnDestroy{
             this.isPadLockUnlocked = this.isFavoriteCompany;
             this.companyData = {...response, length: Object.keys(response).length};
             this.isLoading = false;
-          }, 1000);
+          });
         } else { this.isLoading = false; }
       }, error: (err:ApiMsgRes) => console.log(err)
     });
@@ -214,7 +206,7 @@ export class CompanyHunterComponent implements OnInit, OnDestroy{
   }
 
   onFocusOutSearch() {
-    setTimeout(() => this.companyList = [], 200);
+    this.timerSubscription2 = timer(200).subscribe(() => {this.companyList = [];});
   }
 
   unlockPad() {
@@ -226,7 +218,7 @@ export class CompanyHunterComponent implements OnInit, OnDestroy{
     this.isPadLockClicked = true;
     const parentUserId = this.authService.getUserSingleDetail("ParentUserId"); //if it exists then current user is sub-user
     const userId:string|number = Number(parentUserId) || this.authService.getUserId();
-    this.apiSubscription3 = this.apiService.updateCompanyPoints(userId).subscribe({
+    this.apiSubscription["apiSubscription3"] = this.apiService.updateCompanyPoints(userId).subscribe({
       next: (res:ApiMsgRes) => {
         this.isPadLockClicked = false;
         this.isPadLockUnlocked = true;
@@ -245,7 +237,7 @@ export class CompanyHunterComponent implements OnInit, OnDestroy{
       dateTime: this.datePipe.transform(today, "MM/dd/yyyy, hh:mm a")
     };
 
-    this.apiSubscription4 = this.apiService.transferCompanyDetails(apiBody).subscribe({
+    this.apiSubscription["apiSubscription4"] = this.apiService.transferCompanyDetails(apiBody).subscribe({
       next: (res:ApiMsgRes) => {
         if(res.code===200) {
           this.isApplyInProgress = false;
@@ -273,7 +265,7 @@ export class CompanyHunterComponent implements OnInit, OnDestroy{
   }
 
   setNewFavoriteCompany(userPrefs:string) {
-    this.apiSubscription5 = this.userService.updateUserPereference(userPrefs).subscribe({
+    this.apiSubscription["apiSubscription5"] = this.userService.updateUserPereference(userPrefs).subscribe({
       next: (res:ApiMsgRes) => {
         if(!res.error) {
           this.authService.updateUserDetails("userPreference", userPrefs);
@@ -288,7 +280,7 @@ export class CompanyHunterComponent implements OnInit, OnDestroy{
     if(userPrefs.hasOwnProperty("favoriteCompanies")) {
       const favComIds = userPrefs["favoriteCompanies"];
       this.isListInFetching = true;
-      this.apiSubscription6 = this.userService.getFavoriteShipment(favComIds).subscribe({
+      this.apiSubscription["apiSubscription6"] = this.userService.getFavoriteShipment(favComIds).subscribe({
         next: (res:ApiMsgRes) => {
           if(!res.error) {
             this.favoriteCompanyList = [...res.results];

@@ -1,5 +1,5 @@
 <div class="workstation-box" [ngStyle]="{'height': isAnalysisTabActive?'91.5%':'100%'}">
-    <div class="notice w-100 py-1 ps-3" *ngIf="type=='download' && !hasShownNotice && downloadDataArr.length>0">Please click refresh button to get your file updated while your downloading file is in progress.</div>
+    <div class="notice w-100 py-1 ps-3 text-start" *ngIf="type=='download' && !hasShownNotice && downloadDataArr.length>0">Please click refresh button to get your file updated while your downloading file is in progress.</div>
     
     <div class="top-bar d-flex align-items-center position-relative">
         <button class="backbtn btn btn-danger float-left" *ngIf="openWorkSpaceTable || isFavoriteBackBtn" (click)="backToFolders()">Back</button>
@@ -30,7 +30,7 @@
                 </span>
             </div>
 
-            <div class="d-flex" *ngIf="item=='direction' || item=='type'">
+            <div class="d-flex" *ngIf="item==='direction' || item==='type'">
                 <select [(ngModel)]="directionType" (change)="onFilterSearch(type, 'type', $event)">
                     <option value="">--Select {{item}}--</option>
                     <option value="export">Export</option>
@@ -118,7 +118,7 @@
         </div>
     </div>
 
-    <div class="table-container favourite-table" *ngIf="type == 'favourites'">
+    <div class="table-container favourite-table" *ngIf="type==='favourites' && !isLoading">
         <app-favourites [favouritesArr]="favouriteDataArr" [backTrigger]="gotoBackFavorites" (resetTrigger)="resetBackBtnTrigger($event)"></app-favourites>
     </div>
 
@@ -169,8 +169,8 @@
                     <td class="filename">
                         <div class="d-flex align-items-center justify-content-between">
                             <span>
-                                <input type="checkbox" [checked]="isAllSelected" (click)="selectOneByOne(item?.Id, item?.filePath)" *ngIf="userRights?.Share && item?.status=='Completed' && !isMultipleSharing"/>
-                                {{item?.workspacename}}
+                                <input type="checkbox" class="download-checkbox" id="download-{{item?.Id}}" [checked]="isAllSelected" (click)="selectOneByOne(item?.Id, item?.filePath)" *ngIf="userRights?.Share && item?.status=='Completed' && !isMultipleSharing"/>
+                                <label for="download-{{item?.Id}}">{{item?.workspacename}}</label>
                             </span>
                             <span>
                                 <!-- <img class="download" title="Download File" *ngIf="userRights?.DownloadsAccess && item?.status=='Completed'" (click)="downloadFile(item)" src="assets/images/downloadFile.png" alt="" /> -->                                 

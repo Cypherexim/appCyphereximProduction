@@ -1,6 +1,5 @@
 import { Component, OnInit, OnDestroy, AfterViewInit } from '@angular/core';
-import { Router } from '@angular/router';
-import { Subscription, interval } from 'rxjs';
+import { Subscription, interval, timer } from 'rxjs';
 import { ApiMsgRes } from 'src/app/models/api.types';
 import { SideFilterModel } from 'src/app/models/others';
 import { ApiServiceService } from 'src/app/services/api-service.service';
@@ -22,8 +21,10 @@ export class SearchDataComponent implements OnInit, OnDestroy, AfterViewInit{
   currentEventBind:any;
   profileOption:string = '';
   
-  eventSubscription: Subscription;
-  intervalVal:Subscription;
+  eventSubscription: Subscription = new Subscription();
+  intervalSubscription:Subscription = new Subscription();
+  timerSubscription1:Subscription = new Subscription();
+  timerSubscription2:Subscription = new Subscription();
 
   filterOptions:SideFilterModel = new SideFilterModel;
   navBarShowpages:string[] = ['home', 'workspace', 'download', 'favourite', 'analysisNav']; // 'analysis', >>> analysis comp. is gone
@@ -78,18 +79,18 @@ export class SearchDataComponent implements OnInit, OnDestroy, AfterViewInit{
         this.isAnalysisTabActive = res;
         if(this.currentPage != 'home') {
           this.currentPage = 'load';
-          setTimeout(() => this.currentPage = 'home', 400);
+          this.timerSubscription1 = timer(400).subscribe(() => {this.currentPage = "home";})
         }
       });
   
       this.eventService.toggleSearchLoader.subscribe(res => {
         this.isSearchingData = res?.flag;
         if(this.isSearchingData) {
-          this.intervalVal = interval(1000*10).subscribe({
+          this.intervalSubscription = interval(10000).subscribe({
             next: () => { this.currentFact = Math.floor(Math.random()*20); },
             error: err => console.log(err)
           });
-        } else { this.intervalVal?.unsubscribe(); }
+        } else { this.intervalSubscription?.unsubscribe(); }
       });
     } else {
       const logoutTag = document.getElementById("logoutAnchor") as HTMLAnchorElement;
@@ -105,9 +106,11 @@ export class SearchDataComponent implements OnInit, OnDestroy, AfterViewInit{
   }
 
   ngOnDestroy(): void {
-    if(this.eventSubscription) this.eventSubscription.unsubscribe();
+    this.eventSubscription?.unsubscribe();
     this.eventService.stopSearchingEvent.next(false);
-    this.intervalVal?.unsubscribe();
+    this.intervalSubscription?.unsubscribe();
+    this.timerSubscription1?.unsubscribe();
+    this.timerSubscription2?.unsubscribe();
   }
 
   setOldBookmark() {
@@ -143,10 +146,10 @@ export class SearchDataComponent implements OnInit, OnDestroy, AfterViewInit{
     if(sidebarOption == 'home') {
       this.currentPage = 'load';
       this.isRefresh = true;
-      setTimeout(() => {
+      this.timerSubscription2 = timer(500).subscribe(() => {
         this.currentPage = sidebarOption;
         this.isRefresh = false;
-      }, 500);
+      });
     } else this.currentPage = sidebarOption;
   }
 

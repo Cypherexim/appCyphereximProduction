@@ -1,13 +1,12 @@
 import { Component, OnInit, Input, OnDestroy } from '@angular/core';
 import { Utility } from 'src/app/models/others';
 import { EventemittersService } from 'src/app/services/eventemitters.service';
-import { Subscription } from 'rxjs';
+import { Subscription, timer } from 'rxjs';
 import { AlertifyService } from 'src/app/services/alertify.service';
 import { ApiServiceService } from 'src/app/services/api-service.service';
 import * as Highcharts from "highcharts/highmaps";
 import * as worldMap from "@highcharts/map-collection/custom/world-highres.geo.json";
 import { ApiMsgRes } from 'src/app/models/api.types';
-// import worldMap from 'src/assets/worldMap.json';
 
 
 @Component({
@@ -36,6 +35,7 @@ export class WhatsTrendingComponent implements OnInit, OnDestroy {
   eventSubscription:Subscription = new Subscription();
   eventSubscription2:Subscription = new Subscription();
   eventSubscription3:Subscription = new Subscription();
+  timerSubscription:Subscription = new Subscription();
   allCountries:Utility = new Utility();
   
   tableHeads:string[] = ['Country','Export Companies','Import Companies','Export(%)','Import(%)'];
@@ -113,9 +113,10 @@ export class WhatsTrendingComponent implements OnInit, OnDestroy {
     this.eventSubscription2?.unsubscribe();
     this.eventSubscription3?.unsubscribe();
     this.apiSubscription?.unsubscribe();
+    this.timerSubscription?.unsubscribe();
   }
 
-  onWhatsTrandingInit() {
+  onWhatsTrandingInit():void {
     this.getWorldMapData();
     this.getChartDirection();
 
@@ -148,7 +149,7 @@ export class WhatsTrendingComponent implements OnInit, OnDestroy {
     this.eventSubscription3 = this.eventService.onChangeDirectionBullet.subscribe({
       next: (res:any) => {
         const {type, value} = res;
-        if(type=="direction") {
+        if(type==="direction") {
           this.directionType = value;
           this.getWorldMapRefinedData();
         }
@@ -185,7 +186,7 @@ export class WhatsTrendingComponent implements OnInit, OnDestroy {
     if(this.mapHighcharts) this.mapHighcharts.destroy();
 
     this.isAPIinProcess = false;
-    setTimeout(() => this.worldMapInit(), 1000);
+    this.timerSubscription = timer(1000).subscribe(() => this.worldMapInit());
   }
 
   getCurrentHeight() {

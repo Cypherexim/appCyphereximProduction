@@ -377,9 +377,17 @@ export class ApiServiceService {
     return this.http.get<ApiMsgRes>(`${this.apiUrl}api/${apiName}?userId=${userId}&shipmentIds=${shipmentIds}`);
   }
 
+  getAllowedBookmarkIDs(userId:number|string):Observable<ApiMsgRes> {
+    return this.http.get<ApiMsgRes>(`${this.apiUrl}api/getAllowedBookmarkIDs?userId=${userId}`);
+  }
+
   getShipmentRecordIds(apiBody:any):Observable<ApiMsgRes> {
     const { shipmentIdStr, userId, country, direction, isOnlyFavorites } = apiBody;
     return this.http.get<ApiMsgRes>(`${this.apiUrl}api/getShipmentRecordIds?userId=${userId}&country=${country}&direction=${direction}&isOnlyFavorites=${isOnlyFavorites}&shipmentIds=${shipmentIdStr}`);
+  }
+
+  getFavoriteShipmentCount(apiBody:any):Observable<ApiMsgRes> {
+    return this.http.post<ApiMsgRes>(`${this.apiUrl}api/getFavoriteShipmentCount`, apiBody);
   }
 
   addOldFavoriteShipmentTemp(apiBody:any):Observable<ApiMsgRes> {
