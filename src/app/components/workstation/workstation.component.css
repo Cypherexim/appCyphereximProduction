@@ -346,6 +346,7 @@ div.table-container.download-table table tbody tr td.status-td div.status div.pr
     font-weight: 500;
     letter-spacing: 0.5px;
 }
+div.table-container.download-table table tbody tr td.status-td div.status div.initial{background-color: #cce1ff;color: #0d6efd;}
 div.table-container.download-table table tbody tr td.status-td div.status div.success{background-color: #baffbd;color: green;}
 div.table-container.download-table table tbody tr td.status-td div.status div.error{background-color: #ffc1c1;color: red;}
 div.table-container.download-table table tbody tr td.status-td div.status div.progress-td{background-color: #ffeac3;color: orangered;}

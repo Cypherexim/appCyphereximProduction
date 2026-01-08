@@ -6,7 +6,6 @@ export const environment = {
   apiurl:'https://www.api.cypherexim.com/',
   // apiurl:'http://164.52.217.211:8080/',
   // apiurl:'http://localhost:8080/',
-  linkedInBaseUrl: "https://api.linkedin.com/",
   apiDataCache: {}
 };
 

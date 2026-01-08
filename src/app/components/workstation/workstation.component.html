@@ -180,9 +180,10 @@
                         </div>
                     </td>
                     <td class="status-td"><div class="status">
-                        <div class="success" *ngIf="item?.status=='Completed'">COMPLETED</div>
-                        <div class="error" *ngIf="item?.status == 'Error'">FAILED</div>
-                        <div class="progress-td" *ngIf="item?.status == 'In-Progress'">IN PROGRESS<span class="loaderDot">.</span><span class="loaderDot">.</span><span class="loaderDot">.</span></div>
+                        <div class="initial" ngbTooltip="Your file is in queue. Please wait, it might take few minutes." *ngIf="item?.status=='QUEUE'">WAIT</div>
+                        <div class="success" ngbTooltip="File is ready to download." *ngIf="item?.status=='Completed'">COMPLETED</div>
+                        <div class="error" ngbTooltip="Some error occurred from the server side while creating your file." *ngIf="item?.status == 'Error'">FAILED</div>
+                        <div class="progress-td" ngbTooltip="Your file is under progress, please wait." *ngIf="item?.status == 'In-Progress'">IN PROGRESS<span class="loaderDot">.</span><span class="loaderDot">.</span><span class="loaderDot">.</span></div>
                     </div></td>
                     <!-- <td *ngIf="!isDownloadingAllowed" class="text-center">Share</td> -->
                 </tr>
