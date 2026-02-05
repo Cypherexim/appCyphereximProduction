@@ -23,7 +23,7 @@ export class CardMdChartComponent implements OnInit, AfterViewInit, OnDestroy {
   isMultiSelectOn:boolean = false;
   isAPIinProcess:boolean = false;
 
-  apiSubscription1:Subscription = new Subscription();
+  // apiSubscription1:Subscription = new Subscription();
   timerSubscription1:Subscription = new Subscription();
   timerSubscription2:Subscription = new Subscription();
   timerSubscription3:Subscription = new Subscription();
@@ -84,7 +84,7 @@ export class CardMdChartComponent implements OnInit, AfterViewInit, OnDestroy {
 
   ngOnDestroy(): void {
     this.intervalSubscription?.unsubscribe();
-    this.apiSubscription1?.unsubscribe();
+    // this.apiSubscription1?.unsubscribe();
     this.timerSubscription1?.unsubscribe();
     this.timerSubscription2?.unsubscribe();
     this.timerSubscription3?.unsubscribe();
@@ -264,9 +264,10 @@ export class CardMdChartComponent implements OnInit, AfterViewInit, OnDestroy {
         this.isAPIinProcess = false;
       });
     } else {
-      this.apiSubscription1?.unsubscribe();
+      // this.apiSubscription1?.unsubscribe();
       this.timerSubscription3 = timer(2000).subscribe(() => {
-        this.apiSubscription1 = this.apiService.getWhatstrandingGraphData(apiObj).subscribe({
+        // this.apiSubscription1 = 
+        this.apiService.getWhatstrandingGraphData(apiObj).subscribe({
           next: (res:any) => {
             if(!res.error) {
               this.lineRadarDataValues = {months: [], percentages: [], values: []};

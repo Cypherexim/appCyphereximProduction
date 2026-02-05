@@ -32,9 +32,9 @@ export class EditModalComponent implements OnInit, OnDestroy {
   };
   allCountryList:any[] = [];
   allCountryCodeList:any[] = [];
-  apiSubscription:Subscription = new Subscription();
-  apiSubscription2:Subscription = new Subscription();
-  apiSubscription3:Subscription = new Subscription();
+  // apiSubscription:Subscription = new Subscription();
+  // apiSubscription2:Subscription = new Subscription();
+  // apiSubscription3:Subscription = new Subscription();
   timerSubscription:Subscription = new Subscription();
 
   constructor(
@@ -68,9 +68,9 @@ export class EditModalComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
-    this.apiSubscription?.unsubscribe();
-    this.apiSubscription2?.unsubscribe();
-    this.apiSubscription3?.unsubscribe();
+    // this.apiSubscription?.unsubscribe();
+    // this.apiSubscription2?.unsubscribe();
+    // this.apiSubscription3?.unsubscribe();
     this.timerSubscription?.unsubscribe();
   }
 
@@ -79,7 +79,8 @@ export class EditModalComponent implements OnInit, OnDestroy {
     if(environment.apiDataCache.hasOwnProperty(countryAPIkey)) {
       this.allCountryList = environment.apiDataCache[countryAPIkey];
     } else {
-      this.apiSubscription = this.apiService.getAllGlobeCountries().subscribe({
+      // this.apiSubscription = 
+      this.apiService.getAllGlobeCountries().subscribe({
         next: (res:any) => {
           if(!res?.error) {
             this.allCountryList = res.results;
@@ -91,7 +92,8 @@ export class EditModalComponent implements OnInit, OnDestroy {
   }
 
   getAllCountryCodesList() {
-    this.apiSubscription3 = this.apiService.getAllCountrycodes().subscribe({
+    // this.apiSubscription3 = 
+    this.apiService.getAllCountrycodes().subscribe({
       next: (res:ApiMsgRes) => {
         if(!res.error) {
           this.allCountryCodeList = res.results;
@@ -138,7 +140,8 @@ export class EditModalComponent implements OnInit, OnDestroy {
 
     if(this.isUpdateMode) delete bodyObj["countryName"];
 
-    this.apiSubscription2 = this.apiService.addNewCountry(bodyObj, this.isUpdateMode).subscribe({
+    // this.apiSubscription2 = 
+    this.apiService.addNewCountry(bodyObj, this.isUpdateMode).subscribe({
       next: (res:any) => {
         if(!res.error) this.alertService.success("Country added successfully!");
         else this.alertService.success(res?.message);

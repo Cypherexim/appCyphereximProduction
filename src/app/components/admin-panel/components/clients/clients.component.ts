@@ -26,10 +26,10 @@ export class ClientsComponent implements OnInit, OnDestroy {
 
   unlimited = {download: environment.unlimitedDownload, search: environment.unlimitedSearch};
 
-  apiSubscription1:Subscription;
-  apiSubscription2:Subscription;
-  apiSubscription3:Subscription;
-  apiSubscription4:Subscription;
+  // apiSubscription1:Subscription;
+  // apiSubscription2:Subscription;
+  // apiSubscription3:Subscription;
+  // apiSubscription4:Subscription;
 
   selectOpt:any[] = [{name:'All', val:'all'}, {name:'Expired', val:'dead'},{name:'Hot follow-up', val:'failed'},{name:'Follow-up', val:'pending'},{name:'Running', val:'success'}];
   // countColor:string = "black";
@@ -46,7 +46,8 @@ export class ClientsComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     if(this.listType == "plan") {
-      this.apiSubscription1 = this.userService.getUserPlan().subscribe({
+      //this.apiSubscription1 = 
+      this.userService.getUserPlan().subscribe({
         next: (res:any) => {
           this.isLoading = false;
           if(res!=null && !res?.error && res?.results.length>0) {
@@ -59,7 +60,8 @@ export class ClientsComponent implements OnInit, OnDestroy {
           }
         });
     } else {
-      this.apiSubscription2 = this.userService.getAllUser().subscribe({
+      //this.apiSubscription2 = 
+      this.userService.getAllUser().subscribe({
         next: (res:any) => {
           this.isLoading = false;
           if(res!=null && !res?.error && res?.results.length>0) {
@@ -71,7 +73,8 @@ export class ClientsComponent implements OnInit, OnDestroy {
       });
     }
 
-    this.apiSubscription3 = this.userService.getAllRoles().subscribe((res:any) => {
+    // this.apiSubscription3 = 
+    this.userService.getAllRoles().subscribe((res:any) => {
       if(!res.error) {
         this.allRoles = res?.results;
         this.roleListType = roleName=="admin" ? fewRoles : this.allRoles;
@@ -83,10 +86,10 @@ export class ClientsComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
-    this.apiSubscription1?.unsubscribe();
-    this.apiSubscription2?.unsubscribe();
-    this.apiSubscription3?.unsubscribe();
-    this.apiSubscription4?.unsubscribe();
+    // this.apiSubscription1?.unsubscribe();
+    // this.apiSubscription2?.unsubscribe();
+    // this.apiSubscription3?.unsubscribe();
+    // this.apiSubscription4?.unsubscribe();
   }
 
   arrangeClientLists(res:any) {
@@ -166,7 +169,8 @@ export class ClientsComponent implements OnInit, OnDestroy {
       UserId: !isSubUser ? data?.UserId: data?.subUsers[0]?.UserId
     };
 
-    this.apiSubscription4 = this.userService.userEnableDisable(dataObj).subscribe((res:any) => {
+    // this.apiSubscription4 = 
+    this.userService.userEnableDisable(dataObj).subscribe((res:any) => {
       if(!res?.error && res?.message == "Ok") {
         const clientName = !isSubUser ? data?.FullName: data?.subUsers[0]?.FullName;
         this.alertService.success(`${clientName} is ${isChecked ? "Enabled" : "Disabled"}`);

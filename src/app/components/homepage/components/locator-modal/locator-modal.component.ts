@@ -16,6 +16,7 @@ export class LocatorModalComponent implements OnInit, AfterViewInit, OnDestroy {
   searchControl:FormControl = new FormControl();
   searchVal:string = '';
   locatorType:string = '';
+  isKeywordBasedTab:boolean = false;
   isApiProcess:boolean = false;
   isMainSelect:boolean = false;
   isSelectAllShow:boolean = false;
@@ -37,8 +38,6 @@ export class LocatorModalComponent implements OnInit, AfterViewInit, OnDestroy {
   @Output() callBack:EventEmitter<string[]> = new EventEmitter();
 
   eventSubscription:Subscription = new Subscription();
-  apiSubscription:Subscription = new Subscription();
-  apiSubscription2:Subscription = new Subscription();
   timerSubscription:Subscription = new Subscription();
 
   constructor(
@@ -49,6 +48,7 @@ export class LocatorModalComponent implements OnInit, AfterViewInit, OnDestroy {
   ) {
     this.searchControl.valueChanges.pipe(debounceTime(800)).subscribe({
       next: (inputVal:string) => {
+        this.isMainSelect = false;
         this.searchVal = inputVal;
         this.searchingMoreLocator();
       }, error: (err:any) => console.log(err)
@@ -101,7 +101,7 @@ export class LocatorModalComponent implements OnInit, AfterViewInit, OnDestroy {
     
         if(!isFiltered) this.listArr = [...locatorsArr];
         this.copyArr = [...locatorsArr];
-        this.perPageLocators = locatorsArr.splice(0, 100);
+        this.perPageLocators = this.verifyPreCheckedItems(structuredClone(locatorsArr.splice(0, 100)));
       } else {
         this.isError = true;
         this.copyArr = [];
@@ -111,12 +111,23 @@ export class LocatorModalComponent implements OnInit, AfterViewInit, OnDestroy {
     }    
   }
 
+  verifyPreCheckedItems(perPageItems:any[]) {
+    const newPerPageItems = [];
+    for(let i=0; i<perPageItems.length; i++) {
+      const item = perPageItems[i];
+      const doesExist = this.selectedArr.includes(this.locatorType=='exporter' ? item?.Exp_Name : item?.Imp_Name);
+      newPerPageItems.push({...item, isChecked: doesExist});
+    }
+    console.log(this.selectedArr);
+    return newPerPageItems
+  }
+
   ngAfterViewInit() {  }
 
   ngOnDestroy(): void {
     this.eventSubscription?.unsubscribe();
-    this.apiSubscription?.unsubscribe();
-    this.apiSubscription2?.unsubscribe();
+    // this.apiSubscription?.unsubscribe();
+    // this.apiSubscription2?.unsubscribe();
     this.timerSubscription?.unsubscribe();
   }
 
@@ -139,8 +150,9 @@ export class LocatorModalComponent implements OnInit, AfterViewInit, OnDestroy {
       const direction = type;
       const dataObj = { country, direction, word, locatorType, countryType,  date: {from: fromDate, to: toDate} };
 
-      this.apiSubscription2?.unsubscribe();
-      this.apiSubscription2 = this.apiService.getGlobeImpExpLocator(dataObj, word).subscribe({
+      // this.apiSubscription2?.unsubscribe();
+      // this.apiSubscription2 = 
+      this.apiService.getGlobeImpExpLocator(dataObj, word).subscribe({
         next: (res:any) => {
           if(!res?.error) {
             this.isApiProcess = false;
@@ -183,7 +195,7 @@ export class LocatorModalComponent implements OnInit, AfterViewInit, OnDestroy {
     this.perPageLocators = [];
     
     if(letter == "All") {
-      if(this.apiSubscription) this.apiSubscription.unsubscribe();
+      // if(this.apiSubscription) this.apiSubscription.unsubscribe();
       this.setLocatorsArr({...this.backupLocatorData});
       return;
     }
@@ -195,7 +207,8 @@ export class LocatorModalComponent implements OnInit, AfterViewInit, OnDestroy {
       columnname: this.locatorType=="exporter" ? "Exp_Name" : "Imp_Name"
     };
 
-    this.apiSubscription = this.apiService.getLocatorByChar(bodyObj).subscribe((res:any) => {
+    // this.apiSubscription = 
+    this.apiService.getLocatorByChar(bodyObj).subscribe((res:any) => {
       if(!res?.error) {
         locators[bodyObj.columnname] = res?.results;
         this.setLocatorsArr({...locators});
@@ -237,18 +250,20 @@ export class LocatorModalComponent implements OnInit, AfterViewInit, OnDestroy {
     else this.selectedArr = this.selectedArr.filter(item => item != val);
   }
 
-  selectAllValues(dataArr:any[]) {
-    this.isMainSelect = !this.isMainSelect;
+  selectAllValues(e:KeyboardEvent, dataArr:any[]) {
+    const checkbox = e.target as HTMLInputElement;
+    this.isMainSelect = checkbox.checked;
     const key = this.locatorType=='exporter' ? "Exp_Name" : "Imp_Name";
-    this.selectedArr = this.isMainSelect ? dataArr.map(item => item[key]) : [];
+    const cleanArr = this.isMainSelect ? dataArr.map(item => item[key]) : [];
+    this.selectedArr = [...this.selectedArr, ...cleanArr]
     // const selectedAllItems = this.isMainSelect ? dataArr.map(item => item[key]) : [];
     // selectedAllItems.forEach(item => this.selectedArr.push(item));
   }
 
   applyLocator() {
     const selectedData = this.selectedArr.length>0 
-      ? this.selectedArr 
-      : this.searchVal=="" 
+      ? this.selectedArr
+      : this.searchVal===""
           ? [] : [this.searchVal.toUpperCase()];
 
     this.callBack.emit(selectedData);
@@ -277,4 +292,21 @@ export class LocatorModalComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   closeModal() {this.activeModal.dismiss('Cross click');}
+
+  toggleTab(tabname:string) {
+    this.isKeywordBasedTab = tabname==="keyword";
+    this.selectedArr = [];
+  }
+
+  onPressEnter(e:KeyboardEvent, inputElem:HTMLInputElement) {
+    if(e.key==="Enter") this.onEnterClick(inputElem, "add");
+  }
+  onEnterClick(inputElem:HTMLInputElement, type:string="add", chipId?:number) {
+    if(type === "add" && inputElem?.value!=="") {
+      this.selectedArr.push(inputElem?.value.toUpperCase());
+      inputElem.value = "";
+    }
+    else if(type==="clear") {this.selectedArr = [];}
+    else this.selectedArr.splice(chipId, 1);
+  }
 }

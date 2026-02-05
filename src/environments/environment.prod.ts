@@ -3,9 +3,8 @@ export const environment = {
   india: "data",
   unlimitedDownload: 2000000,
   unlimitedSearch: 50000,
-  apiurl:'https://www.api.cypherexim.com/',
-  // apiurl:'http://164.52.217.211:8080/',
-  // apiurl:'http://localhost:8080/',
+  apiurl:'https://www.api.cypherexim.com/v1/',
+  // apiurl:'http://localhost:8080/v1/',
   apiDataCache: {}
 };
 

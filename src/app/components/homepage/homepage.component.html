@@ -8,9 +8,11 @@
           <div class="dropdown-icon" (click)="setDropClass(firstSelect, 'add')"><img src="assets/images/downarrow.png" alt="" /></div>
 
           <div class="dropdown-data">
-            <p *ngFor="let item of dropdownVal1"
+            <p class="{{!((getDirectionAccess()==='EXPORT' && item.value==='export') || (getDirectionAccess()==='IMPORT' && item.value==='import' || getDirectionAccess()==='BOTH')) && 'disable'}}" *ngFor="let item of dropdownVal1"
               (click)="onselectItem(item.value, item.placeholder, 'first', firstSelect);setDropClass(firstSelect, 'cut')"
-              id="{{item.value}}">{{item.placeholder}}</p>
+              id="{{item.value}}">
+              {{item.placeholder}}
+            </p>
           </div>
         </div>
       </div>

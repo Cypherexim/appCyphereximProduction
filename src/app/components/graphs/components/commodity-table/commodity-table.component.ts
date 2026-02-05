@@ -24,7 +24,7 @@ export class CommodityTableComponent implements OnInit, OnDestroy {
   financialYearValues=[];
   commodities:string[] = [];
 
-  apiSubscription:Subscription = new Subscription();
+  // apiSubscription:Subscription = new Subscription();
   eventSubscription:Subscription = new Subscription();
   timerSubscription:Subscription = new Subscription();
 
@@ -40,7 +40,7 @@ export class CommodityTableComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
-    this.apiSubscription?.unsubscribe();
+    // this.apiSubscription?.unsubscribe();
     this.eventSubscription?.unsubscribe();
     this.timerSubscription?.unsubscribe();
   }
@@ -68,7 +68,8 @@ export class CommodityTableComponent implements OnInit, OnDestroy {
       const tempRes = JSON.parse(JSON.stringify(environment.apiDataCache[apiCacheKey]));
       this.timerSubscription = timer(1500).subscribe(() => this.transformResponseData(tempRes));
     } else {
-      this.apiSubscription = this.apiService.getWhatstrandingCommodityData(body).subscribe({
+      // this.apiSubscription = 
+      this.apiService.getWhatstrandingCommodityData(body).subscribe({
         next: (res:ApiMsgRes) => {
           if(!res.error) {
             this.transformResponseData(res.results);

@@ -36,10 +36,13 @@ export class HomepageComponent implements OnInit, OnChanges, AfterViewInit, OnDe
 
   
   eventSubscription: { [key: `eventSubscription${number}`]: Subscription } = {};
-  apiSubscription: { [key: `apiSubscription${number}`]: Subscription } = {};
+  // apiSubscription: { [key: `apiSubscription${number}`]: Subscription } = {};
   timerSubscription: { [key: `timerSubscription${number}`]: Subscription } = {};
 
   analysisApiSubscription:Subscription[] = [];
+  mainSearchApiSubscription:Subscription = new Subscription();
+  sidefilterApiSubscription:Subscription = new Subscription();
+  sidefilterFullApiSubscription:Subscription = new Subscription();
 
   destory$: Subject<any> = new Subject<any>();
 
@@ -294,9 +297,10 @@ export class HomepageComponent implements OnInit, OnChanges, AfterViewInit, OnDe
     this.eventService.stopSearchingEvent.subscribe({
       next: (res:any) => {
         if (res) {
-          this.apiSubscription["apiSubscription1"]?.unsubscribe();
-          this.apiSubscription["apiSubscription3"]?.unsubscribe();
-          this.apiSubscription["apiSubscription4"]?.unsubscribe();
+          this.mainSearchApiSubscription?.unsubscribe();
+          this.sidefilterApiSubscription?.unsubscribe();
+          this.sidefilterFullApiSubscription?.unsubscribe();
+          this.analysisApiSubscription.forEach(analysis => analysis?.unsubscribe());
           this.eventService.toggleSearchLoader.next({flag: false, page: "home"});
         }
       }, error: (err:any) => console.log("Error:", err)
@@ -522,7 +526,8 @@ export class HomepageComponent implements OnInit, OnChanges, AfterViewInit, OnDe
       isOnlyFavorites: !isToTheOrder
     };
 
-    this.apiSubscription["apiSubscription13"] = this.apiService.getShipmentRecordIds(apiBody).subscribe({
+    // this.apiSubscription["apiSubscription13"] = 
+    this.apiService.getShipmentRecordIds(apiBody).subscribe({
       next: (res:ApiMsgRes) => {
         this.favoriteShipments[favoriteTypeKey].ids = res?.results?.map((item:any) => item?.record_id);
         if(isToTheOrder) this.favoriteShipments.toTheOrder.doesExist = true;
@@ -535,12 +540,13 @@ export class HomepageComponent implements OnInit, OnChanges, AfterViewInit, OnDe
       if (callBy!=="workspace") this.savedStatus = { isAlreadySaved: false, savedFileName: '', savedFileId: '', saveFolder: '' };
 
       //********************* unsubscribing running sidefilters & analysis ****************//
-      [...(Object.keys(this.timerSubscription)), ...$(Object.keys(this.apiSubscription))].forEach((key:string) => {
+      // [...(Object.keys(this.timerSubscription)), ...$(Object.keys(this.apiSubscription))].forEach((key:string) => {
+      [...(Object.keys(this.timerSubscription))].forEach((key:string) => {
         this.timerSubscription?.[key]?.unsubscribe();
-        this.apiSubscription?.[key]?.unsubscribe();
+        // this.apiSubscription?.[key]?.unsubscribe();
       });
       this.timerSubscription = {};
-      this.apiSubscription = {};
+      // this.apiSubscription = {};
       
       
       this.eventSubscription["eventSubscription10"]?.unsubscribe();
@@ -647,7 +653,7 @@ export class HomepageComponent implements OnInit, OnChanges, AfterViewInit, OnDe
       }
     }
 
-    this.apiSubscription["apiSubscription4"]?.unsubscribe();
+    // this.apiSubscription["apiSubscription4"]?.unsubscribe();
 
     this.inItSearchClickProcess(callBy).then(() => {
       this.getSearchData(this.apiBodyObj.base, callBy)
@@ -667,7 +673,7 @@ export class HomepageComponent implements OnInit, OnChanges, AfterViewInit, OnDe
 
       if (["self", "workspace"].includes(callBy)) this.eventService.filterSidebarEvent.emit(false);//it should be hidden while searching data
       //just unsubscribe before we subscribe it again coz it may give pending xhr request result.
-      this.apiSubscription["apiSubscription3"]?.unsubscribe();
+      // this.apiSubscription["apiSubscription3"]?.unsubscribe();
 
       this.isTabsVisible = false;
       
@@ -703,7 +709,8 @@ export class HomepageComponent implements OnInit, OnChanges, AfterViewInit, OnDe
           //   this.searchService.getSearchedDataWithFilter(apiData)
           // ])
 
-          this.apiSubscription["apiSubscription3"] = forkJoin({
+          // this.apiSubscription["apiSubscription3"] = 
+          this.mainSearchApiSubscription = forkJoin({
             counts: this.searchService.getSearchedRecordCounting(counterApiBody).pipe(
               map((data:any) => ({...data, error: false, errorInfo: {}})),
               catchError(err => { console.error(err);
@@ -876,7 +883,7 @@ export class HomepageComponent implements OnInit, OnChanges, AfterViewInit, OnDe
   getSideFilterData(callBy:string, apiBodyType:any) {
     return new Promise((resolve, reject) => {
       try {
-        this.apiSubscription["apiSubscription4"]?.unsubscribe();
+        // this.apiSubscription["apiSubscription4"]?.unsubscribe();
   
         if (apiBodyType == "filter") {
           apiBodyType = Object.keys(this.apiBodyObj[apiBodyType]).length > 0 ? "filter" : "base";
@@ -979,7 +986,9 @@ export class HomepageComponent implements OnInit, OnChanges, AfterViewInit, OnDe
         const sideFilterData = environment.apiDataCache[apiKey];
         resolve({ message: "Ok", error: false, code: 200, results: sideFilterData });
       } else {
-        this.eventSubscription["eventSubscription11"] = this.apiSubscription["apiSubscription4"] = forkJoin(tempUrlArr).subscribe({
+        // this.eventSubscription["eventSubscription11"] = 
+        // this.apiSubscription["apiSubscription4"] = 
+        this.sidefilterApiSubscription = forkJoin(tempUrlArr).subscribe({
             next: (res:any) => {
               for(let i=0; i<res.length; i++) {
                 const singleFilterItem = Object.keys(res[i]?.results[0]);
@@ -1161,8 +1170,13 @@ export class HomepageComponent implements OnInit, OnChanges, AfterViewInit, OnDe
       }
     });
   }
+  
+  getDirectionAccess():string { return this.authService.getUserSingleDetail("direction"); }
 
   onselectItem(value:any, name:any, type:string, textBoxTag:any) {
+    const userDirectionAccess = this.authService.getUserSingleDetail("direction");
+    if(type==="first" && !((userDirectionAccess==='EXPORT' && value==='export') || userDirectionAccess==='IMPORT' && value==='import' || userDirectionAccess==='BOTH')) return;
+
     if (type == 'first') {
       this.firstSelectVal = name;
       this.direction = value;
@@ -1203,7 +1217,7 @@ export class HomepageComponent implements OnInit, OnChanges, AfterViewInit, OnDe
   getCountryLocator() {
     if (this.direction == "") return;
 
-    this.apiSubscription["apiSubscription1"]?.unsubscribe();
+    // this.apiSubscription["apiSubscription1"]?.unsubscribe();
 
     //this is to know that which locator is available in which country to call its locator API
     const countryObj = new CountryHeads();
@@ -2033,7 +2047,7 @@ export class HomepageComponent implements OnInit, OnChanges, AfterViewInit, OnDe
       this.getAnalysisData(apiData);
       this.timerSubscription["timerSubscription14"] = timer(2000).subscribe({next: () => {this.isFilteringData = false}});
     } else {
-      this.eventSubscription["eventSubscription10"] = forkJoin(tempUrlArr).subscribe({
+      this.sidefilterFullApiSubscription = forkJoin(tempUrlArr).subscribe({
         next: (responses:any[]) => {
           this.timerSubscription["timerSubscription15"] = timer(2000).subscribe({next: () => {
             const fullSideFiltersObj = {};
@@ -2378,7 +2392,8 @@ export class HomepageComponent implements OnInit, OnChanges, AfterViewInit, OnDe
         const iconTag = document.getElementById("ICON"+data?.RecordID) as HTMLElement;
         iconTag.className = "fa-regular fa-loader fa-spin";
 
-        this.apiSubscription["apiSubscription8"] = this.apiService.getUpdatedCompanyRevealed({
+        // this.apiSubscription["apiSubscription8"] = 
+        this.apiService.getUpdatedCompanyRevealed({
           direction: this.direction,
           country: this.currentCountry,
           recordId: data?.RecordID,

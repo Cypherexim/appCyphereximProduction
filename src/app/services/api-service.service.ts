@@ -161,7 +161,6 @@ export class ApiServiceService {
     return this.http.get(`${this.apiUrl}api/getcountries`);
   }
 
-
   //get all sub-user list
   getSubUsers() {
     return this.http.get(`${this.apiUrl}api/getUserslistByParentId?ParentUserId=${this.authService.getUserId()}`);

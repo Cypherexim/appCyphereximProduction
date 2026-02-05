@@ -54,7 +54,7 @@ export class CompanyHunterComponent implements OnInit, OnDestroy{
   isPadLockClicked:boolean = false;
   hasAppliedForNewCompany:boolean = false;
 
-  apiSubscription:{ [key: `apiSubscription${number}`]: Subscription } = {};
+  // apiSubscription:{ [key: `apiSubscription${number}`]: Subscription } = {};
   timerSubscription1:Subscription = new Subscription();
   timerSubscription2:Subscription = new Subscription();
 
@@ -75,7 +75,7 @@ export class CompanyHunterComponent implements OnInit, OnDestroy{
   }
 
   ngOnDestroy(): void {
-    Object.keys(this.apiSubscription).forEach((key:string) => this.apiSubscription?.[key]?.unsubscribe());
+    // Object.keys(this.apiSubscription).forEach((key:string) => this.apiSubscription?.[key]?.unsubscribe());
     this.timerSubscription1?.unsubscribe();
     this.timerSubscription2?.unsubscribe();
   }
@@ -108,7 +108,8 @@ export class CompanyHunterComponent implements OnInit, OnDestroy{
       time: new Date().toString()
     };
 
-    this.apiSubscription["apiSubscription7"] = this.apiService.sendNewFeedback(apiBody).subscribe({
+    // this.apiSubscription["apiSubscription7"] = 
+    this.apiService.sendNewFeedback(apiBody).subscribe({
       next: (res:ApiMsgRes) => {
         this.alertService.success(res.message);
         element.value = "";
@@ -141,7 +142,8 @@ export class CompanyHunterComponent implements OnInit, OnDestroy{
     this.resetAllValues();
 
     if(this.typedTxt.length > 2) {
-      this.apiSubscription["apiSubscription1"] = this.apiService.getCompanyListByKeyword(this.typedTxt).subscribe({
+      // this.apiSubscription["apiSubscription1"] = 
+      this.apiService.getCompanyListByKeyword(this.typedTxt).subscribe({
         next: (res:ApiMsgRes) => {
           this.companyList = res.results;
           // if(this.timeout) {clearTimeout(this.timeout);}
@@ -172,7 +174,8 @@ export class CompanyHunterComponent implements OnInit, OnDestroy{
     
     this.isLoading = true;
 
-    this.apiSubscription["apiSubscription2"] = this.apiService.getCompanyInfoDetails(this.typedTxt).subscribe({
+    // this.apiSubscription["apiSubscription2"] = 
+    this.apiService.getCompanyInfoDetails(this.typedTxt).subscribe({
       next: (res:ApiMsgRes) => {
         if(res.results.length>0) {
           const {id, iec, company_name, person_name, contact, email, location, address} = res.results[0];
@@ -218,7 +221,8 @@ export class CompanyHunterComponent implements OnInit, OnDestroy{
     this.isPadLockClicked = true;
     const parentUserId = this.authService.getUserSingleDetail("ParentUserId"); //if it exists then current user is sub-user
     const userId:string|number = Number(parentUserId) || this.authService.getUserId();
-    this.apiSubscription["apiSubscription3"] = this.apiService.updateCompanyPoints(userId).subscribe({
+    // this.apiSubscription["apiSubscription3"] = 
+    this.apiService.updateCompanyPoints(userId).subscribe({
       next: (res:ApiMsgRes) => {
         this.isPadLockClicked = false;
         this.isPadLockUnlocked = true;
@@ -237,7 +241,8 @@ export class CompanyHunterComponent implements OnInit, OnDestroy{
       dateTime: this.datePipe.transform(today, "MM/dd/yyyy, hh:mm a")
     };
 
-    this.apiSubscription["apiSubscription4"] = this.apiService.transferCompanyDetails(apiBody).subscribe({
+    // this.apiSubscription["apiSubscription4"] = 
+    this.apiService.transferCompanyDetails(apiBody).subscribe({
       next: (res:ApiMsgRes) => {
         if(res.code===200) {
           this.isApplyInProgress = false;
@@ -265,7 +270,8 @@ export class CompanyHunterComponent implements OnInit, OnDestroy{
   }
 
   setNewFavoriteCompany(userPrefs:string) {
-    this.apiSubscription["apiSubscription5"] = this.userService.updateUserPereference(userPrefs).subscribe({
+    // this.apiSubscription["apiSubscription5"] = 
+    this.userService.updateUserPereference(userPrefs).subscribe({
       next: (res:ApiMsgRes) => {
         if(!res.error) {
           this.authService.updateUserDetails("userPreference", userPrefs);
@@ -280,7 +286,8 @@ export class CompanyHunterComponent implements OnInit, OnDestroy{
     if(userPrefs.hasOwnProperty("favoriteCompanies")) {
       const favComIds = userPrefs["favoriteCompanies"];
       this.isListInFetching = true;
-      this.apiSubscription["apiSubscription6"] = this.userService.getFavoriteShipment(favComIds).subscribe({
+      // this.apiSubscription["apiSubscription6"] = 
+      this.userService.getFavoriteShipment(favComIds).subscribe({
         next: (res:ApiMsgRes) => {
           if(!res.error) {
             this.favoriteCompanyList = [...res.results];

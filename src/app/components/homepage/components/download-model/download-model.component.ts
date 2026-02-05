@@ -33,8 +33,8 @@ export class DownloadModelComponent implements OnInit, OnDestroy {
 
   toTheOrderPoints:{point?: number, isLoaded: boolean} = {isLoaded: true};
 
-  apiSubscription1:Subscription = new Subscription();
-  apiSubscription2:Subscription = new Subscription();
+  // apiSubscription1:Subscription = new Subscription();
+  // apiSubscription2:Subscription = new Subscription();
   timerSubscription1:Subscription = new Subscription();
   timerSubscription2:Subscription = new Subscription();
 
@@ -63,8 +63,8 @@ export class DownloadModelComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
-    this.apiSubscription1?.unsubscribe();
-    this.apiSubscription2?.unsubscribe();
+    // this.apiSubscription1?.unsubscribe();
+    // this.apiSubscription2?.unsubscribe();
     this.timerSubscription1?.unsubscribe();
     this.timerSubscription2?.unsubscribe();
   }
@@ -101,13 +101,15 @@ export class DownloadModelComponent implements OnInit, OnDestroy {
   }
 
   getUserPointsUpdated() {
-    this.apiSubscription1 = this.userService.updateUserPoints().subscribe({
+    // this.apiSubscription1 = 
+    this.userService.updateUserPoints().subscribe({
       next: (res:any) => {
         if(res != null && !res?.error) {
           const {code, type} = this.countryData;
           this.availablePoints = Number(res?.results[0]?.Downloads);
   
-          this.apiSubscription2 = this.apiService.getCountryDownloadCost(code, type).subscribe({
+          // this.apiSubscription2 = 
+          this.apiService.getCountryDownloadCost(code, type).subscribe({
             next: (res2:any) => {
               if(res2 != null && !res2?.error) {
                 this.costPoints = res2?.results[0]?.CostPerRecord ? Number(res2?.results[0]?.CostPerRecord) : 1;        

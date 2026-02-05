@@ -1,7 +1,71 @@
-div.locator-box{
-    height: 100%;
+div.locator-box .option-container{
+    border-bottom: 1px solid #4cbfa6;
+}
+div.locator-box .option-container div.keyword{
+    padding: 5px 10px;
+    color: white;
+    background-color: #4cbfa6;
+    border-radius: 8px;
+    border-bottom-left-radius: 0;
+    border-bottom-right-radius: 0;
+    cursor: pointer;
+    font-size: 14px;
+}
+div.locator-box .option-container div.keyword.disabled{background-color: #cacaca;}
+div.locator-box .keyword-locator .title{
+    font-size: 16px;
+    font-weight: 600;
+    margin-bottom: 5px;
+}
+div.locator-box .keyword-locator .title span.clear:hover{text-decoration: underline;}
+div.locator-box .keyword-locator .title span.clear{
+    color: #0d6efd;
+    cursor: pointer;
+    font-size: 11.5px;
+}
+div.locator-box .keyword-locator .selected-chips{
+    height: 35%;
+    border-radius: 2.5px;
+    border: 2px solid #c2c2c2;
+    margin-bottom: 10px;
+    overflow: auto;
+}
+div.locator-box .keyword-locator .selected-chips .chip-overflow-box{
+    display: flex;
+    align-items: flex-start;
+    flex-wrap: wrap;
 }
 
+div.locator-box .keyword-locator .selected-chips .chip{
+    background-color: #45b099;
+    width: fit-content;
+    padding: 3px 15px;
+    border-radius: 20px;
+    margin: 5px 0 0 5px;
+    color: white;
+}
+div.locator-box .keyword-locator .selected-chips .chip span.chip-name{
+    font-size: 14px;
+    margin-right: 10px;
+}
+div.locator-box .keyword-locator .selected-chips .chip span.cross:hover{color: red;}
+div.locator-box .keyword-locator .selected-chips .chip span.cross{
+    font-size: 15px;
+    cursor: pointer;
+}
+
+div.locator-box .keyword-locator .keyword-input{width: 55%;}
+div.locator-box .keyword-locator .keyword-input input{
+    border-radius: 2px;
+    margin-bottom: 5px;
+}
+div.locator-box .keyword-locator .keyword-input .btn-grp button{
+    width: 49.5%;
+    border-radius: 2px;
+}
+
+
+div.locator-box div.main-locator{height: 90%;}
 div.locator-box div.exceed-popup{
     position: absolute;
     z-index: 100;

@@ -97,7 +97,7 @@ export class UserPanelComponent implements OnInit, OnChanges, OnDestroy {
           //if it is update mode then password should not be updated as it is
           //already genereated or may have been changed by user
           if(tempAddUser?.ActionType != "update") {
-            tempAddUser["Password"] = tempAddUser["Email"].substring(0, 5) + tempAddUser["MobileNumber"].split('').splice(5, 5).join('');
+            tempAddUser["Password"] = (tempAddUser["Email"].substring(0, 5) + tempAddUser["MobileNumber"].split('').splice(5, 5).join(''))?.toLowerCase();
           } else delete tempAddUser["Password"];
           
           const combinedObjData = {...tempAddUser, ...tempAddPlan};

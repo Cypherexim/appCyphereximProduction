@@ -32,7 +32,7 @@ export class UserLoginComponent implements OnInit, AfterViewInit, OnDestroy {
     disableUser: "Your account is temporarily disabled, please contact to the service provider."
   }
 
-  apiSubscription:Subscription = new Subscription();
+  // apiSubscription:Subscription = new Subscription();
   timerSubscription:Subscription = new Subscription();
 
   constructor(
@@ -74,7 +74,7 @@ export class UserLoginComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
-    this.apiSubscription?.unsubscribe();
+    // this.apiSubscription?.unsubscribe();
     this.timerSubscription?.unsubscribe();
   }
 
@@ -223,7 +223,8 @@ export class UserLoginComponent implements OnInit, AfterViewInit, OnDestroy {
       date: this.datePipe.transform(dateObj, "MM/dd/yyyy, hh:mm a")
     };
 
-    this.apiSubscription = this.apiService.setUserLoginLog(apiBody).subscribe({
+    // this.apiSubscription = 
+    this.apiService.setUserLoginLog(apiBody).subscribe({
       next: (res:any) => {
         if(!res?.error) console.log("Login Log has been added");
       }, error: (err:any) => console.log(err)
@@ -307,6 +308,17 @@ export class UserLoginComponent implements OnInit, AfterViewInit, OnDestroy {
       Companyprofile: "0",
       Analysis: "All"
     };
+
+    const scheduleDemoBody = {
+      time: "N/A",
+      date: "N/A",
+      name: this.userName, 
+      company: this.companyName, 
+      email: this.registerEmail.toLowerCase(), 
+      phone: this.mobileNumber, 
+      desc: "User has been registered himself by Cypher portal",
+      source: "Portal"
+    }
 
     this.userService.addPortalUser(apiObj, true).subscribe({
       next: (res:any) => {

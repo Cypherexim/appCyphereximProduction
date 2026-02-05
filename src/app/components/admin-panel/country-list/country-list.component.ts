@@ -64,6 +64,10 @@ export class CountryListComponent implements OnInit, OnDestroy {
     this.timerSubscription?.unsubscribe();
   }
 
+  getDirectionAccess():string {
+    return this.authService.getUserSingleDetail("direction");
+  }
+
   cachingGlobalCountriesAPI() {
     this.isApiInProcess = true;
     const apiKey = `${environment.apiurl}api/getGlobalCountriesList?type=all`;

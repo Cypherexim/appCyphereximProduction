@@ -1,6 +1,6 @@
 import { Component, Output, EventEmitter, OnDestroy } from '@angular/core';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
-import { Subscription } from 'rxjs';
+// import { Subscription } from 'rxjs';
 import { AlertifyService } from 'src/app/services/alertify.service';
 import { UserService } from 'src/app/services/user.service';
 
@@ -14,7 +14,7 @@ export class PreviewComponent implements OnDestroy {
   isLoading:boolean = false;
   isSucceed:boolean = false;
   isUpdatingMode:boolean = false;
-  apiSubscription:Subscription;
+  // apiSubscription:Subscription;
   @Output() callBack:EventEmitter<any> = new EventEmitter();
 
   constructor(
@@ -24,7 +24,7 @@ export class PreviewComponent implements OnDestroy {
   ) {}
 
   ngOnDestroy(): void {
-    this.apiSubscription?.unsubscribe();
+    // this.apiSubscription?.unsubscribe();
   }
 
   onFinalSubmit() {
@@ -33,7 +33,8 @@ export class PreviewComponent implements OnDestroy {
     this.isUpdatingMode = (this.combinedData.hasOwnProperty("UserId") && this.combinedData?.UserId.length>0);
     delete dataBody["RoleName"];
     
-    this.apiSubscription = this.userService.addPortalUser(dataBody).subscribe({
+    // this.apiSubscription = 
+    this.userService.addPortalUser(dataBody).subscribe({
       next: (res:any) => {
         this.isLoading = false;
   

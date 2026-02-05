@@ -82,7 +82,7 @@ export class AllAnalysisComponent implements OnInit, OnChanges, AfterViewInit, O
   keyHelper = {verticalBar: "barY", horizontalBar: "barX", line1Graph: "line1", line2Graph: "line2"};
   graphSearchTracker = {barX: "value", barY: "price", line1: "price", line2: "value"};
 
-  apiSubscription:Subscription;
+  // apiSubscription:Subscription;
   eventSubscription: Subscription;
   timerSubscription:{[key: `timerSubscription${number}`]:Subscription} = {};
 
@@ -124,7 +124,7 @@ export class AllAnalysisComponent implements OnInit, OnChanges, AfterViewInit, O
 
         this.timerSubscription["timerSubscription2"] = timer(90000).subscribe(() => {
           this.isLoading = false;
-          this.apiSubscription?.unsubscribe();
+          // this.apiSubscription?.unsubscribe();
         });
 
         this.currentCountry = body["countryname"];
@@ -142,7 +142,8 @@ export class AllAnalysisComponent implements OnInit, OnChanges, AfterViewInit, O
 
   //just in case, data is not fetched properly then
   onAnalysisApiCall(queryObj:any) {
-    this.apiSubscription = this.apiService.getAnalysisData(queryObj).subscribe({
+    // this.apiSubscription = 
+    this.apiService.getAnalysisData(queryObj).subscribe({
       next: (res2:any) => {
 
         if(res2?.results[0].hasOwnProperty("asset_value_usd")) {
@@ -192,7 +193,7 @@ export class AllAnalysisComponent implements OnInit, OnChanges, AfterViewInit, O
   unsubscribeEvents() {
     Object.keys(this.timerSubscription).forEach((key:string) => this.timerSubscription?.[key]?.unsubscribe());
     this.eventSubscription?.unsubscribe();
-    this.apiSubscription?.unsubscribe();
+    // this.apiSubscription?.unsubscribe();
 
     if(this.barChartHorizontal) {
       this.barChartVertical.destroy();

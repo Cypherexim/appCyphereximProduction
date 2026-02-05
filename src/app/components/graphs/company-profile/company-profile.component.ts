@@ -72,7 +72,7 @@ export class CompanyProfileComponent implements OnInit, OnDestroy {
 
   currentInfoId: string = "";
   pageSize: number = 1;
-  apiSubscription1: Subscription;
+  // apiSubscription1: Subscription;
   eventSubscription1: Subscription;
   timerSubscription:{[key: `timerSubscription${number}`]:Subscription} = {};
   companyAllShipmentsTotal: number = 0;
@@ -98,7 +98,7 @@ export class CompanyProfileComponent implements OnInit, OnDestroy {
 
   ngOnDestroy(): void {
     this.eventSubscription1?.unsubscribe();
-    this.apiSubscription1?.unsubscribe();
+    // this.apiSubscription1?.unsubscribe();
     this.mapHighcharts.destroy();
     this.mapHighcharts = undefined;
     Object.keys(this.timerSubscription).forEach((key:string) => this.timerSubscription?.[key].unsubscribe());
@@ -158,7 +158,8 @@ export class CompanyProfileComponent implements OnInit, OnDestroy {
       const apiKey = `${environment.apiurl}api/getCompanyprofile?company=${body.companyname}&direction=${body.direction}&date=${body.date}`;
 
       if (!environment.apiDataCache.hasOwnProperty(apiKey)) {
-        this.apiSubscription1 = this.apiServcie.getCompanyProfileCountss(body).subscribe({
+        // this.apiSubscription1 = 
+        this.apiServcie.getCompanyProfileCountss(body).subscribe({
           next: async (res: any) => {
             if (!res?.error) {
 

@@ -53,7 +53,7 @@ export class NotificationComponent implements OnInit, OnDestroy{
     private eventService: EventemittersService
   ) {}
 
-  apiSubscription:Subscription;
+  // apiSubscription:Subscription;
   eventSubscription:Subscription;
   eventSubscription2:Subscription;
   notificationArr:any[] = [];
@@ -71,7 +71,7 @@ export class NotificationComponent implements OnInit, OnDestroy{
   ngOnDestroy(): void {
     this.eventSubscription?.unsubscribe();
     this.eventSubscription2?.unsubscribe();
-    this.apiSubscription?.unsubscribe();
+    // this.apiSubscription?.unsubscribe();
   }
 
   getAllNotification() {

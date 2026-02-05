@@ -30,8 +30,8 @@ export class WhatsTrendingComponent implements OnInit, OnDestroy {
   countryData:[string, number][] = [];
 
   isAnalysisTabActive:boolean = false;
-  apiSubscription:Subscription = new Subscription();
-  apiSubscription2:Subscription = new Subscription();
+  // apiSubscription:Subscription = new Subscription();
+  // apiSubscription2:Subscription = new Subscription();
   eventSubscription:Subscription = new Subscription();
   eventSubscription2:Subscription = new Subscription();
   eventSubscription3:Subscription = new Subscription();
@@ -112,7 +112,7 @@ export class WhatsTrendingComponent implements OnInit, OnDestroy {
     this.eventSubscription?.unsubscribe();
     this.eventSubscription2?.unsubscribe();
     this.eventSubscription3?.unsubscribe();
-    this.apiSubscription?.unsubscribe();
+    // this.apiSubscription?.unsubscribe();
     this.timerSubscription?.unsubscribe();
   }
 
@@ -159,7 +159,8 @@ export class WhatsTrendingComponent implements OnInit, OnDestroy {
 
   getWorldMapData() {
     this.isAPIinProcess = true; 
-    this.apiSubscription = this.apiService.getWhatsTrandingMap().subscribe({
+    // this.apiSubscription = 
+    this.apiService.getWhatsTrandingMap().subscribe({
       next: (res:ApiMsgRes) => {
         if(!res.error) {
           this.worldMapList = JSON.parse(JSON.stringify(res.results));

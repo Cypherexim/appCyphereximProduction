@@ -35,14 +35,21 @@ export class AppComponent implements OnDestroy {
       }
     });
 
-    //to stop print page
-    // document.addEventListener('keydown', (e) => {
-    //   // || e.key == "F12"
-    //   if ((e.ctrlKey && e.key == "p")) {
-    //       e.preventDefault();
-    //       e.stopImmediatePropagation();
-    //     }
-    // });
+    let isDevToolLocked = true;
+    document.addEventListener("keydown", (e) => {
+        const ctrlBtn = e.ctrlKey || e.metaKey;
+        if(
+            isDevToolLocked &&
+            (e.key === "F12" || (ctrlBtn && (e.shiftKey || e.altKey) && ["I","C","J"].includes(e.key)))
+        ) {
+            e.preventDefault();
+            return false;
+        }
+
+        if(ctrlBtn && (e.altKey || e.shiftKey) && e.key === "X") { isDevToolLocked = false; }
+        
+        if(ctrlBtn && (e.altKey || e.shiftKey) && e.key === "Q") { isDevToolLocked = true; }
+    });
 
     this.startTimeoutTimer();
     this.stopBackButton();

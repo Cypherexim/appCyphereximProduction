@@ -1,4 +1,4 @@
-<div class="locator-box">
+<div class="locator-box h-100">
     <div class="head-bar">
         <!-- <h5>{{locatorType | titlecase}} List</h5> -->
         <h5 class="w-100 text-center">{{locatorType | titlecase}} List</h5>
@@ -16,53 +16,81 @@
         <span *ngFor="let item of alphabets;" (click)="getLocatorsByLetter(item)">{{item}}</span>
     </div>
     
-    
-    <div class="copy-tab-head">
-        <span><input type="text" [formControl]="searchControl" placeholder="Search {{locatorType}}" id="" /></span>
+
+    <div class="option-container d-flex align-items-center mt-1">
+        <div (click)="toggleTab('fullname')" ngbTooltip="{{isKeywordBasedTab ? 'If you change the tab, your keywords will be lost.':''}}" class="keyword {{isKeywordBasedTab && 'disabled'}}" style="margin-right: 2px;">FULL NAME</div>
+        <div (click)="toggleTab('keyword')" ngbTooltip="{{!isKeywordBasedTab ? 'If you change the tab, your selection will be lost.':''}}" class="keyword {{!isKeywordBasedTab && 'disabled'}}">KEYWORD BASED</div>
     </div>
-    <div class="table-container" *ngIf="copyArr.length>0 && !isApiProcess">
-        
-        <!-- <cdk-virtual-scroll-viewport [itemSize]="10"> -->
-        <table id="locatorTable">
-            <tbody>
-                <tr class="selectAll" *ngIf="isSelectAllShow">
-                    <td><input type="checkbox" (click)="selectAllValues(perPageLocators)" id="locatorSelectAllId"></td>
-                    <td colspan="2"><label for="locatorSelectAllId">Select All</label></td>
-                </tr>
-                <!-- <tr tabindex="-1" *cdkVirtualFor="let item of perPageLocators;let i=index;"> -->
-                <tr tabindex="-1" *ngFor="let item of perPageLocators;let i=index;">
-                    <td><input type="checkbox" [checked]="isMainSelect" (click)="selectSingleValue($event, item)" id="{{locatorType=='exporter' ? item?.Exp_Name : item?.Imp_Name}}CheckboxId"></td>
-                    <td colspan="2">
-                        <label for="{{locatorType=='exporter' ? item?.Exp_Name : item?.Imp_Name}}CheckboxId">
-                            {{locatorType=='exporter' ? item?.Exp_Name : item?.Imp_Name}}
-                        </label>
-                    </td>
-                </tr>
-            </tbody>
-        </table>
-        <!-- </cdk-virtual-scroll-viewport> -->
-        <div class="copy-tab-foot">
-            <div class="pagination" *ngIf="locatorObj?.country=='India'">
-                <img src="assets/images/rightArrow.png" (click)="partitionLocator('prev')" alt="">
-                <span>{{currentPageNum+1}}</span>
-                <img src="assets/images/rightArrow.png" (click)="partitionLocator('next')" alt="">
-                <pre>Upto {{copyArr.length}} records</pre>
+
+    <div class="keyword-locator d-flex align-items-center flex-column justify-content-center w-100 h-75 {{!isKeywordBasedTab && 'd-none'}}">
+        <div class="title w-75 d-flex justify-content-between align-items-end"><span>Search by keyword:</span> <span *ngIf="selectedArr.length>2" class="clear" (click)="onEnterClick(chipInput, 'clear')">CLEAR ALL</span></div>
+        <div class="selected-chips w-75">
+            <div class="chip-overflow-box w-100">
+                <div class="chip" *ngFor="let item of selectedArr;let i=index">
+                    <span class="chip-name">{{item}}</span>
+                    <span class="cross" (click)="onEnterClick(chipInput, 'remove', i)">X</span>
+                </div>
             </div>
-            <div class="apply-btn"><button class="btn btn-danger" (click)="applyLocator()">Apply</button></div>
+        </div>
+        <div class="keyword-input d-flex flex-column align-items-center">
+            <input (keyup)="onPressEnter($event, chipInput)" type="text" class="form-control w-100" #chipInput placeholder="Type keyword here..." />
+            <div class="btn-grp w-100 d-flex justify-content-between align-items-center">
+                <button class="btn btn-danger" (click)="onEnterClick(chipInput, 'add')">Enter</button>
+                <button class="btn btn-success" (click)="applyLocator()">Apply</button>
+            </div>
         </div>
     </div>
+
+
     
-    <div class="loader-container" *ngIf="copyArr.length==0 && isError && !isApiProcess">
-        <div class="loader position-relative">
-            <h5>No Company Found</h5>
-            <div class="apply-btn w-100 position-absolute text-end"><button class="btn btn-danger" (click)="applyLocator()">Apply</button></div>
+    <div class="main-locator w-100 {{isKeywordBasedTab && 'd-none'}}">
+        <div class="copy-tab-head">
+            <span><input type="text" [formControl]="searchControl" placeholder="Search {{locatorType}}" id="" /></span>
         </div>
-    </div>
-    
-    <div class="loader-container">
-        <div class="loader" *ngIf="isApiProcess">
-            <img src="assets/images/loader.png" alt="">
-            <span>Please wait...</span>
-        </div>        
+        <div class="table-container" *ngIf="copyArr.length>0 && !isApiProcess">
+            
+            <!-- <cdk-virtual-scroll-viewport [itemSize]="10"> -->
+            <table id="locatorTable">
+                <tbody>
+                    <tr class="selectAll" *ngIf="isSelectAllShow">
+                        <td><input type="checkbox" (click)="selectAllValues($event, perPageLocators)" id="locatorSelectAllId"></td>
+                        <td colspan="2"><label for="locatorSelectAllId">Select All</label></td>
+                    </tr>
+                    <!-- <tr tabindex="-1" *cdkVirtualFor="let item of perPageLocators;let i=index;"> -->
+                    <tr tabindex="-1" *ngFor="let item of perPageLocators;let i=index;">
+                        <td><input type="checkbox" [checked]="isMainSelect || item?.isChecked" (click)="selectSingleValue($event, item)" id="{{locatorType=='exporter' ? item?.Exp_Name : item?.Imp_Name}}CheckboxId"></td>
+                        <td colspan="2">
+                            <label for="{{locatorType=='exporter' ? item?.Exp_Name : item?.Imp_Name}}CheckboxId">
+                                {{locatorType=='exporter' ? item?.Exp_Name : item?.Imp_Name}}
+                            </label>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+            <!-- </cdk-virtual-scroll-viewport> -->
+            <div class="copy-tab-foot">
+                <div class="pagination" *ngIf="locatorObj?.country=='India'">
+                    <img src="assets/images/rightArrow.png" (click)="partitionLocator('prev')" alt="">
+                    <span>{{currentPageNum+1}}</span>
+                    <img src="assets/images/rightArrow.png" (click)="partitionLocator('next')" alt="">
+                    <pre>Upto {{copyArr.length}} records</pre>
+                </div>
+                <div class="apply-btn"><button class="btn btn-danger" (click)="applyLocator()">Apply</button></div>
+            </div>
+        </div>
+        
+        <div class="loader-container" *ngIf="copyArr.length==0 && isError && !isApiProcess">
+            <div class="loader position-relative">
+                <h5>No Company Found</h5>
+                <div class="apply-btn w-100 position-absolute text-end"><button class="btn btn-danger" (click)="applyLocator()">Apply</button></div>
+            </div>
+        </div>
+        
+        <div class="loader-container">
+            <div class="loader" *ngIf="isApiProcess">
+                <img src="assets/images/loader.png" alt="">
+                <span>Please wait...</span>
+            </div>        
+        </div>
     </div>
 </div>

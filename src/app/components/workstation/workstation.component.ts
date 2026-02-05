@@ -63,8 +63,8 @@ export class WorkstationComponent implements OnInit, OnChanges, AfterViewInit, O
 
   workspaceFolders: string[] = [];
 
-  apiSubscription1:Subscription = new Subscription();
-  apiSubscription2:Subscription = new Subscription();
+  // apiSubscription1:Subscription = new Subscription();
+  // apiSubscription2:Subscription = new Subscription();
 
   eventSubscription: Subscription = new Subscription();
   eventSubscription2: Subscription = new Subscription();
@@ -114,11 +114,11 @@ export class WorkstationComponent implements OnInit, OnChanges, AfterViewInit, O
   }
 
   onDownloadListInIt() {
-    if(this.apiSubscription1) this.apiSubscription1.unsubscribe();
+    // if(this.apiSubscription1) this.apiSubscription1.unsubscribe();
 
     this.eventService.downloadListUpdate.next({ action: "remove" });
-    this.apiSubscription1 = this.apiService.getDownloadedRecord()
-    .pipe(takeUntil(this.destroy$)).subscribe({
+    // this.apiSubscription1 = 
+    this.apiService.getDownloadedRecord().pipe(takeUntil(this.destroy$)).subscribe({
       next: (res: any) => {
         if (res != null && !res?.error) {
           this.downloadDataArr = this.getSortedArray(res?.results, "datetime");
@@ -147,7 +147,8 @@ export class WorkstationComponent implements OnInit, OnChanges, AfterViewInit, O
       for (let i = 0; i < data.length; i++) this.setDataToWorkspaceFolder(data[i]);
 
     } else {
-      this.apiSubscription2 = this.apiService.getWorkspace().pipe(takeUntil(this.destroy$)).subscribe(async (res: any) => {
+      // this.apiSubscription2 = 
+      this.apiService.getWorkspace().pipe(takeUntil(this.destroy$)).subscribe(async (res: any) => {
         if (res != null && !res?.error) {
           this.userService.removeWorkspaceFolder(); // to remove alreday exist foldernames          
           const modifiedObj = await this.alertService.getModifiedWorkspace(res?.results);
@@ -260,8 +261,8 @@ export class WorkstationComponent implements OnInit, OnChanges, AfterViewInit, O
   ngAfterViewInit(): void { }
 
   ngOnDestroy(): void {
-    if(this.apiSubscription1) {this.apiSubscription1?.unsubscribe();}
-    if(this.apiSubscription2) {this.apiSubscription2?.unsubscribe();}
+    // if(this.apiSubscription1) {this.apiSubscription1?.unsubscribe();}
+    // if(this.apiSubscription2) {this.apiSubscription2?.unsubscribe();}
     this.eventSubscription?.unsubscribe();
     this.eventSubscription2?.unsubscribe();
     this.eventSubscription3?.unsubscribe();

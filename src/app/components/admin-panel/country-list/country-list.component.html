@@ -27,7 +27,9 @@
       </thead>
 
       <tbody *ngIf="copiedCountryList.length>0">
-        <tr *ngFor="let item of copiedCountryList;" [hidden]="userDetails?.CountryCode==='India' && item?.CountryName==='India'">
+        <tr 
+          *ngFor="let item of copiedCountryList;" 
+          [hidden]="userDetails?.CountryCode==='India' && item?.CountryName==='India'">
           <td class="country-name">
             <div class="countryname position-relative">
               <img class="position-absolute" src="assets/images/new-label.png" alt="{{item?.Direction}}" *ngIf="item?.is_new && item[item?.Direction | titlecase]"/>
@@ -44,14 +46,16 @@
           <td class="text-start">{{availableColumns[currentSelectedTab]}}</td>
           <td>
             <!-- <button *ngIf="isAvailbale(item?.CountryName) && item?.active" (mouseover)="onHover($event, true)" (mouseout)="onHover($event, false)" class="cypher-btn gray-bgColor w-50" (click)="onSelectCountry(item, item?.Direction)">Select</button> -->
-            <span *ngIf="isAvailbale(item?.CountryName)">
+            <span *ngIf="isAvailbale(item?.CountryName) && ((getDirectionAccess()==='EXPORT' && item?.Direction==='export') || (getDirectionAccess()==='IMPORT' && item?.Direction==='import') || getDirectionAccess()==='BOTH')">
               <button *ngIf="item?.Direction=='import' && item?.active && item?.Import" (mouseover)="onHover($event, true)" (mouseout)="onHover($event, false)" class="cypher-btn gray-bgColor w-50" (click)="onSelectCountry(item)">Select</button>
               <button *ngIf="item?.Direction=='export' && item?.active && item?.Export" (mouseover)="onHover($event, true)" (mouseout)="onHover($event, false)" class="cypher-btn gray-bgColor w-50" (click)="onSelectCountry(item)">Select</button>
               
               <button disabled class="cypher-btn gray-bgColor w-50 disabled" *ngIf="item?.Direction=='import' && (!item?.active || !item?.Import)">Coming Soon</button>
               <button disabled class="cypher-btn gray-bgColor w-50 disabled" *ngIf="item?.Direction=='export' && (!item?.active || !item?.Export)">Coming Soon</button>
             </span>
-            <span class="padlock" *ngIf="!isAvailbale(item?.CountryName)"><i class="fa-sharp-duotone fa-solid fa-lock"></i></span>
+            <span class="padlock" *ngIf="!isAvailbale(item?.CountryName) || !((getDirectionAccess()==='EXPORT' && item?.Direction==='export') || (getDirectionAccess()==='IMPORT' && item?.Direction==='import') || getDirectionAccess()==='BOTH')">
+              <i class="fa-sharp-duotone fa-solid fa-lock"></i>
+            </span>
             <!-- <button disabled class="cypher-btn gray-bgColor w-50 disabled" *ngIf="!item?.active">Coming Soon</button> -->            
           </td>
         </tr>

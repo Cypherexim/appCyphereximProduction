@@ -40,7 +40,7 @@ export class ConfirmationComponent implements OnInit, OnDestroy {
 
   timeoutVar:any;
 
-  apiSubscription:Subscription = new Subscription();
+  // apiSubscription:Subscription = new Subscription();
   timerSubscription:Subscription = new Subscription();
   
   constructor(
@@ -55,7 +55,8 @@ export class ConfirmationComponent implements OnInit, OnDestroy {
   
   ngOnInit(): void {
     if(this.currentPopUp==='sharing') {
-      this.apiSubscription = this.userService.getAllUserByCols("Email").subscribe({
+      // this.apiSubscription = 
+      this.userService.getAllUserByCols("Email").subscribe({
         next: (res:ApiMsgRes) => {
           if(!res.error) { 
             this.allUsers = res?.results;

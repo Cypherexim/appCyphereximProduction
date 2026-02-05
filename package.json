@@ -4,6 +4,7 @@
   "scripts": {
     "ng": "ng",
     "start": "ng serve --configuration production",
+    "dev": "ng serve --configuration production --port 1996",
     "build": "ng build --configuration production",
     "global": "ng serve --host 192.168.1.8",
     "test": "ng test",

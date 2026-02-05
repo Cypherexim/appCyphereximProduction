@@ -40,8 +40,8 @@ export class NavMenuComponent implements OnInit, OnDestroy {
   isDownloadingFile:boolean = false;
   isLoggedIn:boolean = false;
   loaderTimeout:Subscription = new Subscription();
-  apiSubscription:Subscription = new Subscription();
-  apiSubscription2:Subscription = new Subscription();
+  // apiSubscription:Subscription = new Subscription();
+  // apiSubscription2:Subscription = new Subscription();
   timeSubscription:Subscription = new Subscription();
   eventSubscription:Subscription = new Subscription();
   loginSubscription:Subscription = new Subscription();
@@ -195,7 +195,8 @@ export class NavMenuComponent implements OnInit, OnDestroy {
   }
 
   getAllUserAPI() {
-    this.apiSubscription2 = this.userService.getAllUserByCols("RoleId,ParentUserId").subscribe({
+    // this.apiSubscription2 = 
+    this.userService.getAllUserByCols("RoleId,ParentUserId").subscribe({
       next: (res:any) => {
         if(!res?.error) {
           const resultArr = res.results;
@@ -234,8 +235,8 @@ export class NavMenuComponent implements OnInit, OnDestroy {
     this.eventSubscription3?.unsubscribe();
     this.eventSubscription4?.unsubscribe();
     this.eventSubscription5?.unsubscribe();
-    this.apiSubscription?.unsubscribe();
-    this.apiSubscription2?.unsubscribe();
+    // this.apiSubscription?.unsubscribe();
+    // this.apiSubscription2?.unsubscribe();
     this.timerSubscription1?.unsubscribe();
     this.timerSubscription2?.unsubscribe();
   }
@@ -362,9 +363,10 @@ export class NavMenuComponent implements OnInit, OnDestroy {
 
 
   getNotifications() {
-    this.apiSubscription2?.unsubscribe();
+    // this.apiSubscription2?.unsubscribe();
     
-    this.apiSubscription2 = this.apiService.getAllNotifications().subscribe({
+    // this.apiSubscription2 = 
+    this.apiService.getAllNotifications().subscribe({
       next: async(res:any) => {
         if(!res.error) {
           this.eventService.sendNotifications.next(res.results);

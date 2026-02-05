@@ -152,6 +152,10 @@ div.content div.feature div.feat div.custom-dropdown div.dropdown-data p {
     padding-bottom: 10px;
     text-align: left;
 }
+div.content div.feature div.feat div.custom-dropdown div.dropdown-data p.disable{
+    pointer-events: none;
+    opacity: 0.3;
+}
 
 div.content div.feature div.feat div.custom-dropdown div.dropdown-data p:hover {
     background-color: #ececec;

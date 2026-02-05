@@ -35,7 +35,7 @@ export class SaveFileComponent implements OnInit, OnDestroy, AfterViewInit {
 
   @Output() saveCallBack:EventEmitter<any> = new EventEmitter();
 
-  apiSubscription:Subscription = new Subscription();
+  // apiSubscription:Subscription = new Subscription();
   eventSubscription:Subscription = new Subscription();
   eventSubscription1:Subscription = new Subscription();
   timerSubscription:Subscription = new Subscription();
@@ -59,7 +59,7 @@ export class SaveFileComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   ngOnDestroy(): void {
-    this.apiSubscription?.unsubscribe();
+    // this.apiSubscription?.unsubscribe();
     this.eventSubscription?.unsubscribe();
     this.timerSubscription?.unsubscribe();
   }
@@ -70,7 +70,8 @@ export class SaveFileComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   getWorkspaceData() {
-    this.apiSubscription = this.apiService.getWorkspace().subscribe(async(res:any) => {
+    // this.apiSubscription = 
+    this.apiService.getWorkspace().subscribe(async(res:any) => {
       if(res!=null && !res?.error) {
         const modifiedObj = await this.alertService.getModifiedWorkspace(res?.results);
         const sortedFolderNames = modifiedObj.folderNames.sort();

@@ -30,7 +30,7 @@ export class FavouritesComponent implements OnInit, OnChanges, OnDestroy{
 
 
   eventSubscription:Subscription = new Subscription();
-  apiSubscription:Subscription = new Subscription();
+  // apiSubscription:Subscription = new Subscription();
   timerSubscription:Subscription = new Subscription();
 
   isLoading:boolean = false;
@@ -58,7 +58,7 @@ export class FavouritesComponent implements OnInit, OnChanges, OnDestroy{
 
   ngOnDestroy(): void {
     this.eventSubscription?.unsubscribe();
-    this.apiSubscription?.unsubscribe();
+    // this.apiSubscription?.unsubscribe();
     this.timerSubscription?.unsubscribe();
   }
 
