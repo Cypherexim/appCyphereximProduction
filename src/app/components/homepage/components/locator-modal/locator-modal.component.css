@@ -212,9 +212,12 @@ div.locator-box div.table-container table thead th{
     font-weight: 500;
     letter-spacing: 0.6px;
 }
+div.locator-box div.radio-btns input[type="radio"]{accent-color: red;}
 div.locator-box div.table-container table thead th:last-child{ text-align: right;padding-right: 5px;}
 div.locator-box div.table-container table tbody tr:nth-child(even){background-color: #e5e5e5;}
 div.locator-box div.table-container table tbody tr{border-bottom: 1px solid #e5e5e5;}
+div.locator-box.exact div.table-container table tbody tr.selected{background-color: #4cbfa6b5;border: 2px solid red;}
+div.locator-box.exact div.table-container table tbody tr:hover{background-color: #4cbfa6b5;cursor: pointer;}
 div.locator-box div.table-container table tbody tr.selectAll td:first-child input[type="checkbox"]{accent-color: red;}
 div.locator-box div.table-container table tbody tr.selectAll td:last-child{
     font-weight: 500;
@@ -224,7 +227,7 @@ div.locator-box div.table-container table tbody td{
     font-family: 'Roboto';
     letter-spacing: 0.4px;
 }
-div.locator-box div.table-container table tbody td:first-child{text-align: center;width: 10%;}
+div.locator-box div.table-container table tbody td:first-child{text-align: center;width: 3%;}
 div.locator-box div.table-container table tbody td input[type="checkbox"]{
     accent-color: #4cbfa6;
     scale: 1.1;
@@ -278,9 +281,9 @@ div.locator-box div.table-container cdk-virtual-scroll-viewport{height: 60vh;}
         font-size: 14px;   
     }
     div.locator-box div.table-container table tbody td:nth-child(2){
-        font-size: 14px;
+        font-size: 12.5px;
         letter-spacing: 0.7px;
-        padding: 5px 0;
+        padding: 7px 0px;
     }
     div.locator-box div.table-container table tbody td input[type="checkbox"]{scale: 0.9;}
     div.locator-box div.table-container cdk-virtual-scroll-viewport{height: 75%;}

@@ -1,7 +1,7 @@
-<div class="locator-box h-100">
+<div class="locator-box exact h-100" id="locatorBox">
     <div class="head-bar">
         <!-- <h5>{{locatorType | titlecase}} List</h5> -->
-        <h5 class="w-100 text-center">{{locatorType | titlecase}} List</h5>
+        <h5 class="w-100 text-center">{{locatorType==='exporter' ? 'Supplier': 'Buyer' | titlecase}} List</h5>
         <img (click)="closeModal()" src="assets/images/cross.png" alt="" />
     </div>
 
@@ -17,9 +17,17 @@
     </div>
     
 
-    <div class="option-container d-flex align-items-center mt-1">
+    <div class="option-container d-flex align-items-center mt-1 d-none">
         <div (click)="toggleTab('fullname')" ngbTooltip="{{isKeywordBasedTab ? 'If you change the tab, your keywords will be lost.':''}}" class="keyword {{isKeywordBasedTab && 'disabled'}}" style="margin-right: 2px;">FULL NAME</div>
         <div (click)="toggleTab('keyword')" ngbTooltip="{{!isKeywordBasedTab ? 'If you change the tab, your selection will be lost.':''}}" class="keyword {{!isKeywordBasedTab && 'disabled'}}">KEYWORD BASED</div>
+    </div>
+
+    <div class="radio-btns py-2 px-3 d-flex align-items-center" style="font-size: 14px;">
+        <input type="radio" name="search-type" id="exactSearch" (change)="onChangeRadio('exact')" class="me-1" value="exact" checked />
+        <label for="exactSearch" class="me-4">Exact Search</label>
+
+        <input type="radio" name="search-type" id="contentSearch" (change)="onChangeRadio('content')" class="me-1" value="content" />
+        <label for="contentSearch">Content Search</label>
     </div>
 
     <div class="keyword-locator d-flex align-items-center flex-column justify-content-center w-100 h-75 {{!isKeywordBasedTab && 'd-none'}}">
@@ -52,15 +60,19 @@
             <!-- <cdk-virtual-scroll-viewport [itemSize]="10"> -->
             <table id="locatorTable">
                 <tbody>
-                    <tr class="selectAll" *ngIf="isSelectAllShow">
-                        <td><input type="checkbox" (click)="selectAllValues($event, perPageLocators)" id="locatorSelectAllId"></td>
-                        <td colspan="2"><label for="locatorSelectAllId">Select All</label></td>
+                    <tr class="selectAll d-none" *ngIf="isSelectAllShow">
+                        <td>
+                            <!-- <input type="checkbox" (click)="selectAllValues($event, perPageLocators)" id="locatorSelectAllId"> colspan="2"-->
+                        </td>
+                        <td><label for="locatorSelectAllId">Select All</label></td>
                     </tr>
                     <!-- <tr tabindex="-1" *cdkVirtualFor="let item of perPageLocators;let i=index;"> -->
-                    <tr tabindex="-1" *ngFor="let item of perPageLocators;let i=index;">
-                        <td><input type="checkbox" [checked]="isMainSelect || item?.isChecked" (click)="selectSingleValue($event, item)" id="{{locatorType=='exporter' ? item?.Exp_Name : item?.Imp_Name}}CheckboxId"></td>
-                        <td colspan="2">
-                            <label for="{{locatorType=='exporter' ? item?.Exp_Name : item?.Imp_Name}}CheckboxId">
+                    <tr tabindex="-1" class="{{currentLocator==='content' && 'opacity-50'}}" *ngFor="let item of perPageLocators;let i=index;" id="{{(locatorType=='exporter' ? item?.Exp_Name : item?.Imp_Name).replaceAll(' ','')}}TrId" (click)="selectSingleValue(item, locatorType=='exporter' ? item?.Exp_Name : item?.Imp_Name)">
+                        <td>
+                            <!-- <input type="checkbox" [checked]="isMainSelect || item?.isChecked" (click)="selectSingleValue($event, item)" id="{{locatorType=='exporter' ? item?.Exp_Name : item?.Imp_Name}}CheckboxId"> colspan="2"-->
+                        </td>
+                        <td>
+                            <label class="w-100" for="{{locatorType=='exporter' ? item?.Exp_Name : item?.Imp_Name}}CheckboxId">
                                 {{locatorType=='exporter' ? item?.Exp_Name : item?.Imp_Name}}
                             </label>
                         </td>
@@ -69,13 +81,15 @@
             </table>
             <!-- </cdk-virtual-scroll-viewport> -->
             <div class="copy-tab-foot">
-                <div class="pagination" *ngIf="locatorObj?.country=='India'">
+                <div class="pagination" *ngIf="copyArr?.length>100 && locatorObj?.country=='India' && (currentLocator==='exact' || (currentLocator==='content' && searchVal.length>2 && !isApiProcess))">
                     <img src="assets/images/rightArrow.png" (click)="partitionLocator('prev')" alt="">
                     <span>{{currentPageNum+1}}</span>
                     <img src="assets/images/rightArrow.png" (click)="partitionLocator('next')" alt="">
                     <pre>Upto {{copyArr.length}} records</pre>
                 </div>
-                <div class="apply-btn"><button class="btn btn-danger" (click)="applyLocator()">Apply</button></div>
+                <div class="apply-btn {{selectedArr?.length>0 || (currentLocator==='content' && perPageLocators?.length>0) ? 'visible': 'invisible'}}">
+                    <button class="btn btn-danger" (click)="applyLocator()">Apply</button>
+                </div>
             </div>
         </div>
         

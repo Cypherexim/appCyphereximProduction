@@ -27,6 +27,8 @@ export class LocatorModalComponent implements OnInit, AfterViewInit, OnDestroy {
   isLocatorExist = ():boolean => Object.keys(this.backupLocatorData).length>0;
   isError:boolean = false;
   selectedArr:string[] = [];
+  lastHighlightedTr:HTMLElement = undefined;
+  currentLocator:string = "exact";
   errorMsg:string = 'No Data Found';
   hasExceeded:boolean = false;
 
@@ -178,13 +180,16 @@ export class LocatorModalComponent implements OnInit, AfterViewInit, OnDestroy {
           this.isError = true;
         }
       });
-    } 
-    
-    if(this.searchVal.length === 0) {
+    } else if(this.currentLocator==="exact" && this.searchVal.length === 0) {
       this.currentPageNum = 0;
       this.copyArr = [...this.listArr];
       this.perPageLocators = [...this.copyArr].splice(0, 100);
       this.isSelectAllShow = false;
+    } else {
+      if(this.currentLocator==="content" && this.searchVal.length<=2 && this.searchVal.length>0) {
+        this.currentPageNum = 0;
+        this.perPageLocators = [];
+      }
     }
   }
 
@@ -240,14 +245,35 @@ export class LocatorModalComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   //for selecting single value which is just for temporary
-  selectSingleValue(e:any, item:any) {
-    const isChecked = e.target.checked;
-    const key = this.locatorType=='exporter' ? "Exp_Name" : "Imp_Name";
-    const selectedInpArr:any = document.querySelectorAll("input[type='checkbox']:checked");
-    const val =  item[key];
+  onChangeRadio(value:string) {
+    const container = document.getElementById("locatorBox") as HTMLDivElement;
+    container.classList.remove(this.currentLocator);
+    container.classList.add(value);
+    this.currentLocator = value;
+    this.selectedArr=[];
+    if(this.lastHighlightedTr) this.lastHighlightedTr.classList.remove("selected");
+    if(value==="content") {
+      this.perPageLocators = [];
+    } else { this.perPageLocators = structuredClone(this.copyArr).splice(0,100); }
+  }
+  selectSingleValue(item:any, trId:string) {
+    if(this.currentLocator==="exact") {
+      const selectedTr = document.getElementById(trId.replace(new RegExp(" ",'g'), '')+'TrId') as HTMLElement;
+      
+      if(this.lastHighlightedTr) {
+        this.lastHighlightedTr.classList.remove("selected"); 
+      }
+      selectedTr.classList.add("selected");
+      this.lastHighlightedTr = selectedTr
+  
+      const key = this.locatorType=='exporter' ? "Exp_Name" : "Imp_Name";
+      this.selectedArr =  [item[key]];
+    } else { this.selectedArr =  [this.searchVal]; }
     
-    if(isChecked) this.selectedArr.push(val);
-    else this.selectedArr = this.selectedArr.filter(item => item != val);
+    // const selectedInpArr:any = document.querySelectorAll("input[type='checkbox']:checked");
+    // const isChecked = e.target.checked;
+    // if(isChecked) this.selectedArr.push(val);
+    // else this.selectedArr = this.selectedArr.filter(item => item != val);
   }
 
   selectAllValues(e:KeyboardEvent, dataArr:any[]) {
